@@ -38,6 +38,7 @@
         underscore: 'lib/reqMod-underscore',
         backbone: 'lib/reqMod-backbone',
         handlebars: 'lib/reqMod-handlebars',
+        Plotly: 'lib/reqMod-plotly-1.21.2',
         moment: 'lib/reqMod-moment',
         raphael: 'lib/reqMod-raphael-min',
         text: 'lib/reqMod-text'
@@ -53,19 +54,13 @@
         'backbone': {
           deps: ['underscore', 'jquery'],
           init: function () {
-            // exports
             return this.Backbone.noConflict();
           }
         },
         'bootstrap': {
           deps: ['jquery']
         },
-//        'handlebars_original': {
-//          deps: ['bootstrap'], // automatically require bootstrap when requiring an handlebars template
-//          exports: 'Handlebars'
-//        },
-        'handlebars': { // handlebars with custom block helpers
-//          deps: ['handlebars_original'],
+        'handlebars': {
           exports: 'Handlebars'
         }
       }
@@ -401,7 +396,19 @@ Include alerts, prompts &amp; confirm boxes">Run with JS</button>
 {{#if custom_js}}
 <script src="{{makeURL custom_js static}}{{cacheBust}}"></script>
 {{/if}}
-
+  <style>
+    #plotter{
+      position: absolute;
+      top:100px;
+      left:100px;
+      height: 500px;
+      width: 600px;
+      background-color: #414141;
+      border-radius: 5px;
+      z-index: 2;
+    }
+  </style>
+  <div id="plotter"></div>
 </body>
 </html>
 

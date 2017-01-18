@@ -90,6 +90,7 @@ def([
             this.codeMirrorJSView.showSources();
             this.codeMirrorHTMLView.render();
             this.headerControlView.renderSlider();
+            this.headerControlView.renderPlot();
           }
         }
       }, this);
@@ -129,6 +130,13 @@ def([
         this.codeMirrorHTMLView.render();
         this.headerControlView.renderSlider();
         this.headerControlView.resume();
+      }, this);
+
+      this.headerControlView.on("aspectChange", function (callback) {
+        this.pauseUIUpdates();
+        this.htmlJSLinksView.collapseAll();
+        this.codeMirrorHTMLView.removeAllHighlights();
+        callback();
       }, this);
 
       this.headerControlView.on("jsDetailChange", function (val) {

@@ -42,7 +42,7 @@ def([
 
     getActiveNodes: function (path, domModifiersOnly) {
       return this.filter(function (model) {
-        var hasHits = !!model.getHits();
+        var hasHits = !!model.getHitsWithinDisplayRange();
         var hasPath = !!model.get("path");
         var matchesPath = path ? path === model.get("path") : true;
         var domModifier = domModifiersOnly ? !!model.get("domModifier") : true;
@@ -50,6 +50,17 @@ def([
 
         return hasHits && isFunction && hasPath && matchesPath && domModifier;
       });
+    },
+
+    getStartupCodeEndTimestamp: function () {
+      
+      // for (var i = 0; i < 20; i++) {
+      //   var model = this.models[i];
+      //   var hasHits = !!model.getHits();
+      //   hasHits ? console.log(_.pluck(model.get("invokes"), "timestamp")) : null;
+      // }
+
+      return 1483479547344;
     },
 
     setTimeStampBounds: function (minInvokeTime, maxInvokeTime) {
@@ -189,7 +200,7 @@ def([
       this.each(function (model) {
         model.set("domModifier", false);
 
-        var hasHits = !!model.getHits();
+        var hasHits = !!model.getHitsWithinDisplayRange();
         var hasPath = !!model.get("path");
 
         if (hasHits && hasPath) {
