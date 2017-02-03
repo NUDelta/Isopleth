@@ -1,0 +1,116 @@
+Index: chrome-extension/js/injectors/fondueInjector.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- chrome-extension/js/injectors/fondueInjector.js	(date 1485473528000)
++++ chrome-extension/js/injectors/fondueInjector.js	(revision )
+@@ -10,9 +10,14 @@
+         this.totalInvocations = 0;
+       };
+ 
+-      FondueBridge.MAX_LOG_COUNT = 3000;
+-      FondueBridge.MAX_STACK_DEPTH = 20;
+-      FondueBridge.EMIT_INTERVAL_MILLIS = 3000;
++      // FondueBridge.MAX_LOG_COUNT = 3000;
++      // FondueBridge.MAX_STACK_DEPTH = 20;
++      // FondueBridge.EMIT_INTERVAL_MILLIS = 3000;
++
++
++      FondueBridge.MAX_LOG_COUNT = 999999;
++      FondueBridge.MAX_STACK_DEPTH = 999999;
++      FondueBridge.EMIT_INTERVAL_MILLIS = 2000;
+ 
+       FondueBridge.prototype = {
+         constructor: FondueBridge,
+@@ -23,7 +28,6 @@
+ 
+         getNewNodes: function () {
+           // if (!this.nodesHandle) {
+-          //   debugger;
+           //   this.nodesHandle = window.__tracer.trackNodes();
+           // }
+ 
+@@ -82,6 +86,7 @@
+               endLine: node.end.line,
+               endColumn: node.end.column,
+               childrenIds: node.childrenIds,
++              source: node.source,
+               hits: 0,
+               invokes: []
+             };
+@@ -120,6 +125,18 @@
+           });
+         },
+ 
++        emitScreenCapture: function () {
++          unravelAgent.html2canvas(document.body).then(function (canvas) {
++            window.dispatchEvent(new CustomEvent("fondueDTO", {
++                detail: {
++                  eventStr: "fondueDTO:screenCapture",
++                  obj: {dataURL: canvas.toDataURL('image/jpeg', 1.0)}
++                }
++              })
++            );
++          });
++        },
++
+         emitNodeActivity: function () {
+           try {
+             //Get the last n javascript calls logged
+@@ -143,35 +160,33 @@
+               }
+ 
+               invocation.node = node;
+-              if (node.domQuery || this.isDomQueryNode(node)) {
+-                invocation.callStack = unravelAgent._(__tracer.backtrace({
+-                  invocationId: invocation.invocationId,
+-                  range: [0, FondueBridge.MAX_STACK_DEPTH]
+-                })).reverse();
++              // if (node.domQuery || this.isDomQueryNode(node)) {
++              invocation.callStack = unravelAgent._(__tracer.backtrace({
++                invocationId: invocation.invocationId,
++                range: [0, FondueBridge.MAX_STACK_DEPTH]
++              })).reverse();
+ 
+-                //Remove the last item on the stack, === the invocation
+-                if (invocation.callStack.length > 0) {
+-                  invocation.callStack.pop();
+-                }
+-              } else {
+-                invocation.callStack = [];
++              //Remove the last item on the stack, === the invocation
++              if (invocation.callStack.length > 0) {
++                invocation.callStack.pop();
+               }
++              // } else {
++              //   invocation.callStack = [];
++              // }
+             }, this);
+ 
+             // if (arrInvocations.length < FondueBridge.MAX_LOG_COUNT) {
+-            if (unravelAgent.scriptLoadComplete) {
+-              __tracer.softReset(this.logHandle);
+-            }
++            // if (unravelAgent.scriptLoadComplete) {
++            //   __tracer.softReset(this.logHandle);
++            // }
+             // }
+ 
+-            var logLength = __tracer.getLogLength(this.logHandle);
+-            if (logLength > 10000) {
+-              console.log("Remaining Log Length is too large:", logLength, "... clearing.");
+-              this.updateTrackedNodes();
+-              __tracer.softReset(this.logHandle);
+-              // __tracer.clearLogs(this.logHandle);
+-            }
+-
++            // var logLength = __tracer.getLogLength(this.logHandle);
++            // if (logLength > 10000) {
++            //   console.log("Remaining Log Length is too large:", logLength, "... clearing.");
++            //   this.updateTrackedNodes();
++            //   __tracer.softReset(this.logHandle);
++            // }
+ 
+             window.dispatchEvent(new CustomEvent("fondueDTO", {
+                 detail: {
