@@ -7,3 +7,7 @@ body{
 #effect2 p {
   color:lightgreen;
 }
+
+.hidden{
+  display:none;
+}
