@@ -371,6 +371,10 @@ if (typeof {name} === 'undefined') {
 		}
 
 		var o = { type: typeof(val) };
+    try {
+      o.name = val.name;
+    } catch (ignored) {
+    }
 		if (["undefined", "boolean", "number", "string"].indexOf(o.type) !== -1 || val === null) {
 			if (typeof(val) === "undefined" && val !== undefined) {
 				// special case: document.all claims to be undefined http://stackoverflow.com/questions/10350142/why-is-document-all-falsy
@@ -452,6 +456,87 @@ if (typeof {name} === 'undefined') {
 		lengths of all strings, the lengths of all keys, and the count of
 		objects of any other type, ignoring the overhead of array/object storage.
 		**/
+
+		var pathToSelector = function(node){
+		  if(!node || !node.outerHTML){
+		    return null;
+      }
+
+      var path;
+      while (node.parentElement) {
+        var name = node.localName;
+        if (!name) break;
+        name = name.toLowerCase();
+        var parent = node.parentElement;
+
+        var domSiblings = [];
+
+        if (parent.children && parent.children.length > 0) {
+          for (var i = 0; i < parent.children.length; i++) {
+            var sibling = parent.children[i];
+            if (sibling.localName && sibling.localName.toLowerCase) {
+              if (sibling.localName.toLowerCase() === name) {
+                domSiblings.push(sibling);
+              }
+            }
+          }
+				}
+
+        if (domSiblings.length > 1) {
+          name += ':eq(' + domSiblings.indexOf(node) + ')';
+        }
+        path = name + (path ? '>' + path : '');
+        node = parent;
+      }
+
+      return path;
+    };
+
+    if (object && object.toString && object.toString().toLowerCase().indexOf("event") > -1) {
+      object = {
+        eventName: object.toString ? object.toString() : null,
+        altKey: object.altKey,
+        bubbles: object.bubbles,
+        button: object.button,
+        buttons: object.buttons,
+        cancelBubble: object.cancelBubble,
+        cancelable: object.cancelable,
+        clientX: object.clientX,
+        clientY: object.clientY,
+        composed: object.composed,
+        ctrlKey: object.ctrlKey,
+        currentTarget: object.currentTarget ? object.currentTarget.outerHTML : null,
+        defaultPrevented: object.defaultPrevented,
+        detail: object.detail,
+        eventPhase: object.eventPhase,
+        fromElement: object.fromElement ? object.fromElement.outerHTML : null,
+        isTrusted: object.isTrusted,
+        layerX: object.layerX,
+        layerY: object.layerY,
+        metaKey: object.metaKey,
+        movementX: object.movementX,
+        movementY: object.movementY,
+        offsetX: object.offsetX,
+        offsetY: object.offsetY,
+        pageX: object.pageX,
+        pageY: object.pageY,
+        path: pathToSelector(object.path && object.path.length ? object.path[0] : null),
+        relatedTarget: object.relatedTarget ? object.relatedTarget.outerHTML : null,
+        returnValue: object.returnValue,
+        screenX: object.screenX,
+        screenY: object.screenY,
+        shiftKey: object.shiftKey,
+        sourceCapabilities: object.sourceCapabilities ? object.sourceCapabilities.toString() : null,
+        target: object.target ? object.target.outerHTML : null,
+        timeStamp: object.timeStamp,
+        toElement: object.toElement ? object.toElement.outerHTML: null,
+        type: object.type,
+        view: object.view ? object.view.toString() : null,
+        which: object.which,
+        x: object.x,
+        y: object.y
+      }
+    }
 
 		// returns array: [approx size of copy, copy]
 		var scrape = function (o, depth) {

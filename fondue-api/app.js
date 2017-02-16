@@ -6,6 +6,18 @@ var ROUTES = require('./routes/routes');
 
 var app = express();
 
+var redis = require('redis');
+var redisClient = redis.createClient();
+
+// TODO ISOPLETH caching is off!
+redisClient.on('connect', function () {
+  redisClient.flushdb(function (err, didSucceed) {
+    if(!err){
+      console.log("Redis flushdb success.")
+    }
+  });
+});
+
 var lessMiddleware = require('less-middleware');
 var crossOriginMiddleware = require("./middleware/crossOriginMiddleware");
 

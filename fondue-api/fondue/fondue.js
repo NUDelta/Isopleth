@@ -167,7 +167,6 @@ function traceFilter(src, options) {
     // those functions so that we can return it from the wrapper function's
     // toString.
 
-    //TODO - Callbacks here are actually handlers, not async
     falafel(src, {loc: true}, eselector.tester([
       {
         selector: '.function',
@@ -175,46 +174,29 @@ function traceFilter(src, options) {
           var id = makeId('function', options.path, node.loc);
           functionSources[id] = node.source();
         }
-      }
+      },
+      {
+        selector: '.function > block',
+        callback: function (node) {
+          var id = makeId('function', options.path, node.parent.loc);
+          functionSources[id] = node.source();
+        }
+      },
+      {
+        selector: 'expression.function',
+        callback: function (node) {
+          var id = makeId('function', options.path, node.loc);
+          functionSources[id] = node.source();
+        }
+      },
+      {
+        selector: '.call',
+        callback: function (node) {
+          var id = makeId('callsite', options.path, node.loc);
+          functionSources[id] = node.source();
+        }
+      },
     ]));
-
-    //
-    //falafel(src, { loc: true }, helpers.wrap(eselector.tester([
-    //	{
-    //		selector: 'program',
-    //		callback: function (node) {
-    //			var id = makeId('toplevel', options.path, node.loc);
-    //     node.originalSource = node.source() + " ";
-    //     preNodes[id] = node;
-    //		}
-    //	},
-    //	{
-    //		selector: '.function > block',
-    //		callback: function (node) {
-    //			var id = makeId('function', options.path, node.parent.loc);
-    //     node.originalSource = node.source() + " ";
-    //     preNodes[id] = node;
-    //		}
-    //	},
-    //	{
-    //		selector: 'expression.function',
-    //		callback: function (node) {
-    //			if (node.parent.type !== 'Property' || node.parent.kind === 'init') {
-    //       var id = makeId('function', options.path, node.loc);
-    //       node.originalSource = node.source() + " ";
-    //       preNodes[id] = node;
-    //			}
-    //		}
-    //	},
-    //	{
-    //		selector: '.call',
-    //		callback: function (node) {
-    //			var id = makeId('callsite', options.path, node.loc);
-    //     node.originalSource = node.source() + " ";
-    //     preNodes[id] = node;
-    //		}
-    //	}
-    //])));
 
     // instrument the source code
     var instrumentedSrc = falafel(src, {loc: true}, helpers.wrap(eselector.tester([
@@ -227,7 +209,6 @@ function traceFilter(src, options) {
             start: node.loc.start,
             end: node.loc.end,
             id: id,
-            //originalSource:preNodes[id].originalSource,
             type: 'toplevel',
             name: '(' + basename(options.path) + ' toplevel)',
           });
@@ -246,7 +227,7 @@ function traceFilter(src, options) {
             start: node.parent.loc.start,
             end: node.parent.loc.end,
             id: id,
-            //originalSource:preNodes[id].originalSource,
+            source: functionSources[id],
             type: 'function',
             name: concoctFunctionName(node.parent),
             params: params,
@@ -276,7 +257,7 @@ function traceFilter(src, options) {
             start: node.loc.start,
             end: node.loc.end,
             id: id,
-            //originalSource:preNodes[id].originalSource,
+            source: functionSources[id],
             type: 'callsite',
             name: node.callee.source(),
             nameStart: nameLoc.start,
@@ -297,7 +278,6 @@ function traceFilter(src, options) {
               node.arguments[0].update(JSON.stringify(String(instrumentedEvalSource)))
             }
           } else if (node.callee.source() !== "require") {
-            //node.callee.originalSource = node.callee.source();
             if (node.callee.type === 'MemberExpression') {
               if (node.callee.computed) {
                 node.callee.update(' ', options.tracer_name, '.traceFunCall({ this: ', node.callee.object.source(), ', property: ', node.callee.property.source(), ', nodeId: ', JSON.stringify(id), ' })');
@@ -319,7 +299,7 @@ function traceFilter(src, options) {
     // if (options.path && options.path.indexOf("-script-") > -1) {
     //   prologue += options.tracer_name + '.add(' + JSON.stringify(options.path) + ', ' + JSON.stringify(src) + ', { nodes: ' + JSON.stringify(nodes) + ' });\n\n';
     // } else {
-      prologue += options.tracer_name + '.add(' + JSON.stringify(options.path) + ', "", { nodes: ' + JSON.stringify(nodes) + ' });\n\n';
+    prologue += options.tracer_name + '.add(' + JSON.stringify(options.path) + ', "", { nodes: ' + JSON.stringify(nodes) + ' });\n\n';
     // }
 
     return {
@@ -365,7 +345,7 @@ function traceFilter(src, options) {
  *   throw_parse_errors (false): if false, parse exceptions are caught and the
  *       original source code is returned.
  **/
-function instrument(src, options, errOpt) {
+function instrument(src, options, errOpt, callback) {
   options = mergeInto(options, {
     include_prefix: true,
     tracer_name: '__tracer',
@@ -377,55 +357,50 @@ function instrument(src, options, errOpt) {
     return src;
   }
 
-  var beautifiedSrc = util.beautifyJS(src, options.path);
-  if (beautifiedSrc === null) {
-    if (errOpt) {
-      errOpt.path = options.path;
-      errOpt.beautifyErr = true;
-    }
-    return src;
-  }
-
-  src = beautifiedSrc;
-
-  if (m = /^(#![^\n]+)\n/.exec(src)) {
-    shebang = m[1];
-    src = src.slice(shebang.length);
-  }
-
-  if (options.include_prefix) {
-    prefix += instrumentationPrefix({
-      name: options.tracer_name,
-      nodejs: options.nodejs,
-      maxInvocationsPerTick: options.maxInvocationsPerTick
-    });
-  }
-
-  if (src.indexOf("/*theseus" + " instrument: false */") !== -1) {
-    output = shebang + prefix + src;
-  } else {
-
-    try {
-
-    } catch (err) {
+  util.beautifyJS(src, options.path, function (beautifiedSrc) {
+    if (beautifiedSrc === null) {
+      if (errOpt) {
+        errOpt.path = options.path;
+        errOpt.beautifyErr = true;
+      }
+      return callback(src);
     }
 
-    var m = traceFilter(src, {
-      prefix: prefix,
-      path: options.path,
-      tracer_name: options.tracer_name,
-      sourceFilename: options.sourceFilename,
-      generatedFilename: options.generatedFilename,
-      throw_parse_errors: options.throw_parse_errors
-    });
-    var oldToString = m.toString;
-    m.toString = function () {
-      return shebang + oldToString();
-    };
-    return m;
-  }
+    src = beautifiedSrc;
 
-  return output;
+    if (m = /^(#![^\n]+)\n/.exec(src)) {
+      shebang = m[1];
+      src = src.slice(shebang.length);
+    }
+
+    if (options.include_prefix) {
+      prefix += instrumentationPrefix({
+        name: options.tracer_name,
+        nodejs: options.nodejs,
+        maxInvocationsPerTick: options.maxInvocationsPerTick
+      });
+    }
+
+    if (src.indexOf("/*theseus" + " instrument: false */") !== -1) {
+      output = shebang + prefix + src;
+    } else {
+      var m = traceFilter(src, {
+        prefix: prefix,
+        path: options.path,
+        tracer_name: options.tracer_name,
+        sourceFilename: options.sourceFilename,
+        generatedFilename: options.generatedFilename,
+        throw_parse_errors: options.throw_parse_errors
+      });
+      var oldToString = m.toString;
+      m.toString = function () {
+        return shebang + oldToString();
+      };
+      return callback(m);
+    }
+
+    return callback(output);
+  });
 }
 
 module.exports = {

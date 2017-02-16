@@ -26,7 +26,8 @@
     "request": "^2.60.0",
     "uglify-js": "^2.4.24",
     "underscore": "^1.8.3",
-    "url": "^0.10.3"
+    "url": "^0.10.3",
+    "uuid": "^3.0.1"
   },
   "devDependencies": {
     "tap": "0.4.x",
