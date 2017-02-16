@@ -9,6 +9,7 @@ def([
   "../views/CodeMirrorHTMLView",
   "../views/CodeMirrorCSSView",
   "../views/HTMLJSLinksView",
+  "../views/FluidView",
   "../collections/SourceCollection",
   "../collections/ActiveNodeCollection",
   "../routers/JSBinSocketRouter"
@@ -20,6 +21,7 @@ def([
              CodeMirrorHTMLView,
              CodeMirrorCSSView,
              HTMLJSLinksView,
+             FluidView,
              SourceCollection,
              ActiveNodeCollection,
              JSBinSocketRouter) {
@@ -44,6 +46,8 @@ def([
       });
 
       this.codeMirrorJSView = new CodeMirrorJSView(this.codeMirrors, this.sourceCollection, this.activeNodeCollection, this);
+      this.fluidView = new FluidView(this.codeMirrors, this.sourceCollection, this.activeNodeCollection, this);
+      this.fluidView.render();
       this.codeMirrorHTMLView = new CodeMirrorHTMLView(this.codeMirrors, this.activeNodeCollection, this);
       this.dropDownJSView = new DropDownJSView(this.sourceCollection, this.codeMirrorJSView);
       this.headerControlView = new HeaderControlView(this.activeNodeCollection);
@@ -90,10 +94,17 @@ def([
             this.codeMirrorJSView.showSources();
             this.codeMirrorHTMLView.render();
             this.headerControlView.renderSlider();
-            this.headerControlView.renderPlot();
+            this.fluidView.onInvokes();
+            // this.headerControlView.renderPlot();
           }
         }
       }, this);
+
+      // this.jsBinSocketRouter.onSocketData("fondueDTO:screenCapture", function (obj) {
+      //   console.log("fondueDTO:screenCapture");
+      //   var $img = $("<img>", {src: obj.dataURL});
+      //   $("#plotter").html($img);
+      // }, this);
 
       this.jsBinSocketRouter.onSocketData("fondueDTO:css", function (obj) {
         console.log("fondueDTO:css");
@@ -116,7 +127,12 @@ def([
         this.dropDownJSView.render();
 
         if (!this.uiPaused) {
-          this.dropDownJSView.detailChange(1);
+          // this.dropDownJSView.detailChange(1);
+          this.headerControlView.lastDetailSlideVal = 1;
+          this.headerControlView.jsDetailChange(null, {value: 120});
+          // this.headerControlView.$detailSlider.slider({
+          //   value: 100,
+          // });
           this.codeMirrorHTMLView.render();
         }
       }, this);
@@ -149,16 +165,16 @@ def([
 
     bindViewListeners: function () {
       this.headerControlView.on("activeCodePanel:pause", function (pause) {
-        if (pause) {
-          this.pauseUIUpdates();
-        } else {
-          this.uiPaused = false;
-          this.htmlJSLinksView.collapseAll();
-          this.codeMirrorJSView.showSources();
-          this.codeMirrorHTMLView.render();
-          this.headerControlView.renderSlider();
-          this.headerControlView.resume();
-        }
+        // if (pause) {
+        //   this.pauseUIUpdates();
+        // } else {
+        //   this.uiPaused = false;
+        //   this.htmlJSLinksView.collapseAll();
+        //   this.codeMirrorJSView.showSources();
+        //   this.codeMirrorHTMLView.render();
+        //   this.headerControlView.renderSlider();
+        //   this.headerControlView.resume();
+        // }
       }, this);
 
       this.headerControlView.on("activeCodePanel:reset", function () {
@@ -169,23 +185,25 @@ def([
       }, this);
 
       this.headerControlView.on("controlView:order", function (jsOrderReversed) {
-        this.sourceCollection.setOrder(jsOrderReversed);
-        this.htmlJSLinksView.collapseAll();
-        this.codeMirrorHTMLView.render();
-        this.dropDownJSView.render();
-        this.codeMirrorJSView.showSources();
+        // this.sourceCollection.setOrder(jsOrderReversed);
+        // this.htmlJSLinksView.collapseAll();
+        // this.codeMirrorHTMLView.render();
+        // this.dropDownJSView.render();
+        // this.codeMirrorJSView.showSources();
       }, this);
 
       this.headerControlView.on("timeSlideChange", function () {
         this.uiPaused = true;
         this.htmlJSLinksView.collapseAll();
-        this.headerControlView.pause();
+        //this.headerControlView.pause();
         this.codeMirrorHTMLView.render();
         this.codeMirrorJSView.showSources();
       }, this);
     },
 
     pauseUIUpdates: function () {
+      console.warn("Ignoring UI Pause Request");
+      return;
       this.uiPaused = true;
       this.headerControlView.pause();
     },
@@ -197,6 +215,13 @@ def([
     javascript: function (codeMirrorInstance) {
       this.codeMirrors.js = codeMirrorInstance;
       this.codeMirrorJSView.showSources();
+      //TODO ISOPLETH super hack, ship it!
+      $("#bin").css("width","50%");
+      $(".binview.stretch").css("width","100%");
+      $($(".stretch.panelwrapper")[0]).hide();
+      $("body").css("background", "#fff");
+      $($(".stretch.panelwrapper")[2]).css("width","100%");
+      $($(".stretch.panelwrapper")[2]).css("left","0");
     },
 
     html: function (codeMirrorInstance) {

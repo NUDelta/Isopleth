@@ -7,7 +7,7 @@ def([
   return Backbone.Collection.extend({
     model: SourceModel,
 
-    sortReversed: true,
+    sortReversed: false,
 
     initialize: function (ignored, o) {
       this.activeNodeCollection = o.activeNodeCollection; //used in sourceModel

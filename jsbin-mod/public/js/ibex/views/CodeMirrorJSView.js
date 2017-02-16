@@ -7,7 +7,7 @@ def([
     jsMirror: null,
     sources: null,
     mirrorLastLine: 0,
-    activeCodeOnly: true,
+    activeCodeOnly: false,
 
     initialize: function (codeMirrors, sourceCollection, activeNodeCollection, jsBinRouter) {
       this.codeMirrors = codeMirrors;

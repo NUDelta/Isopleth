@@ -16,10 +16,13 @@ def([
       "click .fondue-toggle-file": "toggleFileClicked"
     },
 
+    // But don't block instrumentation on the server,
+    // because we need the full traces through the libs
     _blockLibs: _([
       "a3c5de",
       "jquery",
       "moderniz",
+      "zepto",
       "plugins",
       "moment",
       "underscore",
@@ -94,6 +97,14 @@ def([
             domModifiersOnly: false,
             activeCodeOnly: false
           });
+          break;
+        case 6:  // all but blocked
+          this.markBlockedSourceModels();
+          this.codeMirrorJSView.showOptional({
+            domModifiersOnly: false,
+            activeCodeOnly: false
+          });
+
           break;
       }
     },
