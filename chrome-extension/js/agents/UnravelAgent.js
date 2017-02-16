@@ -7,7 +7,8 @@ define([
   "../injectors/whittleInjector",
   "../injectors/introJSInjector",
   "../injectors/introJSBridgeInjector",
-  "../injectors/highlightJSInjector"
+  "../injectors/highlightJSInjector",
+  "../injectors/html2canvasInjector"
 ], function (jQueryInjector,
              underscoreInjector,
              observerInjector,
@@ -16,7 +17,8 @@ define([
              whittleInjector,
              introJSInjector,
              introJSBridgeInjector,
-             highlightJSInjector) {
+             highlightJSInjector,
+             html2canvasInjector) {
   function UnravelAgent() {
     if (!(this instanceof UnravelAgent)) {
       throw new TypeError("UnravelAgent constructor cannot be called as a function.");
@@ -46,12 +48,13 @@ define([
     var f9 = "(" + introJSInjector.toString() + ").apply(this, []); ";
     var f10 = "(" + highlightJSInjector.toString() + ").apply(this, []); ";
     var f11 = "(" + introJSBridgeInjector.toString() + ").apply(this, []); ";
-    var f12 = "(" + goFondue.toString() + ").apply(this, []); ";
+    var f12 = "(" + html2canvasInjector.toString() + ").apply(this, []); ";
+    var f13 = "(" + goFondue.toString() + ").apply(this, []); ";
     var end = " } ";
 
     chrome.devtools.inspectedWindow.reload({
       ignoreCache: true,
-      injectedScript: start + f1 + f2 + f3 + f5 + f6 + f7 + f8 + f9 + f10 + f11 + f12 + end
+      injectedScript: start + f1 + f2 + f3 + f5 + f6 + f7 + f8 + f9 + f10 + f11 + f12 + f13 + end
     });
 
     var checkTimeout = function (isActive) {

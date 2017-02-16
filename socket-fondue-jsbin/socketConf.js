@@ -100,6 +100,12 @@ module.exports = function (httpServer) {
       emitToBin(data.binId, "fondueDTO:arrInvocations", data);
     });
 
+    socket.on("fondueDTO:screenCapture", function (data) {
+      console.log("heard screenCapture destined for bin ", data.binId);
+
+      emitToBin(data.binId, "fondueDTO:screenCapture", data);
+    });
+
     socket.on("fondueDTO:nodes", function (data) {
       console.log("heard nodes destined for bin ", data.binId);
 
