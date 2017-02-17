@@ -10,15 +10,16 @@ def([
 
     tagName: "div",
 
-    className:"card",
+    className: "card",
 
     events: {
       "click": "flip"
     },
 
-    initialize: function () {
+    initialize: function (description, code) {
       this.$el.append(this.template({
-        bim: "bazz"
+        description: description,
+        code: code
       }));
     },
 

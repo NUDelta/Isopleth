@@ -1,9 +1,9 @@
 [
   {
-    "timestamp": 1487281612059,
+    "timestamp": 1487339617045,
     "tick": 0,
-    "invocationId": "0.9807245813414156-0",
-    "topLevelInvocationId": "0.9807245813414156-0",
+    "invocationId": "0.84835528485025-0",
+    "topLevelInvocationId": "0.84835528485025-0",
     "nodeId": "http://localhost:3004/javascripts/home.js-toplevel-1-0-13-7",
     "node": {
       "path": "http://localhost:3004/javascripts/home.js",
@@ -27,15 +27,15 @@
     "nodeName": "(home.js toplevel)"
   },
   {
-    "timestamp": 1487281612059,
+    "timestamp": 1487339617046,
     "tick": 1,
-    "invocationId": "0.9807245813414156-1",
-    "topLevelInvocationId": "0.9807245813414156-0",
+    "invocationId": "0.84835528485025-1",
+    "topLevelInvocationId": "0.84835528485025-0",
     "nodeId": "http://localhost:3004/javascripts/home.js-callsite-13-0-13-6",
     "arguments": [],
     "parents": [
       {
-        "invocationId": "0.9807245813414156-0",
+        "invocationId": "0.84835528485025-0",
         "type": "call",
         "inbetween": []
       }
@@ -71,15 +71,15 @@
     "nodeName": "load"
   },
   {
-    "timestamp": 1487281612059,
+    "timestamp": 1487339617046,
     "tick": 2,
-    "invocationId": "0.9807245813414156-2",
-    "topLevelInvocationId": "0.9807245813414156-0",
+    "invocationId": "0.84835528485025-2",
+    "topLevelInvocationId": "0.84835528485025-0",
     "nodeId": "http://localhost:3004/javascripts/home.js-function-1-0-12-1",
     "arguments": [],
     "parents": [
       {
-        "invocationId": "0.9807245813414156-1",
+        "invocationId": "0.84835528485025-1",
         "type": "call",
         "inbetween": []
       }
@@ -95,7 +95,7 @@
         "column": 1
       },
       "id": "http://localhost:3004/javascripts/home.js-function-1-0-12-1",
-      "source": "function load() {\n \"iso_fe108853-9581-417c-8c03-5e270b82e987_iso\";\n var testElement = document.getElementById(\"test2\");\n var photoEl = document.getElementById(\"effect2\");\n var eventHandlerFn = function () {\n  \"iso_209d5249-a2c1-4599-b0f0-24fc747b2bd2_iso\";\n  if (photoEl.classList) {\n   photoEl.classList.toggle(\"hidden\");\n  }\n };\n testElement.addEventListener(\"click\", eventHandlerFn);\n}",
+      "source": "function load() {\n \"iso_ff60b861-4a0b-4a58-9ed1-3ce8978c94a8_iso\";\n var testElement = document.getElementById(\"test1\");\n var photoEl = document.getElementById(\"effect1\");\n var eventHandlerFn = function () {\n  \"iso_48e7fcb7-1326-4a47-bedc-a694837a3fcd_iso\";\n  if (photoEl.classList) {\n   photoEl.classList.toggle(\"hidden\");\n  }\n };\n testElement.addEventListener(\"click\", eventHandlerFn);\n}",
       "type": "function",
       "name": "load",
       "params": [],
@@ -108,16 +108,16 @@
     "nodeName": "load"
   },
   {
-    "timestamp": 1487281612059,
+    "timestamp": 1487339617046,
     "tick": 3,
-    "invocationId": "0.9807245813414156-3",
-    "topLevelInvocationId": "0.9807245813414156-0",
+    "invocationId": "0.84835528485025-3",
+    "topLevelInvocationId": "0.84835528485025-0",
     "nodeId": "http://localhost:3004/javascripts/home.js-callsite-3-19-3-51",
     "arguments": [
       {
         "value": {
           "type": "string",
-          "value": "test2"
+          "value": "test1"
         }
       }
     ],
@@ -135,7 +135,7 @@
     },
     "parents": [
       {
-        "invocationId": "0.9807245813414156-2",
+        "invocationId": "0.84835528485025-2",
         "type": "call",
         "inbetween": []
       }
@@ -151,7 +151,7 @@
         "column": 51
       },
       "id": "http://localhost:3004/javascripts/home.js-callsite-3-19-3-51",
-      "source": "document.getElementById(\"test2\")",
+      "source": "document.getElementById(\"test1\")",
       "type": "callsite",
       "name": "document.getElementById",
       "nameStart": {
@@ -169,10 +169,10 @@
     },
     "callStack": [
       {
-        "timestamp": 1487281612059,
+        "timestamp": 1487339617046,
         "tick": 2,
-        "invocationId": "0.9807245813414156-2",
-        "topLevelInvocationId": "0.9807245813414156-0",
+        "invocationId": "0.84835528485025-2",
+        "topLevelInvocationId": "0.84835528485025-0",
         "nodeId": "http://localhost:3004/javascripts/home.js-function-1-0-12-1",
         "arguments": []
       }
@@ -180,16 +180,16 @@
     "nodeName": "document.getElementById"
   },
   {
-    "timestamp": 1487281612060,
+    "timestamp": 1487339617047,
     "tick": 4,
-    "invocationId": "0.9807245813414156-4",
-    "topLevelInvocationId": "0.9807245813414156-0",
+    "invocationId": "0.84835528485025-4",
+    "topLevelInvocationId": "0.84835528485025-0",
     "nodeId": "http://localhost:3004/javascripts/home.js-callsite-4-15-4-49",
     "arguments": [
       {
         "value": {
           "type": "string",
-          "value": "effect2"
+          "value": "effect1"
         }
       }
     ],
@@ -207,7 +207,7 @@
     },
     "parents": [
       {
-        "invocationId": "0.9807245813414156-2",
+        "invocationId": "0.84835528485025-2",
         "type": "call",
         "inbetween": []
       }
@@ -223,7 +223,7 @@
         "column": 49
       },
       "id": "http://localhost:3004/javascripts/home.js-callsite-4-15-4-49",
-      "source": "document.getElementById(\"effect2\")",
+      "source": "document.getElementById(\"effect1\")",
       "type": "callsite",
       "name": "document.getElementById",
       "nameStart": {
@@ -241,10 +241,10 @@
     },
     "callStack": [
       {
-        "timestamp": 1487281612059,
+        "timestamp": 1487339617046,
         "tick": 2,
-        "invocationId": "0.9807245813414156-2",
-        "topLevelInvocationId": "0.9807245813414156-0",
+        "invocationId": "0.84835528485025-2",
+        "topLevelInvocationId": "0.84835528485025-0",
         "nodeId": "http://localhost:3004/javascripts/home.js-function-1-0-12-1",
         "arguments": []
       }
@@ -252,10 +252,10 @@
     "nodeName": "document.getElementById"
   },
   {
-    "timestamp": 1487281612061,
+    "timestamp": 1487339617047,
     "tick": 5,
-    "invocationId": "0.9807245813414156-5",
-    "topLevelInvocationId": "0.9807245813414156-0",
+    "invocationId": "0.84835528485025-5",
+    "topLevelInvocationId": "0.84835528485025-0",
     "nodeId": "http://localhost:3004/javascripts/home.js-callsite-11-1-11-54",
     "arguments": [
       {
@@ -267,7 +267,7 @@
       {
         "value": {
           "type": "function",
-          "name": ""
+          "json": "function () {\n  \"iso_48e7fcb7-1326-4a47-bedc-a694837a3fcd_iso\";\n  if (photoEl.classList) {\n   photoEl.classList.toggle(\"hidden\");\n  }\n }"
         }
       }
     ],
@@ -278,7 +278,7 @@
     },
     "parents": [
       {
-        "invocationId": "0.9807245813414156-2",
+        "invocationId": "0.84835528485025-2",
         "type": "call",
         "inbetween": []
       }
@@ -312,10 +312,10 @@
     },
     "callStack": [
       {
-        "timestamp": 1487281612059,
+        "timestamp": 1487339617046,
         "tick": 2,
-        "invocationId": "0.9807245813414156-2",
-        "topLevelInvocationId": "0.9807245813414156-0",
+        "invocationId": "0.84835528485025-2",
+        "topLevelInvocationId": "0.84835528485025-0",
         "nodeId": "http://localhost:3004/javascripts/home.js-function-1-0-12-1",
         "arguments": []
       }
@@ -323,10 +323,10 @@
     "nodeName": "testElement.addEventListener"
   },
   {
-    "timestamp": 1487281726818,
+    "timestamp": 1487339622216,
     "tick": 6,
-    "invocationId": "0.9807245813414156-6",
-    "topLevelInvocationId": "0.9807245813414156-6",
+    "invocationId": "0.84835528485025-6",
+    "topLevelInvocationId": "0.84835528485025-6",
     "nodeId": "http://localhost:3004/javascripts/home.js-function-5-22-10-2",
     "arguments": [
       {
@@ -364,11 +364,11 @@
             },
             "clientX": {
               "type": "number",
-              "value": 89
+              "value": 96
             },
             "clientY": {
               "type": "number",
-              "value": 157
+              "value": 17
             },
             "composed": {
               "type": "boolean",
@@ -380,7 +380,7 @@
             },
             "currentTarget": {
               "type": "string",
-              "value": "<button id=\"test2\" class=\"btn btn-primary\">Moment Call</button>"
+              "value": "<button id=\"test1\" class=\"btn btn-success\">Show / Hide</button>"
             },
             "defaultPrevented": {
               "type": "boolean",
@@ -404,11 +404,11 @@
             },
             "layerX": {
               "type": "number",
-              "value": 91
+              "value": 98
             },
             "layerY": {
               "type": "number",
-              "value": 12
+              "value": 4
             },
             "metaKey": {
               "type": "boolean",
@@ -424,23 +424,23 @@
             },
             "offsetX": {
               "type": "number",
-              "value": 75
+              "value": 82
             },
             "offsetY": {
               "type": "number",
-              "value": 11
+              "value": 3
             },
             "pageX": {
               "type": "number",
-              "value": 89
+              "value": 96
             },
             "pageY": {
               "type": "number",
-              "value": 157
+              "value": 17
             },
             "path": {
               "type": "string",
-              "value": "body>div:eq(2)>div>button"
+              "value": "body>div:eq(0)>div>button"
             },
             "relatedTarget": {
               "type": "null",
@@ -452,11 +452,11 @@
             },
             "screenX": {
               "type": "number",
-              "value": 2009
+              "value": 96
             },
             "screenY": {
               "type": "number",
-              "value": 254
+              "value": 137
             },
             "shiftKey": {
               "type": "boolean",
@@ -468,15 +468,15 @@
             },
             "target": {
               "type": "string",
-              "value": "<button id=\"test2\" class=\"btn btn-primary\">Moment Call</button>"
+              "value": "<button id=\"test1\" class=\"btn btn-success\">Show / Hide</button>"
             },
             "timeStamp": {
               "type": "number",
-              "value": 114988.05000000002
+              "value": 5456.975
             },
             "toElement": {
               "type": "string",
-              "value": "<button id=\"test2\" class=\"btn btn-primary\">Moment Call</button>"
+              "value": "<button id=\"test1\" class=\"btn btn-success\">Show / Hide</button>"
             },
             "type": {
               "type": "string",
@@ -492,11 +492,11 @@
             },
             "x": {
               "type": "number",
-              "value": 89
+              "value": 96
             },
             "y": {
               "type": "number",
-              "value": 157
+              "value": 17
             }
           },
           "truncated": {
@@ -514,7 +514,7 @@
     },
     "parents": [
       {
-        "invocationId": "0.9807245813414156-2",
+        "invocationId": "0.84835528485025-2",
         "type": "async",
         "inbetween": []
       }
@@ -530,7 +530,7 @@
         "column": 2
       },
       "id": "http://localhost:3004/javascripts/home.js-function-5-22-10-2",
-      "source": "function () {\n  \"iso_209d5249-a2c1-4599-b0f0-24fc747b2bd2_iso\";\n  if (photoEl.classList) {\n   photoEl.classList.toggle(\"hidden\");\n  }\n }",
+      "source": "function () {\n  \"iso_48e7fcb7-1326-4a47-bedc-a694837a3fcd_iso\";\n  if (photoEl.classList) {\n   photoEl.classList.toggle(\"hidden\");\n  }\n }",
       "type": "function",
       "name": "eventHandlerFn",
       "params": [],
@@ -540,13 +540,14 @@
       "endColumn": 2
     },
     "callStack": [],
-    "nodeName": "eventHandlerFn"
+    "nodeName": "eventHandlerFn",
+    "asyncParentId": "http://localhost:3004/javascripts/home.js-callsite-11-1-11-54"
   },
   {
-    "timestamp": 1487281726819,
+    "timestamp": 1487339622217,
     "tick": 7,
-    "invocationId": "0.9807245813414156-7",
-    "topLevelInvocationId": "0.9807245813414156-6",
+    "invocationId": "0.84835528485025-7",
+    "topLevelInvocationId": "0.84835528485025-6",
     "nodeId": "http://localhost:3004/javascripts/home.js-callsite-8-3-8-37",
     "arguments": [
       {
@@ -563,7 +564,7 @@
     },
     "parents": [
       {
-        "invocationId": "0.9807245813414156-6",
+        "invocationId": "0.84835528485025-6",
         "type": "call",
         "inbetween": []
       }
@@ -597,10 +598,10 @@
     },
     "callStack": [
       {
-        "timestamp": 1487281726818,
+        "timestamp": 1487339622216,
         "tick": 6,
-        "invocationId": "0.9807245813414156-6",
-        "topLevelInvocationId": "0.9807245813414156-6",
+        "invocationId": "0.84835528485025-6",
+        "topLevelInvocationId": "0.84835528485025-6",
         "nodeId": "http://localhost:3004/javascripts/home.js-function-5-22-10-2",
         "arguments": [
           {
@@ -638,11 +639,11 @@
                 },
                 "clientX": {
                   "type": "number",
-                  "value": 89
+                  "value": 96
                 },
                 "clientY": {
                   "type": "number",
-                  "value": 157
+                  "value": 17
                 },
                 "composed": {
                   "type": "boolean",
@@ -654,7 +655,7 @@
                 },
                 "currentTarget": {
                   "type": "string",
-                  "value": "<button id=\"test2\" class=\"btn btn-primary\">Moment Call</button>"
+                  "value": "<button id=\"test1\" class=\"btn btn-success\">Show / Hide</button>"
                 },
                 "defaultPrevented": {
                   "type": "boolean",
@@ -678,11 +679,11 @@
                 },
                 "layerX": {
                   "type": "number",
-                  "value": 91
+                  "value": 98
                 },
                 "layerY": {
                   "type": "number",
-                  "value": 12
+                  "value": 4
                 },
                 "metaKey": {
                   "type": "boolean",
@@ -698,23 +699,23 @@
                 },
                 "offsetX": {
                   "type": "number",
-                  "value": 75
+                  "value": 82
                 },
                 "offsetY": {
                   "type": "number",
-                  "value": 11
+                  "value": 3
                 },
                 "pageX": {
                   "type": "number",
-                  "value": 89
+                  "value": 96
                 },
                 "pageY": {
                   "type": "number",
-                  "value": 157
+                  "value": 17
                 },
                 "path": {
                   "type": "string",
-                  "value": "body>div:eq(2)>div>button"
+                  "value": "body>div:eq(0)>div>button"
                 },
                 "relatedTarget": {
                   "type": "null",
@@ -726,11 +727,11 @@
                 },
                 "screenX": {
                   "type": "number",
-                  "value": 2009
+                  "value": 96
                 },
                 "screenY": {
                   "type": "number",
-                  "value": 254
+                  "value": 137
                 },
                 "shiftKey": {
                   "type": "boolean",
@@ -742,15 +743,15 @@
                 },
                 "target": {
                   "type": "string",
-                  "value": "<button id=\"test2\" class=\"btn btn-primary\">Moment Call</button>"
+                  "value": "<button id=\"test1\" class=\"btn btn-success\">Show / Hide</button>"
                 },
                 "timeStamp": {
                   "type": "number",
-                  "value": 114988.05000000002
+                  "value": 5456.975
                 },
                 "toElement": {
                   "type": "string",
-                  "value": "<button id=\"test2\" class=\"btn btn-primary\">Moment Call</button>"
+                  "value": "<button id=\"test1\" class=\"btn btn-success\">Show / Hide</button>"
                 },
                 "type": {
                   "type": "string",
@@ -766,11 +767,11 @@
                 },
                 "x": {
                   "type": "number",
-                  "value": 89
+                  "value": 96
                 },
                 "y": {
                   "type": "number",
-                  "value": 157
+                  "value": 17
                 }
               },
               "truncated": {

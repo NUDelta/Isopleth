@@ -13,26 +13,26 @@ html(lang='en')
   body(style="padding:1em")
     .row
       .col-xs-12
-        button.btn.btn-success(id="test1") Show / Hide
+        button.btn.btn-success(id="test1") Toggle A
     br
     .row
       .col-xs-12
         img(id="effect1", src="/img/waves.png", height=50)
-    br
-    .row
+    //br
+    //.row
       .col-xs-12
           button.btn.btn-primary(id="test2") Moment Call
-    .row
+    //.row
       .col-xs-4
         br
         #effect2(style="min-height: 1em; ")
     br
     .row
       .col-xs-12
-        button.btn.btn-warning(id="test3") Animate
+        button.btn.btn-warning(id="test3") Toggle B
     br
     .row
       .col-xs-12
-        img(id="effect3", src="/img/ship2.png", height="100px", style="display:none;")
+        img(id="effect3", src="/img/ship2.png", height="100px")
 
     script(id="postbody", src='/javascripts/home.js')

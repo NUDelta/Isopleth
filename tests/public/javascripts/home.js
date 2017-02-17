@@ -12,6 +12,22 @@ function load() {
 }
 
 load();
+
+
+function other() {
+  var button2 = document.getElementById("test3");
+  var shipEl = document.getElementById("effect3");
+
+  var eventHandlerFn = function () {
+    if (shipEl.classList) {
+      shipEl.classList.toggle("hidden");
+    }
+  };
+
+  button2.addEventListener("click", eventHandlerFn);
+}
+
+other();
 //
 // function scenario() {
 //   $("#test1").click(function () {

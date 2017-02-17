@@ -81,18 +81,10 @@ def([
     },
 
     aspectSetup: function () {
-      this.trigger("aspectChange", _.bind(function uiPaused() {
-        // Find the end of the setup code
-        // var endTime = this.activeNodeCollection.getStartupCodeEndTimestamp();
-        // this.$timeLineSlider.slider("values", [0, endTime]);
-        // this.timeSlideChange(null, {values: [0, endTime]});
-
-
-      }, this));
     },
 
     aspectEvents: function () {
-
+      this.trigger("aspect:events");
     },
 
     aspectDom: function () {

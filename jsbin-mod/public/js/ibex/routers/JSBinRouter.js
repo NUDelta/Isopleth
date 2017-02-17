@@ -199,6 +199,10 @@ def([
         this.codeMirrorHTMLView.render();
         this.codeMirrorJSView.showSources();
       }, this);
+
+      this.headerControlView.on("aspect:events", function () {
+        this.fluidView.backtraceAsyncEvent();
+      }, this);
     },
 
     pauseUIUpdates: function () {
@@ -216,12 +220,12 @@ def([
       this.codeMirrors.js = codeMirrorInstance;
       this.codeMirrorJSView.showSources();
       //TODO ISOPLETH super hack, ship it!
-      $("#bin").css("width","50%");
-      $(".binview.stretch").css("width","100%");
+      $("#bin").css("width", "50%");
+      $(".binview.stretch").css("width", "100%");
       $($(".stretch.panelwrapper")[0]).hide();
       $("body").css("background", "#fff");
-      $($(".stretch.panelwrapper")[2]).css("width","100%");
-      $($(".stretch.panelwrapper")[2]).css("left","0");
+      $($(".stretch.panelwrapper")[2]).css("width", "100%");
+      $($(".stretch.panelwrapper")[2]).css("left", "0");
     },
 
     html: function (codeMirrorInstance) {

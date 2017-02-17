@@ -371,10 +371,6 @@ if (typeof {name} === 'undefined') {
 		}
 
 		var o = { type: typeof(val) };
-    try {
-      o.name = val.name;
-    } catch (ignored) {
-    }
 		if (["undefined", "boolean", "number", "string"].indexOf(o.type) !== -1 || val === null) {
 			if (typeof(val) === "undefined" && val !== undefined) {
 				// special case: document.all claims to be undefined http://stackoverflow.com/questions/10350142/why-is-document-all-falsy
@@ -386,7 +382,10 @@ if (typeof {name} === 'undefined') {
 			} else {
 				o.value = val;
 			}
-		} else if (o.type === "object") {
+		} else if (o.type === "function") {
+      o.json = val && val.toString ? val.toString() : null;
+      o.name = val && val.name ? val.name : null;
+    } else if (o.type === "object") {
 			var newDepth = maxDepth - 1;
 
 			if (val instanceof Array) {
