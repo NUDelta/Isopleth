@@ -23,8 +23,8 @@ def([
       "click #resetTraces": "resetClicked",
       "click #jsScriptOrder": "toggleJSOrder",
       "click #aspect-setup": "aspectSetup",
-      "click #aspect-events": "aspectEvents",
-      "click #aspect-dom": "aspectDom"
+      "click #aspect-tiles": "aspectTiles",
+      "click #aspect-graph": "aspectGraph"
     },
 
     initialize: function (activeNodeCollection) {
@@ -83,12 +83,12 @@ def([
     aspectSetup: function () {
     },
 
-    aspectEvents: function () {
-      this.trigger("aspect:events");
+    aspectTiles: function () {
+      this.trigger("aspect:tiles");
     },
 
-    aspectDom: function () {
-
+    aspectGraph: function () {
+      this.trigger("aspect:graph");
     },
 
     renderPlot: function () {

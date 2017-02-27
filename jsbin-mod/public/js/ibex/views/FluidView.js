@@ -4,9 +4,10 @@ def([
   "underscore",
   "handlebars",
   "views/CardView",
+  "views/CallGraphView",
   "../routers/JSBinSocketRouter",
   "text!../templates/FluidView.html"
-], function ($, Backbone, _, Handlebars, CardView, JSBinSocketRouter, FluidViewTemplate) {
+], function ($, Backbone, _, Handlebars, CardView, CallGraphView, JSBinSocketRouter, FluidViewTemplate) {
   return Backbone.View.extend({
     template: Handlebars.compile(FluidViewTemplate),
 
@@ -25,14 +26,14 @@ def([
     },
 
     onInvokes: function () {
-      this.$(".container").empty();
-      this.backtraceAsyncEvent();
+      // this.$(".container").empty();
+      // this.backtraceAsyncEvent();
     },
 
-    backtraceAsyncEvent: function () {
-      var invocations = [];
-      var invokeIdMap = {};
-      var topLevelInvokes = [];
+    processInvokes: function () {
+      this.invocations = [];
+      this.invokeIdMap = {};
+      this.topLevelInvokes = [];
 
       _(this.activeNodeCollection.getGeneralNodes()).each(function (nodeModel) {
         var invokes = nodeModel.get("invokes");
@@ -41,12 +42,12 @@ def([
             return;
           }
 
-          invokeIdMap[invoke.invocationId] = invoke;
-          invocations.push(invoke);
-        });
-      });
+          this.invokeIdMap[invoke.invocationId] = invoke;
+          this.invocations.push(invoke);
+        }, this);
+      }, this);
 
-      invocations.sort(function (a, b) {
+      this.invocations.sort(function (a, b) {
         if (a.timestamp > b.timestamp) {
           return 1;
         } else if (a.timestamp < b.timestamp) {
@@ -64,36 +65,50 @@ def([
       });
 
       // Draw missing async links in graph
-      _(invocations).each(function (invoke) {
-        if (invoke.node.type === "function") {
-          if (invoke.topLevelInvocationId === invoke.invocationId) {
-            topLevelInvokes.push(invoke);
+      // _(invocations).each(function (invoke) {
+      //   if (invoke.node.type === "function") {
+      //     if (invoke.topLevelInvocationId === invoke.invocationId) {
+      //       topLevelInvokes.push(invoke);
+      //
+      //       // Search for async parent
+      //       _(invocations).each(function (bInvoke) {
+      //         var argMatch = _(bInvoke.arguments).find(function (arg) {
+      //           return arg.value && arg.value.type === "function"
+      //             && arg.value.json === invoke.node.source;
+      //         });
+      //
+      //         if (argMatch) {
+      //           if (invoke.asyncParentInvokeIds) {
+      //             invoke.asyncParentInvokeIds.push(bInvoke.invocationId);
+      //           } else {
+      //             invoke.asyncParentInvokeIds = [bInvoke.invocationId];
+      //           }
+      //         }
+      //       });
+      //     }
+      //   }
+      // });
+    },
 
-            // Search for async parent
-            _(invocations).each(function (bInvoke) {
-              var argMatch = _(bInvoke.arguments).find(function (arg) {
-                return arg.value && arg.value.type === "function"
-                  && arg.value.json === invoke.node.source;
-              });
+    showCallGraph: function () {
+      this.$(".container").empty();
+      this.processInvokes();
 
-              if (argMatch) {
-                if (invoke.asyncParentInvokeIds) {
-                  invoke.asyncParentInvokeIds.push(bInvoke.invocationId);
-                } else {
-                  invoke.asyncParentInvokeIds = [bInvoke.invocationId];
-                }
-              }
-            });
-          }
-        }
-      });
+      var callGraphView = new CallGraphView(this.invocations, this.invokeIdMap);
+      this.$(".container").append(callGraphView.el);
+      callGraphView.drawGraph();
+    },
 
-      var lastInvoke = _(topLevelInvokes).last();
-      if (!lastInvoke.asyncParentInvokeIds) {
-        return console.warn("No async parent... hmmm.. number of top level invokes:", topLevelInvokes.length);
+    backtraceAsyncEvent: function () {
+      this.$(".container").empty();
+      this.processInvokes();
+
+      var lastInvoke = _(this.topLevelInvokes).last();
+      if (!lastInvoke || !lastInvoke.asyncParentInvokeIds) {
+        return console.warn("No async parent... hmmm.. number of top level invokes:", this.topLevelInvokes.length);
       }
 
-      var asyncParentInvoke = invokeIdMap[lastInvoke.asyncParentInvokeIds[0]];
+      var asyncParentInvoke = this.invokeIdMap[lastInvoke.asyncParentInvokeIds[0]];
       if (!asyncParentInvoke) {
         return console.warn("No async parent invoke ids found.")
       }
@@ -106,6 +121,11 @@ def([
       cardView = new CardView(
         "Async Binding",
         asyncParentInvoke.node.source);
+      this.$(".container").append(cardView.el);
+
+      cardView = new CardView(
+        "DOM hook registered: " + lastInvoke.arguments[0].value.ownProperties.type.value,
+        lastInvoke.arguments[0].value.ownProperties.target.value);
       this.$(".container").append(cardView.el);
 
       cardView = new CardView(

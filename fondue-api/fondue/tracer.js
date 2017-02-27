@@ -384,7 +384,13 @@ if (typeof {name} === 'undefined') {
 			}
 		} else if (o.type === "function") {
       o.json = val && val.toString ? val.toString() : null;
-      o.name = val && val.name ? val.name : null;
+      if (val && val.name) {
+        if (val.name.length > 44) {
+          o.name = val.name.substring(0, 45) + "...";
+        } else {
+          o.name = val.name;
+        }
+      }
     } else if (o.type === "object") {
 			var newDepth = maxDepth - 1;
 

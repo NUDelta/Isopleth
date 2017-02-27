@@ -200,8 +200,12 @@ def([
         this.codeMirrorJSView.showSources();
       }, this);
 
-      this.headerControlView.on("aspect:events", function () {
+      this.headerControlView.on("aspect:tiles", function () {
         this.fluidView.backtraceAsyncEvent();
+      }, this);
+
+      this.headerControlView.on("aspect:graph", function () {
+        this.fluidView.showCallGraph();
       }, this);
     },
 

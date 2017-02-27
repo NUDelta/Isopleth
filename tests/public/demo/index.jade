@@ -1,6 +1,6 @@
 html(lang='en')
   head
-    //script(src='/javascripts/lib/zepto.js')
+    script(src='/javascripts/lib/zepto.js')
     //script(src='/javascripts/lib/jquery-2.1.4.js')
     //script(src='/javascripts/lib/underscore-min.js')
     //script(src='/javascripts/lib/moment.js')
@@ -34,5 +34,14 @@ html(lang='en')
     .row
       .col-xs-12
         img(id="effect3", src="/img/ship2.png", height="100px")
+    br
+    .row
+      .col-xs-6
+        button.btn.btn-danger(id="test4") Ajax JSON A
+
+      .col-xs-6
+        h4 Ajax JSON Res
+        p#jsonRes
+
 
     script(id="postbody", src='/javascripts/home.js')

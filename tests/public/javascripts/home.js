@@ -1,33 +1,72 @@
-function load() {
-  var testElement = document.getElementById("test1");
-  var photoEl = document.getElementById("effect1");
+// function load() {
+//   var testElement = document.getElementById("test1");
+//   var photoEl = document.getElementById("effect1");
+//
+//   var eventHandlerFn = function () {
+//     if (photoEl.classList) {
+//       photoEl.classList.toggle("hidden");
+//     }
+//   };
+//
+//   testElement.addEventListener("click", eventHandlerFn);
+// }
+//
+// load();
+//
+// function loadB() {
+//   var button2 = document.getElementById("test3");
+//   var shipEl = document.getElementById("effect3");
+//
+//   var eventHandlerFn = function () {
+//     if (shipEl.classList) {
+//       shipEl.classList.toggle("hidden");
+//     }
+//   };
+//
+//   button2.addEventListener("click", eventHandlerFn);
+// }
+//
+// loadB();
+//
+// function jsonA() {
+//   var button3 = document.getElementById("test4");
+//   var request = new XMLHttpRequest();
+//   var jsonResponseHandler = function () {
+//     if (request.status >= 200 && request.status < 400) {
+//       document.getElementById("jsonRes").innerText = request.responseText;
+//     }
+//   };
+//
+//   var jsonGetterFn = function () {
+//     document.getElementById("jsonRes").innerText = "";
+//     request.open('GET', 'http://localhost:3004/javascripts/sample.json', true);
+//     request.onload = jsonResponseHandler;
+//     request.send();
+//   };
+//
+//   button3.addEventListener("click", jsonGetterFn);
+// }
+//
+// jsonA();
 
-  var eventHandlerFn = function () {
-    if (photoEl.classList) {
-      photoEl.classList.toggle("hidden");
-    }
+function jsonB() {
+  var jsonResponseHandler = function (data,status,xhr) {
+    $("#jsonRes").text(JSON.stringify(data));
   };
 
-  testElement.addEventListener("click", eventHandlerFn);
-}
-
-load();
-
-
-function other() {
-  var button2 = document.getElementById("test3");
-  var shipEl = document.getElementById("effect3");
-
-  var eventHandlerFn = function () {
-    if (shipEl.classList) {
-      shipEl.classList.toggle("hidden");
-    }
+  var jsonGetterFn = function () {
+    $.getJSON('http://localhost:3004/javascripts/sample.json', jsonResponseHandler);
   };
 
-  button2.addEventListener("click", eventHandlerFn);
+  $("#test4").click(jsonGetterFn);
 }
 
-other();
+jsonB();
+
+
+
+
+
 //
 // function scenario() {
 //   $("#test1").click(function () {

@@ -1,10 +1,10 @@
 [
   {
-    "timestamp": 1487339617045,
+    "timestamp": 1487609820434,
     "tick": 0,
-    "invocationId": "0.84835528485025-0",
-    "topLevelInvocationId": "0.84835528485025-0",
-    "nodeId": "http://localhost:3004/javascripts/home.js-toplevel-1-0-13-7",
+    "invocationId": "0.658525225919514-0",
+    "topLevelInvocationId": "0.658525225919514-0",
+    "nodeId": "http://localhost:3004/javascripts/home.js-toplevel-1-0-27-8",
     "node": {
       "path": "http://localhost:3004/javascripts/home.js",
       "start": {
@@ -12,30 +12,30 @@
         "column": 0
       },
       "end": {
-        "line": 13,
-        "column": 7
+        "line": 27,
+        "column": 8
       },
-      "id": "http://localhost:3004/javascripts/home.js-toplevel-1-0-13-7",
+      "id": "http://localhost:3004/javascripts/home.js-toplevel-1-0-27-8",
       "type": "toplevel",
       "name": "(home.js toplevel)",
       "startLine": 1,
       "startColumn": 0,
-      "endLine": 13,
-      "endColumn": 7
+      "endLine": 27,
+      "endColumn": 8
     },
     "callStack": [],
     "nodeName": "(home.js toplevel)"
   },
   {
-    "timestamp": 1487339617046,
+    "timestamp": 1487609820435,
     "tick": 1,
-    "invocationId": "0.84835528485025-1",
-    "topLevelInvocationId": "0.84835528485025-0",
+    "invocationId": "0.658525225919514-1",
+    "topLevelInvocationId": "0.658525225919514-0",
     "nodeId": "http://localhost:3004/javascripts/home.js-callsite-13-0-13-6",
     "arguments": [],
     "parents": [
       {
-        "invocationId": "0.84835528485025-0",
+        "invocationId": "0.658525225919514-0",
         "type": "call",
         "inbetween": []
       }
@@ -71,15 +71,15 @@
     "nodeName": "load"
   },
   {
-    "timestamp": 1487339617046,
+    "timestamp": 1487609820435,
     "tick": 2,
-    "invocationId": "0.84835528485025-2",
-    "topLevelInvocationId": "0.84835528485025-0",
+    "invocationId": "0.658525225919514-2",
+    "topLevelInvocationId": "0.658525225919514-0",
     "nodeId": "http://localhost:3004/javascripts/home.js-function-1-0-12-1",
     "arguments": [],
     "parents": [
       {
-        "invocationId": "0.84835528485025-1",
+        "invocationId": "0.658525225919514-1",
         "type": "call",
         "inbetween": []
       }
@@ -95,7 +95,7 @@
         "column": 1
       },
       "id": "http://localhost:3004/javascripts/home.js-function-1-0-12-1",
-      "source": "function load() {\n \"iso_ff60b861-4a0b-4a58-9ed1-3ce8978c94a8_iso\";\n var testElement = document.getElementById(\"test1\");\n var photoEl = document.getElementById(\"effect1\");\n var eventHandlerFn = function () {\n  \"iso_48e7fcb7-1326-4a47-bedc-a694837a3fcd_iso\";\n  if (photoEl.classList) {\n   photoEl.classList.toggle(\"hidden\");\n  }\n };\n testElement.addEventListener(\"click\", eventHandlerFn);\n}",
+      "source": "function load() {\n \"iso_d10a97e2-d0e7-450c-bc99-db533485cfd1_iso\";\n var testElement = document.getElementById(\"test1\");\n var photoEl = document.getElementById(\"effect1\");\n var eventHandlerFn = function () {\n  \"iso_be73df04-1a78-4e4f-831c-d2ca3f337f86_iso\";\n  if (photoEl.classList) {\n   photoEl.classList.toggle(\"hidden\");\n  }\n };\n testElement.addEventListener(\"click\", eventHandlerFn);\n}",
       "type": "function",
       "name": "load",
       "params": [],
@@ -108,10 +108,10 @@
     "nodeName": "load"
   },
   {
-    "timestamp": 1487339617046,
+    "timestamp": 1487609820435,
     "tick": 3,
-    "invocationId": "0.84835528485025-3",
-    "topLevelInvocationId": "0.84835528485025-0",
+    "invocationId": "0.658525225919514-3",
+    "topLevelInvocationId": "0.658525225919514-0",
     "nodeId": "http://localhost:3004/javascripts/home.js-callsite-3-19-3-51",
     "arguments": [
       {
@@ -135,7 +135,7 @@
     },
     "parents": [
       {
-        "invocationId": "0.84835528485025-2",
+        "invocationId": "0.658525225919514-2",
         "type": "call",
         "inbetween": []
       }
@@ -169,10 +169,10 @@
     },
     "callStack": [
       {
-        "timestamp": 1487339617046,
+        "timestamp": 1487609820435,
         "tick": 2,
-        "invocationId": "0.84835528485025-2",
-        "topLevelInvocationId": "0.84835528485025-0",
+        "invocationId": "0.658525225919514-2",
+        "topLevelInvocationId": "0.658525225919514-0",
         "nodeId": "http://localhost:3004/javascripts/home.js-function-1-0-12-1",
         "arguments": []
       }
@@ -180,10 +180,10 @@
     "nodeName": "document.getElementById"
   },
   {
-    "timestamp": 1487339617047,
+    "timestamp": 1487609820436,
     "tick": 4,
-    "invocationId": "0.84835528485025-4",
-    "topLevelInvocationId": "0.84835528485025-0",
+    "invocationId": "0.658525225919514-4",
+    "topLevelInvocationId": "0.658525225919514-0",
     "nodeId": "http://localhost:3004/javascripts/home.js-callsite-4-15-4-49",
     "arguments": [
       {
@@ -207,7 +207,7 @@
     },
     "parents": [
       {
-        "invocationId": "0.84835528485025-2",
+        "invocationId": "0.658525225919514-2",
         "type": "call",
         "inbetween": []
       }
@@ -241,10 +241,10 @@
     },
     "callStack": [
       {
-        "timestamp": 1487339617046,
+        "timestamp": 1487609820435,
         "tick": 2,
-        "invocationId": "0.84835528485025-2",
-        "topLevelInvocationId": "0.84835528485025-0",
+        "invocationId": "0.658525225919514-2",
+        "topLevelInvocationId": "0.658525225919514-0",
         "nodeId": "http://localhost:3004/javascripts/home.js-function-1-0-12-1",
         "arguments": []
       }
@@ -252,10 +252,10 @@
     "nodeName": "document.getElementById"
   },
   {
-    "timestamp": 1487339617047,
+    "timestamp": 1487609820436,
     "tick": 5,
-    "invocationId": "0.84835528485025-5",
-    "topLevelInvocationId": "0.84835528485025-0",
+    "invocationId": "0.658525225919514-5",
+    "topLevelInvocationId": "0.658525225919514-0",
     "nodeId": "http://localhost:3004/javascripts/home.js-callsite-11-1-11-54",
     "arguments": [
       {
@@ -267,7 +267,8 @@
       {
         "value": {
           "type": "function",
-          "json": "function () {\n  \"iso_48e7fcb7-1326-4a47-bedc-a694837a3fcd_iso\";\n  if (photoEl.classList) {\n   photoEl.classList.toggle(\"hidden\");\n  }\n }"
+          "json": "function () {\n  \"iso_be73df04-1a78-4e4f-831c-d2ca3f337f86_iso\";\n  if (photoEl.classList) {\n   photoEl.classList.toggle(\"hidden\");\n  }\n }",
+          "name": null
         }
       }
     ],
@@ -278,7 +279,7 @@
     },
     "parents": [
       {
-        "invocationId": "0.84835528485025-2",
+        "invocationId": "0.658525225919514-2",
         "type": "call",
         "inbetween": []
       }
@@ -312,10 +313,10 @@
     },
     "callStack": [
       {
-        "timestamp": 1487339617046,
+        "timestamp": 1487609820435,
         "tick": 2,
-        "invocationId": "0.84835528485025-2",
-        "topLevelInvocationId": "0.84835528485025-0",
+        "invocationId": "0.658525225919514-2",
+        "topLevelInvocationId": "0.658525225919514-0",
         "nodeId": "http://localhost:3004/javascripts/home.js-function-1-0-12-1",
         "arguments": []
       }
@@ -323,10 +324,307 @@
     "nodeName": "testElement.addEventListener"
   },
   {
-    "timestamp": 1487339622216,
+    "timestamp": 1487609820437,
     "tick": 6,
-    "invocationId": "0.84835528485025-6",
-    "topLevelInvocationId": "0.84835528485025-6",
+    "invocationId": "0.658525225919514-6",
+    "topLevelInvocationId": "0.658525225919514-0",
+    "nodeId": "http://localhost:3004/javascripts/home.js-callsite-27-0-27-7",
+    "arguments": [],
+    "parents": [
+      {
+        "invocationId": "0.658525225919514-0",
+        "type": "call",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 27,
+        "column": 0
+      },
+      "end": {
+        "line": 27,
+        "column": 7
+      },
+      "id": "http://localhost:3004/javascripts/home.js-callsite-27-0-27-7",
+      "source": "other()",
+      "type": "callsite",
+      "name": "other",
+      "nameStart": {
+        "line": 27,
+        "column": 0
+      },
+      "nameEnd": {
+        "line": 27,
+        "column": 5
+      },
+      "startLine": 27,
+      "startColumn": 0,
+      "endLine": 27,
+      "endColumn": 7
+    },
+    "callStack": [],
+    "nodeName": "other"
+  },
+  {
+    "timestamp": 1487609820437,
+    "tick": 7,
+    "invocationId": "0.658525225919514-7",
+    "topLevelInvocationId": "0.658525225919514-0",
+    "nodeId": "http://localhost:3004/javascripts/home.js-function-15-0-26-1",
+    "arguments": [],
+    "parents": [
+      {
+        "invocationId": "0.658525225919514-6",
+        "type": "call",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 15,
+        "column": 0
+      },
+      "end": {
+        "line": 26,
+        "column": 1
+      },
+      "id": "http://localhost:3004/javascripts/home.js-function-15-0-26-1",
+      "source": "function other() {\n \"iso_57f8e382-c0c3-4535-8bab-d1caaef5174c_iso\";\n var button2 = document.getElementById(\"test3\");\n var shipEl = document.getElementById(\"effect3\");\n var eventHandlerFn = function () {\n  \"iso_c5663189-3bcb-48ec-a078-9326d9143d37_iso\";\n  if (shipEl.classList) {\n   shipEl.classList.toggle(\"hidden\");\n  }\n };\n button2.addEventListener(\"click\", eventHandlerFn);\n}",
+      "type": "function",
+      "name": "other",
+      "params": [],
+      "startLine": 15,
+      "startColumn": 0,
+      "endLine": 26,
+      "endColumn": 1
+    },
+    "callStack": [],
+    "nodeName": "other"
+  },
+  {
+    "timestamp": 1487609820437,
+    "tick": 8,
+    "invocationId": "0.658525225919514-8",
+    "topLevelInvocationId": "0.658525225919514-0",
+    "nodeId": "http://localhost:3004/javascripts/home.js-callsite-17-15-17-47",
+    "arguments": [
+      {
+        "value": {
+          "type": "string",
+          "value": "test3"
+        }
+      }
+    ],
+    "this": {
+      "type": "object",
+      "preview": "[object Object]",
+      "ownProperties": {
+        "effect1": {
+          "type": "undefined"
+        },
+        "effect3": {
+          "type": "undefined"
+        }
+      }
+    },
+    "parents": [
+      {
+        "invocationId": "0.658525225919514-7",
+        "type": "call",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 17,
+        "column": 15
+      },
+      "end": {
+        "line": 17,
+        "column": 47
+      },
+      "id": "http://localhost:3004/javascripts/home.js-callsite-17-15-17-47",
+      "source": "document.getElementById(\"test3\")",
+      "type": "callsite",
+      "name": "document.getElementById",
+      "nameStart": {
+        "line": 17,
+        "column": 24
+      },
+      "nameEnd": {
+        "line": 17,
+        "column": 38
+      },
+      "startLine": 17,
+      "startColumn": 15,
+      "endLine": 17,
+      "endColumn": 47
+    },
+    "callStack": [
+      {
+        "timestamp": 1487609820437,
+        "tick": 7,
+        "invocationId": "0.658525225919514-7",
+        "topLevelInvocationId": "0.658525225919514-0",
+        "nodeId": "http://localhost:3004/javascripts/home.js-function-15-0-26-1",
+        "arguments": []
+      }
+    ],
+    "nodeName": "document.getElementById"
+  },
+  {
+    "timestamp": 1487609820437,
+    "tick": 9,
+    "invocationId": "0.658525225919514-9",
+    "topLevelInvocationId": "0.658525225919514-0",
+    "nodeId": "http://localhost:3004/javascripts/home.js-callsite-18-14-18-48",
+    "arguments": [
+      {
+        "value": {
+          "type": "string",
+          "value": "effect3"
+        }
+      }
+    ],
+    "this": {
+      "type": "object",
+      "preview": "[object Object]",
+      "ownProperties": {
+        "effect1": {
+          "type": "undefined"
+        },
+        "effect3": {
+          "type": "undefined"
+        }
+      }
+    },
+    "parents": [
+      {
+        "invocationId": "0.658525225919514-7",
+        "type": "call",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 18,
+        "column": 14
+      },
+      "end": {
+        "line": 18,
+        "column": 48
+      },
+      "id": "http://localhost:3004/javascripts/home.js-callsite-18-14-18-48",
+      "source": "document.getElementById(\"effect3\")",
+      "type": "callsite",
+      "name": "document.getElementById",
+      "nameStart": {
+        "line": 18,
+        "column": 23
+      },
+      "nameEnd": {
+        "line": 18,
+        "column": 37
+      },
+      "startLine": 18,
+      "startColumn": 14,
+      "endLine": 18,
+      "endColumn": 48
+    },
+    "callStack": [
+      {
+        "timestamp": 1487609820437,
+        "tick": 7,
+        "invocationId": "0.658525225919514-7",
+        "topLevelInvocationId": "0.658525225919514-0",
+        "nodeId": "http://localhost:3004/javascripts/home.js-function-15-0-26-1",
+        "arguments": []
+      }
+    ],
+    "nodeName": "document.getElementById"
+  },
+  {
+    "timestamp": 1487609820437,
+    "tick": 10,
+    "invocationId": "0.658525225919514-10",
+    "topLevelInvocationId": "0.658525225919514-0",
+    "nodeId": "http://localhost:3004/javascripts/home.js-callsite-25-1-25-50",
+    "arguments": [
+      {
+        "value": {
+          "type": "string",
+          "value": "click"
+        }
+      },
+      {
+        "value": {
+          "type": "function",
+          "json": "function () {\n  \"iso_c5663189-3bcb-48ec-a078-9326d9143d37_iso\";\n  if (shipEl.classList) {\n   shipEl.classList.toggle(\"hidden\");\n  }\n }",
+          "name": null
+        }
+      }
+    ],
+    "this": {
+      "type": "object",
+      "preview": "[object Object]",
+      "ownProperties": {}
+    },
+    "parents": [
+      {
+        "invocationId": "0.658525225919514-7",
+        "type": "call",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 25,
+        "column": 1
+      },
+      "end": {
+        "line": 25,
+        "column": 50
+      },
+      "id": "http://localhost:3004/javascripts/home.js-callsite-25-1-25-50",
+      "source": "button2.addEventListener(\"click\", eventHandlerFn)",
+      "type": "callsite",
+      "name": "button2.addEventListener",
+      "nameStart": {
+        "line": 25,
+        "column": 9
+      },
+      "nameEnd": {
+        "line": 25,
+        "column": 25
+      },
+      "startLine": 25,
+      "startColumn": 1,
+      "endLine": 25,
+      "endColumn": 50
+    },
+    "callStack": [
+      {
+        "timestamp": 1487609820437,
+        "tick": 7,
+        "invocationId": "0.658525225919514-7",
+        "topLevelInvocationId": "0.658525225919514-0",
+        "nodeId": "http://localhost:3004/javascripts/home.js-function-15-0-26-1",
+        "arguments": []
+      }
+    ],
+    "nodeName": "button2.addEventListener"
+  },
+  {
+    "timestamp": 1487609835023,
+    "tick": 11,
+    "invocationId": "0.658525225919514-11",
+    "topLevelInvocationId": "0.658525225919514-11",
     "nodeId": "http://localhost:3004/javascripts/home.js-function-5-22-10-2",
     "arguments": [
       {
@@ -364,11 +662,11 @@
             },
             "clientX": {
               "type": "number",
-              "value": 96
+              "value": 86
             },
             "clientY": {
               "type": "number",
-              "value": 17
+              "value": 26
             },
             "composed": {
               "type": "boolean",
@@ -380,7 +678,7 @@
             },
             "currentTarget": {
               "type": "string",
-              "value": "<button id=\"test1\" class=\"btn btn-success\">Show / Hide</button>"
+              "value": "<button id=\"test1\" class=\"btn btn-success\">Toggle A</button>"
             },
             "defaultPrevented": {
               "type": "boolean",
@@ -404,11 +702,11 @@
             },
             "layerX": {
               "type": "number",
-              "value": 98
+              "value": 88
             },
             "layerY": {
               "type": "number",
-              "value": 4
+              "value": 12
             },
             "metaKey": {
               "type": "boolean",
@@ -424,19 +722,19 @@
             },
             "offsetX": {
               "type": "number",
-              "value": 82
+              "value": 72
             },
             "offsetY": {
               "type": "number",
-              "value": 3
+              "value": 12
             },
             "pageX": {
               "type": "number",
-              "value": 96
+              "value": 86
             },
             "pageY": {
               "type": "number",
-              "value": 17
+              "value": 26
             },
             "path": {
               "type": "string",
@@ -452,11 +750,11 @@
             },
             "screenX": {
               "type": "number",
-              "value": 96
+              "value": 95
             },
             "screenY": {
               "type": "number",
-              "value": 137
+              "value": 149
             },
             "shiftKey": {
               "type": "boolean",
@@ -468,15 +766,15 @@
             },
             "target": {
               "type": "string",
-              "value": "<button id=\"test1\" class=\"btn btn-success\">Show / Hide</button>"
+              "value": "<button id=\"test1\" class=\"btn btn-success\">Toggle A</button>"
             },
             "timeStamp": {
               "type": "number",
-              "value": 5456.975
+              "value": 14822.785000000002
             },
             "toElement": {
               "type": "string",
-              "value": "<button id=\"test1\" class=\"btn btn-success\">Show / Hide</button>"
+              "value": "<button id=\"test1\" class=\"btn btn-success\">Toggle A</button>"
             },
             "type": {
               "type": "string",
@@ -492,16 +790,16 @@
             },
             "x": {
               "type": "number",
-              "value": 96
+              "value": 86
             },
             "y": {
               "type": "number",
-              "value": 17
+              "value": 26
             }
           },
           "truncated": {
             "keys": {
-              "amount": 2
+              "amount": 7
             }
           }
         }
@@ -514,7 +812,7 @@
     },
     "parents": [
       {
-        "invocationId": "0.84835528485025-2",
+        "invocationId": "0.658525225919514-2",
         "type": "async",
         "inbetween": []
       }
@@ -530,7 +828,7 @@
         "column": 2
       },
       "id": "http://localhost:3004/javascripts/home.js-function-5-22-10-2",
-      "source": "function () {\n  \"iso_48e7fcb7-1326-4a47-bedc-a694837a3fcd_iso\";\n  if (photoEl.classList) {\n   photoEl.classList.toggle(\"hidden\");\n  }\n }",
+      "source": "function () {\n  \"iso_be73df04-1a78-4e4f-831c-d2ca3f337f86_iso\";\n  if (photoEl.classList) {\n   photoEl.classList.toggle(\"hidden\");\n  }\n }",
       "type": "function",
       "name": "eventHandlerFn",
       "params": [],
@@ -541,13 +839,15 @@
     },
     "callStack": [],
     "nodeName": "eventHandlerFn",
-    "asyncParentId": "http://localhost:3004/javascripts/home.js-callsite-11-1-11-54"
+    "asyncParentInvokeIds": [
+      "0.658525225919514-5"
+    ]
   },
   {
-    "timestamp": 1487339622217,
-    "tick": 7,
-    "invocationId": "0.84835528485025-7",
-    "topLevelInvocationId": "0.84835528485025-6",
+    "timestamp": 1487609835025,
+    "tick": 12,
+    "invocationId": "0.658525225919514-12",
+    "topLevelInvocationId": "0.658525225919514-11",
     "nodeId": "http://localhost:3004/javascripts/home.js-callsite-8-3-8-37",
     "arguments": [
       {
@@ -564,7 +864,881 @@
     },
     "parents": [
       {
-        "invocationId": "0.84835528485025-6",
+        "invocationId": "0.658525225919514-11",
+        "type": "call",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 8,[
+  {
+    "timestamp": 1487609820434,
+    "tick": 0,
+    "invocationId": "0.658525225919514-0",
+    "topLevelInvocationId": "0.658525225919514-0",
+    "nodeId": "http://localhost:3004/javascripts/home.js-toplevel-1-0-27-8",
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "line": 27,
+        "column": 8
+      },
+      "id": "http://localhost:3004/javascripts/home.js-toplevel-1-0-27-8",
+      "type": "toplevel",
+      "name": "(home.js toplevel)",
+      "startLine": 1,
+      "startColumn": 0,
+      "endLine": 27,
+      "endColumn": 8
+    },
+    "callStack": [],
+    "nodeName": "(home.js toplevel)"
+  },
+  {
+    "timestamp": 1487609820435,
+    "tick": 1,
+    "invocationId": "0.658525225919514-1",
+    "topLevelInvocationId": "0.658525225919514-0",
+    "nodeId": "http://localhost:3004/javascripts/home.js-callsite-13-0-13-6",
+    "arguments": [],
+    "parents": [
+      {
+        "invocationId": "0.658525225919514-0",
+        "type": "call",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 13,
+        "column": 0
+      },
+      "end": {
+        "line": 13,
+        "column": 6
+      },
+      "id": "http://localhost:3004/javascripts/home.js-callsite-13-0-13-6",
+      "source": "load()",
+      "type": "callsite",
+      "name": "load",
+      "nameStart": {
+        "line": 13,
+        "column": 0
+      },
+      "nameEnd": {
+        "line": 13,
+        "column": 4
+      },
+      "startLine": 13,
+      "startColumn": 0,
+      "endLine": 13,
+      "endColumn": 6
+    },
+    "callStack": [],
+    "nodeName": "load"
+  },
+  {
+    "timestamp": 1487609820435,
+    "tick": 2,
+    "invocationId": "0.658525225919514-2",
+    "topLevelInvocationId": "0.658525225919514-0",
+    "nodeId": "http://localhost:3004/javascripts/home.js-function-1-0-12-1",
+    "arguments": [],
+    "parents": [
+      {
+        "invocationId": "0.658525225919514-1",
+        "type": "call",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "line": 12,
+        "column": 1
+      },
+      "id": "http://localhost:3004/javascripts/home.js-function-1-0-12-1",
+      "source": "function load() {\n \"iso_d10a97e2-d0e7-450c-bc99-db533485cfd1_iso\";\n var testElement = document.getElementById(\"test1\");\n var photoEl = document.getElementById(\"effect1\");\n var eventHandlerFn = function () {\n  \"iso_be73df04-1a78-4e4f-831c-d2ca3f337f86_iso\";\n  if (photoEl.classList) {\n   photoEl.classList.toggle(\"hidden\");\n  }\n };\n testElement.addEventListener(\"click\", eventHandlerFn);\n}",
+      "type": "function",
+      "name": "load",
+      "params": [],
+      "startLine": 1,
+      "startColumn": 0,
+      "endLine": 12,
+      "endColumn": 1
+    },
+    "callStack": [],
+    "nodeName": "load"
+  },
+  {
+    "timestamp": 1487609820435,
+    "tick": 3,
+    "invocationId": "0.658525225919514-3",
+    "topLevelInvocationId": "0.658525225919514-0",
+    "nodeId": "http://localhost:3004/javascripts/home.js-callsite-3-19-3-51",
+    "arguments": [
+      {
+        "value": {
+          "type": "string",
+          "value": "test1"
+        }
+      }
+    ],
+    "this": {
+      "type": "object",
+      "preview": "[object Object]",
+      "ownProperties": {
+        "effect1": {
+          "type": "undefined"
+        },
+        "effect3": {
+          "type": "undefined"
+        }
+      }
+    },
+    "parents": [
+      {
+        "invocationId": "0.658525225919514-2",
+        "type": "call",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 3,
+        "column": 19
+      },
+      "end": {
+        "line": 3,
+        "column": 51
+      },
+      "id": "http://localhost:3004/javascripts/home.js-callsite-3-19-3-51",
+      "source": "document.getElementById(\"test1\")",
+      "type": "callsite",
+      "name": "document.getElementById",
+      "nameStart": {
+        "line": 3,
+        "column": 28
+      },
+      "nameEnd": {
+        "line": 3,
+        "column": 42
+      },
+      "startLine": 3,
+      "startColumn": 19,
+      "endLine": 3,
+      "endColumn": 51
+    },
+    "callStack": [
+      {
+        "timestamp": 1487609820435,
+        "tick": 2,
+        "invocationId": "0.658525225919514-2",
+        "topLevelInvocationId": "0.658525225919514-0",
+        "nodeId": "http://localhost:3004/javascripts/home.js-function-1-0-12-1",
+        "arguments": []
+      }
+    ],
+    "nodeName": "document.getElementById"
+  },
+  {
+    "timestamp": 1487609820436,
+    "tick": 4,
+    "invocationId": "0.658525225919514-4",
+    "topLevelInvocationId": "0.658525225919514-0",
+    "nodeId": "http://localhost:3004/javascripts/home.js-callsite-4-15-4-49",
+    "arguments": [
+      {
+        "value": {
+          "type": "string",
+          "value": "effect1"
+        }
+      }
+    ],
+    "this": {
+      "type": "object",
+      "preview": "[object Object]",
+      "ownProperties": {
+        "effect1": {
+          "type": "undefined"
+        },
+        "effect3": {
+          "type": "undefined"
+        }
+      }
+    },
+    "parents": [
+      {
+        "invocationId": "0.658525225919514-2",
+        "type": "call",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 4,
+        "column": 15
+      },
+      "end": {
+        "line": 4,
+        "column": 49
+      },
+      "id": "http://localhost:3004/javascripts/home.js-callsite-4-15-4-49",
+      "source": "document.getElementById(\"effect1\")",
+      "type": "callsite",
+      "name": "document.getElementById",
+      "nameStart": {
+        "line": 4,
+        "column": 24
+      },
+      "nameEnd": {
+        "line": 4,
+        "column": 38
+      },
+      "startLine": 4,
+      "startColumn": 15,
+      "endLine": 4,
+      "endColumn": 49
+    },
+    "callStack": [
+      {
+        "timestamp": 1487609820435,
+        "tick": 2,
+        "invocationId": "0.658525225919514-2",
+        "topLevelInvocationId": "0.658525225919514-0",
+        "nodeId": "http://localhost:3004/javascripts/home.js-function-1-0-12-1",
+        "arguments": []
+      }
+    ],
+    "nodeName": "document.getElementById"
+  },
+  {
+    "timestamp": 1487609820436,
+    "tick": 5,
+    "invocationId": "0.658525225919514-5",
+    "topLevelInvocationId": "0.658525225919514-0",
+    "nodeId": "http://localhost:3004/javascripts/home.js-callsite-11-1-11-54",
+    "arguments": [
+      {
+        "value": {
+          "type": "string",
+          "value": "click"
+        }
+      },
+      {
+        "value": {
+          "type": "function",
+          "json": "function () {\n  \"iso_be73df04-1a78-4e4f-831c-d2ca3f337f86_iso\";\n  if (photoEl.classList) {\n   photoEl.classList.toggle(\"hidden\");\n  }\n }",
+          "name": null
+        }
+      }
+    ],
+    "this": {
+      "type": "object",
+      "preview": "[object Object]",
+      "ownProperties": {}
+    },
+    "parents": [
+      {
+        "invocationId": "0.658525225919514-2",
+        "type": "call",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 11,
+        "column": 1
+      },
+      "end": {
+        "line": 11,
+        "column": 54
+      },
+      "id": "http://localhost:3004/javascripts/home.js-callsite-11-1-11-54",
+      "source": "testElement.addEventListener(\"click\", eventHandlerFn)",
+      "type": "callsite",
+      "name": "testElement.addEventListener",
+      "nameStart": {
+        "line": 11,
+        "column": 13
+      },
+      "nameEnd": {
+        "line": 11,
+        "column": 29
+      },
+      "startLine": 11,
+      "startColumn": 1,
+      "endLine": 11,
+      "endColumn": 54
+    },
+    "callStack": [
+      {
+        "timestamp": 1487609820435,
+        "tick": 2,
+        "invocationId": "0.658525225919514-2",
+        "topLevelInvocationId": "0.658525225919514-0",
+        "nodeId": "http://localhost:3004/javascripts/home.js-function-1-0-12-1",
+        "arguments": []
+      }
+    ],
+    "nodeName": "testElement.addEventListener"
+  },
+  {
+    "timestamp": 1487609820437,
+    "tick": 6,
+    "invocationId": "0.658525225919514-6",
+    "topLevelInvocationId": "0.658525225919514-0",
+    "nodeId": "http://localhost:3004/javascripts/home.js-callsite-27-0-27-7",
+    "arguments": [],
+    "parents": [
+      {
+        "invocationId": "0.658525225919514-0",
+        "type": "call",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 27,
+        "column": 0
+      },
+      "end": {
+        "line": 27,
+        "column": 7
+      },
+      "id": "http://localhost:3004/javascripts/home.js-callsite-27-0-27-7",
+      "source": "other()",
+      "type": "callsite",
+      "name": "other",
+      "nameStart": {
+        "line": 27,
+        "column": 0
+      },
+      "nameEnd": {
+        "line": 27,
+        "column": 5
+      },
+      "startLine": 27,
+      "startColumn": 0,
+      "endLine": 27,
+      "endColumn": 7
+    },
+    "callStack": [],
+    "nodeName": "other"
+  },
+  {
+    "timestamp": 1487609820437,
+    "tick": 7,
+    "invocationId": "0.658525225919514-7",
+    "topLevelInvocationId": "0.658525225919514-0",
+    "nodeId": "http://localhost:3004/javascripts/home.js-function-15-0-26-1",
+    "arguments": [],
+    "parents": [
+      {
+        "invocationId": "0.658525225919514-6",
+        "type": "call",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 15,
+        "column": 0
+      },
+      "end": {
+        "line": 26,
+        "column": 1
+      },
+      "id": "http://localhost:3004/javascripts/home.js-function-15-0-26-1",
+      "source": "function other() {\n \"iso_57f8e382-c0c3-4535-8bab-d1caaef5174c_iso\";\n var button2 = document.getElementById(\"test3\");\n var shipEl = document.getElementById(\"effect3\");\n var eventHandlerFn = function () {\n  \"iso_c5663189-3bcb-48ec-a078-9326d9143d37_iso\";\n  if (shipEl.classList) {\n   shipEl.classList.toggle(\"hidden\");\n  }\n };\n button2.addEventListener(\"click\", eventHandlerFn);\n}",
+      "type": "function",
+      "name": "other",
+      "params": [],
+      "startLine": 15,
+      "startColumn": 0,
+      "endLine": 26,
+      "endColumn": 1
+    },
+    "callStack": [],
+    "nodeName": "other"
+  },
+  {
+    "timestamp": 1487609820437,
+    "tick": 8,
+    "invocationId": "0.658525225919514-8",
+    "topLevelInvocationId": "0.658525225919514-0",
+    "nodeId": "http://localhost:3004/javascripts/home.js-callsite-17-15-17-47",
+    "arguments": [
+      {
+        "value": {
+          "type": "string",
+          "value": "test3"
+        }
+      }
+    ],
+    "this": {
+      "type": "object",
+      "preview": "[object Object]",
+      "ownProperties": {
+        "effect1": {
+          "type": "undefined"
+        },
+        "effect3": {
+          "type": "undefined"
+        }
+      }
+    },
+    "parents": [
+      {
+        "invocationId": "0.658525225919514-7",
+        "type": "call",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 17,
+        "column": 15
+      },
+      "end": {
+        "line": 17,
+        "column": 47
+      },
+      "id": "http://localhost:3004/javascripts/home.js-callsite-17-15-17-47",
+      "source": "document.getElementById(\"test3\")",
+      "type": "callsite",
+      "name": "document.getElementById",
+      "nameStart": {
+        "line": 17,
+        "column": 24
+      },
+      "nameEnd": {
+        "line": 17,
+        "column": 38
+      },
+      "startLine": 17,
+      "startColumn": 15,
+      "endLine": 17,
+      "endColumn": 47
+    },
+    "callStack": [
+      {
+        "timestamp": 1487609820437,
+        "tick": 7,
+        "invocationId": "0.658525225919514-7",
+        "topLevelInvocationId": "0.658525225919514-0",
+        "nodeId": "http://localhost:3004/javascripts/home.js-function-15-0-26-1",
+        "arguments": []
+      }
+    ],
+    "nodeName": "document.getElementById"
+  },
+  {
+    "timestamp": 1487609820437,
+    "tick": 9,
+    "invocationId": "0.658525225919514-9",
+    "topLevelInvocationId": "0.658525225919514-0",
+    "nodeId": "http://localhost:3004/javascripts/home.js-callsite-18-14-18-48",
+    "arguments": [
+      {
+        "value": {
+          "type": "string",
+          "value": "effect3"
+        }
+      }
+    ],
+    "this": {
+      "type": "object",
+      "preview": "[object Object]",
+      "ownProperties": {
+        "effect1": {
+          "type": "undefined"
+        },
+        "effect3": {
+          "type": "undefined"
+        }
+      }
+    },
+    "parents": [
+      {
+        "invocationId": "0.658525225919514-7",
+        "type": "call",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 18,
+        "column": 14
+      },
+      "end": {
+        "line": 18,
+        "column": 48
+      },
+      "id": "http://localhost:3004/javascripts/home.js-callsite-18-14-18-48",
+      "source": "document.getElementById(\"effect3\")",
+      "type": "callsite",
+      "name": "document.getElementById",
+      "nameStart": {
+        "line": 18,
+        "column": 23
+      },
+      "nameEnd": {
+        "line": 18,
+        "column": 37
+      },
+      "startLine": 18,
+      "startColumn": 14,
+      "endLine": 18,
+      "endColumn": 48
+    },
+    "callStack": [
+      {
+        "timestamp": 1487609820437,
+        "tick": 7,
+        "invocationId": "0.658525225919514-7",
+        "topLevelInvocationId": "0.658525225919514-0",
+        "nodeId": "http://localhost:3004/javascripts/home.js-function-15-0-26-1",
+        "arguments": []
+      }
+    ],
+    "nodeName": "document.getElementById"
+  },
+  {
+    "timestamp": 1487609820437,
+    "tick": 10,
+    "invocationId": "0.658525225919514-10",
+    "topLevelInvocationId": "0.658525225919514-0",
+    "nodeId": "http://localhost:3004/javascripts/home.js-callsite-25-1-25-50",
+    "arguments": [
+      {
+        "value": {
+          "type": "string",
+          "value": "click"
+        }
+      },
+      {
+        "value": {
+          "type": "function",
+          "json": "function () {\n  \"iso_c5663189-3bcb-48ec-a078-9326d9143d37_iso\";\n  if (shipEl.classList) {\n   shipEl.classList.toggle(\"hidden\");\n  }\n }",
+          "name": null
+        }
+      }
+    ],
+    "this": {
+      "type": "object",
+      "preview": "[object Object]",
+      "ownProperties": {}
+    },
+    "parents": [
+      {
+        "invocationId": "0.658525225919514-7",
+        "type": "call",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 25,
+        "column": 1
+      },
+      "end": {
+        "line": 25,
+        "column": 50
+      },
+      "id": "http://localhost:3004/javascripts/home.js-callsite-25-1-25-50",
+      "source": "button2.addEventListener(\"click\", eventHandlerFn)",
+      "type": "callsite",
+      "name": "button2.addEventListener",
+      "nameStart": {
+        "line": 25,
+        "column": 9
+      },
+      "nameEnd": {
+        "line": 25,
+        "column": 25
+      },
+      "startLine": 25,
+      "startColumn": 1,
+      "endLine": 25,
+      "endColumn": 50
+    },
+    "callStack": [
+      {
+        "timestamp": 1487609820437,
+        "tick": 7,
+        "invocationId": "0.658525225919514-7",
+        "topLevelInvocationId": "0.658525225919514-0",
+        "nodeId": "http://localhost:3004/javascripts/home.js-function-15-0-26-1",
+        "arguments": []
+      }
+    ],
+    "nodeName": "button2.addEventListener"
+  },
+  {
+    "timestamp": 1487609835023,
+    "tick": 11,
+    "invocationId": "0.658525225919514-11",
+    "topLevelInvocationId": "0.658525225919514-11",
+    "nodeId": "http://localhost:3004/javascripts/home.js-function-5-22-10-2",
+    "arguments": [
+      {
+        "value": {
+          "type": "object",
+          "preview": "[object Object]",
+          "ownProperties": {
+            "eventName": {
+              "type": "string",
+              "value": "[object MouseEvent]"
+            },
+            "altKey": {
+              "type": "boolean",
+              "value": false
+            },
+            "bubbles": {
+              "type": "boolean",
+              "value": true
+            },
+            "button": {
+              "type": "number",
+              "value": 0
+            },
+            "buttons": {
+              "type": "number",
+              "value": 0
+            },
+            "cancelBubble": {
+              "type": "boolean",
+              "value": false
+            },
+            "cancelable": {
+              "type": "boolean",
+              "value": true
+            },
+            "clientX": {
+              "type": "number",
+              "value": 86
+            },
+            "clientY": {
+              "type": "number",
+              "value": 26
+            },
+            "composed": {
+              "type": "boolean",
+              "value": true
+            },
+            "ctrlKey": {
+              "type": "boolean",
+              "value": false
+            },
+            "currentTarget": {
+              "type": "string",
+              "value": "<button id=\"test1\" class=\"btn btn-success\">Toggle A</button>"
+            },
+            "defaultPrevented": {
+              "type": "boolean",
+              "value": false
+            },
+            "detail": {
+              "type": "number",
+              "value": 1
+            },
+            "eventPhase": {
+              "type": "number",
+              "value": 2
+            },
+            "fromElement": {
+              "type": "null",
+              "preview": "null"
+            },
+            "isTrusted": {
+              "type": "boolean",
+              "value": true
+            },
+            "layerX": {
+              "type": "number",
+              "value": 88
+            },
+            "layerY": {
+              "type": "number",
+              "value": 12
+            },
+            "metaKey": {
+              "type": "boolean",
+              "value": false
+            },
+            "movementX": {
+              "type": "number",
+              "value": 0
+            },
+            "movementY": {
+              "type": "number",
+              "value": 0
+            },
+            "offsetX": {
+              "type": "number",
+              "value": 72
+            },
+            "offsetY": {
+              "type": "number",
+              "value": 12
+            },
+            "pageX": {
+              "type": "number",
+              "value": 86
+            },
+            "pageY": {
+              "type": "number",
+              "value": 26
+            },
+            "path": {
+              "type": "string",
+              "value": "body>div:eq(0)>div>button"
+            },
+            "relatedTarget": {
+              "type": "null",
+              "preview": "null"
+            },
+            "returnValue": {
+              "type": "boolean",
+              "value": true
+            },
+            "screenX": {
+              "type": "number",
+              "value": 95
+            },
+            "screenY": {
+              "type": "number",
+              "value": 149
+            },
+            "shiftKey": {
+              "type": "boolean",
+              "value": false
+            },
+            "sourceCapabilities": {
+              "type": "string",
+              "value": "[object InputDeviceCapabilities]"
+            },
+            "target": {
+              "type": "string",
+              "value": "<button id=\"test1\" class=\"btn btn-success\">Toggle A</button>"
+            },
+            "timeStamp": {
+              "type": "number",
+              "value": 14822.785000000002
+            },
+            "toElement": {
+              "type": "string",
+              "value": "<button id=\"test1\" class=\"btn btn-success\">Toggle A</button>"
+            },
+            "type": {
+              "type": "string",
+              "value": "click"
+            },
+            "view": {
+              "type": "string",
+              "value": "[object Window]"
+            },
+            "which": {
+              "type": "number",
+              "value": 1
+            },
+            "x": {
+              "type": "number",
+              "value": 86
+            },
+            "y": {
+              "type": "number",
+              "value": 26
+            }
+          },
+          "truncated": {
+            "keys": {
+              "amount": 7
+            }
+          }
+        }
+      }
+    ],
+    "this": {
+      "type": "object",
+      "preview": "[object Object]",
+      "ownProperties": {}
+    },
+    "parents": [
+      {
+        "invocationId": "0.658525225919514-2",
+        "type": "async",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 5,
+        "column": 22
+      },
+      "end": {
+        "line": 10,
+        "column": 2
+      },
+      "id": "http://localhost:3004/javascripts/home.js-function-5-22-10-2",
+      "source": "function () {\n  \"iso_be73df04-1a78-4e4f-831c-d2ca3f337f86_iso\";\n  if (photoEl.classList) {\n   photoEl.classList.toggle(\"hidden\");\n  }\n }",
+      "type": "function",
+      "name": "eventHandlerFn",
+      "params": [],
+      "startLine": 5,
+      "startColumn": 22,
+      "endLine": 10,
+      "endColumn": 2
+    },
+    "callStack": [],
+    "nodeName": "eventHandlerFn",
+    "asyncParentInvokeIds": [
+      "0.658525225919514-5"
+    ]
+  },
+  {
+    "timestamp": 1487609835025,
+    "tick": 12,
+    "invocationId": "0.658525225919514-12",
+    "topLevelInvocationId": "0.658525225919514-11",
+    "nodeId": "http://localhost:3004/javascripts/home.js-callsite-8-3-8-37",
+    "arguments": [
+      {
+        "value": {
+          "type": "string",
+          "value": "hidden"
+        }
+      }
+    ],
+    "this": {
+      "type": "object",
+      "preview": "[object Object]",
+      "ownProperties": {}
+    },
+    "parents": [
+      {
+        "invocationId": "0.658525225919514-11",
         "type": "call",
         "inbetween": []
       }
@@ -598,10 +1772,10 @@
     },
     "callStack": [
       {
-        "timestamp": 1487339622216,
-        "tick": 6,
-        "invocationId": "0.84835528485025-6",
-        "topLevelInvocationId": "0.84835528485025-6",
+        "timestamp": 1487609835023,
+        "tick": 11,
+        "invocationId": "0.658525225919514-11",
+        "topLevelInvocationId": "0.658525225919514-11",
         "nodeId": "http://localhost:3004/javascripts/home.js-function-5-22-10-2",
         "arguments": [
           {
@@ -639,11 +1813,11 @@
                 },
                 "clientX": {
                   "type": "number",
-                  "value": 96
+                  "value": 86
                 },
                 "clientY": {
                   "type": "number",
-                  "value": 17
+                  "value": 26
                 },
                 "composed": {
                   "type": "boolean",
@@ -655,7 +1829,7 @@
                 },
                 "currentTarget": {
                   "type": "string",
-                  "value": "<button id=\"test1\" class=\"btn btn-success\">Show / Hide</button>"
+                  "value": "<button id=\"test1\" class=\"btn btn-success\">Toggle A</button>"
                 },
                 "defaultPrevented": {
                   "type": "boolean",
@@ -679,11 +1853,11 @@
                 },
                 "layerX": {
                   "type": "number",
-                  "value": 98
+                  "value": 88
                 },
                 "layerY": {
                   "type": "number",
-                  "value": 4
+                  "value": 12
                 },
                 "metaKey": {
                   "type": "boolean",
@@ -699,19 +1873,19 @@
                 },
                 "offsetX": {
                   "type": "number",
-                  "value": 82
+                  "value": 72
                 },
                 "offsetY": {
                   "type": "number",
-                  "value": 3
+                  "value": 12
                 },
                 "pageX": {
                   "type": "number",
-                  "value": 96
+                  "value": 86
                 },
                 "pageY": {
                   "type": "number",
-                  "value": 17
+                  "value": 26
                 },
                 "path": {
                   "type": "string",
@@ -727,11 +1901,11 @@
                 },
                 "screenX": {
                   "type": "number",
-                  "value": 96
+                  "value": 95
                 },
                 "screenY": {
                   "type": "number",
-                  "value": 137
+                  "value": 149
                 },
                 "shiftKey": {
                   "type": "boolean",
@@ -743,15 +1917,15 @@
                 },
                 "target": {
                   "type": "string",
-                  "value": "<button id=\"test1\" class=\"btn btn-success\">Show / Hide</button>"
+                  "value": "<button id=\"test1\" class=\"btn btn-success\">Toggle A</button>"
                 },
                 "timeStamp": {
                   "type": "number",
-                  "value": 5456.975
+                  "value": 14822.785000000002
                 },
                 "toElement": {
                   "type": "string",
-                  "value": "<button id=\"test1\" class=\"btn btn-success\">Show / Hide</button>"
+                  "value": "<button id=\"test1\" class=\"btn btn-success\">Toggle A</button>"
                 },
                 "type": {
                   "type": "string",
@@ -767,16 +1941,235 @@
                 },
                 "x": {
                   "type": "number",
-                  "value": 96
+                  "value": 86
                 },
                 "y": {
                   "type": "number",
-                  "value": 17
+                  "value": 26
                 }
               },
               "truncated": {
                 "keys": {
-                  "amount": 2
+                  "amount": 7
+                }
+              }
+            }
+          }
+        ],
+        "this": {
+          "type": "object",
+          "preview": "[object Object]",
+          "ownProperties": {}
+        }
+      }
+    ],
+    "nodeName": "photoEl.classList.toggle"
+  }
+]
+        "column": 3
+      },
+      "end": {
+        "line": 8,
+        "column": 37
+      },
+      "id": "http://localhost:3004/javascripts/home.js-callsite-8-3-8-37",
+      "source": "photoEl.classList.toggle(\"hidden\")",
+      "type": "callsite",
+      "name": "photoEl.classList.toggle",
+      "nameStart": {
+        "line": 8,
+        "column": 21
+      },
+      "nameEnd": {
+        "line": 8,
+        "column": 27
+      },
+      "startLine": 8,
+      "startColumn": 3,
+      "endLine": 8,
+      "endColumn": 37
+    },
+    "callStack": [
+      {
+        "timestamp": 1487609835023,
+        "tick": 11,
+        "invocationId": "0.658525225919514-11",
+        "topLevelInvocationId": "0.658525225919514-11",
+        "nodeId": "http://localhost:3004/javascripts/home.js-function-5-22-10-2",
+        "arguments": [
+          {
+            "value": {
+              "type": "object",
+              "preview": "[object Object]",
+              "ownProperties": {
+                "eventName": {
+                  "type": "string",
+                  "value": "[object MouseEvent]"
+                },
+                "altKey": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "bubbles": {
+                  "type": "boolean",
+                  "value": true
+                },
+                "button": {
+                  "type": "number",
+                  "value": 0
+                },
+                "buttons": {
+                  "type": "number",
+                  "value": 0
+                },
+                "cancelBubble": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "cancelable": {
+                  "type": "boolean",
+                  "value": true
+                },
+                "clientX": {
+                  "type": "number",
+                  "value": 86
+                },
+                "clientY": {
+                  "type": "number",
+                  "value": 26
+                },
+                "composed": {
+                  "type": "boolean",
+                  "value": true
+                },
+                "ctrlKey": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "currentTarget": {
+                  "type": "string",
+                  "value": "<button id=\"test1\" class=\"btn btn-success\">Toggle A</button>"
+                },
+                "defaultPrevented": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "detail": {
+                  "type": "number",
+                  "value": 1
+                },
+                "eventPhase": {
+                  "type": "number",
+                  "value": 2
+                },
+                "fromElement": {
+                  "type": "null",
+                  "preview": "null"
+                },
+                "isTrusted": {
+                  "type": "boolean",
+                  "value": true
+                },
+                "layerX": {
+                  "type": "number",
+                  "value": 88
+                },
+                "layerY": {
+                  "type": "number",
+                  "value": 12
+                },
+                "metaKey": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "movementX": {
+                  "type": "number",
+                  "value": 0
+                },
+                "movementY": {
+                  "type": "number",
+                  "value": 0
+                },
+                "offsetX": {
+                  "type": "number",
+                  "value": 72
+                },
+                "offsetY": {
+                  "type": "number",
+                  "value": 12
+                },
+                "pageX": {
+                  "type": "number",
+                  "value": 86
+                },
+                "pageY": {
+                  "type": "number",
+                  "value": 26
+                },
+                "path": {
+                  "type": "string",
+                  "value": "body>div:eq(0)>div>button"
+                },
+                "relatedTarget": {
+                  "type": "null",
+                  "preview": "null"
+                },
+                "returnValue": {
+                  "type": "boolean",
+                  "value": true
+                },
+                "screenX": {
+                  "type": "number",
+                  "value": 95
+                },
+                "screenY": {
+                  "type": "number",
+                  "value": 149
+                },
+                "shiftKey": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "sourceCapabilities": {
+                  "type": "string",
+                  "value": "[object InputDeviceCapabilities]"
+                },
+                "target": {
+                  "type": "string",
+                  "value": "<button id=\"test1\" class=\"btn btn-success\">Toggle A</button>"
+                },
+                "timeStamp": {
+                  "type": "number",
+                  "value": 14822.785000000002
+                },
+                "toElement": {
+                  "type": "string",
+                  "value": "<button id=\"test1\" class=\"btn btn-success\">Toggle A</button>"
+                },
+                "type": {
+                  "type": "string",
+                  "value": "click"
+                },
+                "view": {
+                  "type": "string",
+                  "value": "[object Window]"
+                },
+                "which": {
+                  "type": "number",
+                  "value": 1
+                },
+                "x": {
+                  "type": "number",
+                  "value": 86
+                },
+                "y": {
+                  "type": "number",
+                  "value": 26
+                }
+              },
+              "truncated": {
+                "keys": {
+                  "amount": 7
                 }
               }
             }

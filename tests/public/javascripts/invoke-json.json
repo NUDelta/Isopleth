@@ -1,0 +1,1646 @@
+[
+  {
+    "timestamp": 1488229923080,
+    "tick": 0,
+    "invocationId": "0.39396259123198507-0",
+    "topLevelInvocationId": "0.39396259123198507-0",
+    "nodeId": "http://localhost:3004/javascripts/home.js-toplevel-1-0-20-8",
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "line": 20,
+        "column": 8
+      },
+      "id": "http://localhost:3004/javascripts/home.js-toplevel-1-0-20-8",
+      "type": "toplevel",
+      "name": "(home.js toplevel)",
+      "startLine": 1,
+      "startColumn": 0,
+      "endLine": 20,
+      "endColumn": 8
+    },
+    "callStack": [],
+    "nodeName": "(home.js toplevel)"
+  },
+  {
+    "timestamp": 1488229923080,
+    "tick": 1,
+    "invocationId": "0.39396259123198507-1",
+    "topLevelInvocationId": "0.39396259123198507-0",
+    "nodeId": "http://localhost:3004/javascripts/home.js-callsite-20-0-20-7",
+    "arguments": [],
+    "parents": [
+      {
+        "invocationId": "0.39396259123198507-0",
+        "type": "call",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 20,
+        "column": 0
+      },
+      "end": {
+        "line": 20,
+        "column": 7
+      },
+      "id": "http://localhost:3004/javascripts/home.js-callsite-20-0-20-7",
+      "source": "jsonA()",
+      "type": "callsite",
+      "name": "jsonA",
+      "nameStart": {
+        "line": 20,
+        "column": 0
+      },
+      "nameEnd": {
+        "line": 20,
+        "column": 5
+      },
+      "startLine": 20,
+      "startColumn": 0,
+      "endLine": 20,
+      "endColumn": 7
+    },
+    "callStack": [],
+    "nodeName": "jsonA"
+  },
+  {
+    "timestamp": 1488229923080,
+    "tick": 2,
+    "invocationId": "0.39396259123198507-2",
+    "topLevelInvocationId": "0.39396259123198507-0",
+    "nodeId": "http://localhost:3004/javascripts/home.js-function-1-0-19-1",
+    "arguments": [],
+    "parents": [
+      {
+        "invocationId": "0.39396259123198507-1",
+        "type": "call",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "line": 19,
+        "column": 1
+      },
+      "id": "http://localhost:3004/javascripts/home.js-function-1-0-19-1",
+      "source": "function jsonA() {\n \"iso_ef4be0de-42a7-4424-b9d8-278907061474_iso\";\n var button3 = document.getElementById(\"test4\");\n var request = new XMLHttpRequest();\n var jsonResponseHandler = function () {\n  \"iso_1414e80e-036f-4bbd-81af-0d7aea34b985_iso\";\n  if (request.status >= 200 && request.status < 400) {\n   document.getElementById(\"jsonRes\").innerText = request.responseText;\n  }\n };\n var jsonGetterFn = function () {\n  \"iso_7c1d8190-b28b-4641-b060-5e386e8515b5_iso\";\n  document.getElementById(\"jsonRes\").innerText = \"\";\n  request.open(\"GET\", \"http://localhost:3004/javascripts/sample.json\", true);\n  request.onload = jsonResponseHandler;\n  request.send();\n };\n button3.addEventListener(\"click\", jsonGetterFn);\n}",
+      "type": "function",
+      "name": "jsonA",
+      "params": [],
+      "startLine": 1,
+      "startColumn": 0,
+      "endLine": 19,
+      "endColumn": 1
+    },
+    "callStack": [],
+    "nodeName": "jsonA"
+  },
+  {
+    "timestamp": 1488229923080,
+    "tick": 3,
+    "invocationId": "0.39396259123198507-3",
+    "topLevelInvocationId": "0.39396259123198507-0",
+    "nodeId": "http://localhost:3004/javascripts/home.js-callsite-3-15-3-47",
+    "arguments": [
+      {
+        "value": {
+          "type": "string",
+          "value": "test4"
+        }
+      }
+    ],
+    "this": {
+      "type": "object",
+      "preview": "[object Object]",
+      "ownProperties": {
+        "effect1": {
+          "type": "undefined"
+        },
+        "effect3": {
+          "type": "undefined"
+        }
+      }
+    },
+    "parents": [
+      {
+        "invocationId": "0.39396259123198507-2",
+        "type": "call",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 3,
+        "column": 15
+      },
+      "end": {
+        "line": 3,
+        "column": 47
+      },
+      "id": "http://localhost:3004/javascripts/home.js-callsite-3-15-3-47",
+      "source": "document.getElementById(\"test4\")",
+      "type": "callsite",
+      "name": "document.getElementById",
+      "nameStart": {
+        "line": 3,
+        "column": 24
+      },
+      "nameEnd": {
+        "line": 3,
+        "column": 38
+      },
+      "startLine": 3,
+      "startColumn": 15,
+      "endLine": 3,
+      "endColumn": 47
+    },
+    "callStack": [
+      {
+        "timestamp": 1488229923080,
+        "tick": 2,
+        "invocationId": "0.39396259123198507-2",
+        "topLevelInvocationId": "0.39396259123198507-0",
+        "nodeId": "http://localhost:3004/javascripts/home.js-function-1-0-19-1",
+        "arguments": []
+      }
+    ],
+    "nodeName": "document.getElementById"
+  },
+  {
+    "timestamp": 1488229923081,
+    "tick": 4,
+    "invocationId": "0.39396259123198507-4",
+    "topLevelInvocationId": "0.39396259123198507-0",
+    "nodeId": "http://localhost:3004/javascripts/home.js-callsite-18-1-18-48",
+    "arguments": [
+      {
+        "value": {
+          "type": "string",
+          "value": "click"
+        }
+      },
+      {
+        "value": {
+          "type": "function",
+          "json": "function () {\n  \"iso_7c1d8190-b28b-4641-b060-5e386e8515b5_iso\";\n  document.getElementById(\"jsonRes\").innerText = \"\";\n  request.open(\"GET\", \"http://localhost:3004/javascripts/sample.json\", true);\n  request.onload = jsonResponseHandler;\n  request.send();\n }"
+        }
+      }
+    ],
+    "this": {
+      "type": "object",
+      "preview": "[object Object]",
+      "ownProperties": {}
+    },
+    "parents": [
+      {
+        "invocationId": "0.39396259123198507-2",
+        "type": "call",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 18,
+        "column": 1
+      },
+      "end": {
+        "line": 18,
+        "column": 48
+      },
+      "id": "http://localhost:3004/javascripts/home.js-callsite-18-1-18-48",
+      "source": "button3.addEventListener(\"click\", jsonGetterFn)",
+      "type": "callsite",
+      "name": "button3.addEventListener",
+      "nameStart": {
+        "line": 18,
+        "column": 9
+      },
+      "nameEnd": {
+        "line": 18,
+        "column": 25
+      },
+      "startLine": 18,
+      "startColumn": 1,
+      "endLine": 18,
+      "endColumn": 48
+    },
+    "callStack": [
+      {
+        "timestamp": 1488229923080,
+        "tick": 2,
+        "invocationId": "0.39396259123198507-2",
+        "topLevelInvocationId": "0.39396259123198507-0",
+        "nodeId": "http://localhost:3004/javascripts/home.js-function-1-0-19-1",
+        "arguments": []
+      }
+    ],
+    "nodeName": "button3.addEventListener"
+  },
+  {
+    "timestamp": 1488229950563,
+    "tick": 5,
+    "invocationId": "0.39396259123198507-5",
+    "topLevelInvocationId": "0.39396259123198507-5",
+    "nodeId": "http://localhost:3004/javascripts/home.js-function-11-20-17-2",
+    "arguments": [
+      {
+        "value": {
+          "type": "object",
+          "preview": "[object Object]",
+          "ownProperties": {
+            "eventName": {
+              "type": "string",
+              "value": "[object MouseEvent]"
+            },
+            "altKey": {
+              "type": "boolean",
+              "value": false
+            },
+            "bubbles": {
+              "type": "boolean",
+              "value": true
+            },
+            "button": {
+              "type": "number",
+              "value": 0
+            },
+            "buttons": {
+              "type": "number",
+              "value": 0
+            },
+            "cancelBubble": {
+              "type": "boolean",
+              "value": false
+            },
+            "cancelable": {
+              "type": "boolean",
+              "value": true
+            },
+            "clientX": {
+              "type": "number",
+              "value": 79
+            },
+            "clientY": {
+              "type": "number",
+              "value": 347
+            },
+            "composed": {
+              "type": "boolean",
+              "value": true
+            },
+            "ctrlKey": {
+              "type": "boolean",
+              "value": false
+            },
+            "currentTarget": {
+              "type": "string",
+              "value": "<button id=\"test4\" class=\"btn btn-danger\">Ajax JSON A</button>"
+            },
+            "defaultPrevented": {
+              "type": "boolean",
+              "value": false
+            },
+            "detail": {
+              "type": "number",
+              "value": 1
+            },
+            "eventPhase": {
+              "type": "number",
+              "value": 2
+            },
+            "fromElement": {
+              "type": "null",
+              "preview": "null"
+            },
+            "isTrusted": {
+              "type": "boolean",
+              "value": true
+            },
+            "layerX": {
+              "type": "number",
+              "value": 81
+            },
+            "layerY": {
+              "type": "number",
+              "value": -16
+            },
+            "metaKey": {
+              "type": "boolean",
+              "value": false
+            },
+            "movementX": {
+              "type": "number",
+              "value": 0
+            },
+            "movementY": {
+              "type": "number",
+              "value": 0
+            },
+            "offsetX": {
+              "type": "number",
+              "value": 65
+            },
+            "offsetY": {
+              "type": "number",
+              "value": 16
+            },
+            "pageX": {
+              "type": "number",
+              "value": 79
+            },
+            "pageY": {
+              "type": "number",
+              "value": 347
+            },
+            "path": {
+              "type": "string",
+              "value": "body>div:eq(4)>div:eq(0)>button"
+            },
+            "relatedTarget": {
+              "type": "null",
+              "preview": "null"
+            },
+            "returnValue": {
+              "type": "boolean",
+              "value": true
+            },
+            "screenX": {
+              "type": "number",
+              "value": 87
+            },
+            "screenY": {
+              "type": "number",
+              "value": 503
+            },
+            "shiftKey": {
+              "type": "boolean",
+              "value": false
+            },
+            "sourceCapabilities": {
+              "type": "string",
+              "value": "[object InputDeviceCapabilities]"
+            },
+            "target": {
+              "type": "string",
+              "value": "<button id=\"test4\" class=\"btn btn-danger\">Ajax JSON A</button>"
+            },
+            "timeStamp": {
+              "type": "number",
+              "value": 27707.295000000002
+            },
+            "toElement": {
+              "type": "string",
+              "value": "<button id=\"test4\" class=\"btn btn-danger\">Ajax JSON A</button>"
+            },
+            "type": {
+              "type": "string",
+              "value": "click"
+            },
+            "view": {
+              "type": "string",
+              "value": "[object Window]"
+            },
+            "which": {
+              "type": "number",
+              "value": 1
+            },
+            "x": {
+              "type": "number",
+              "value": 79
+            },
+            "y": {
+              "type": "number",
+              "value": 347
+            }
+          },
+          "truncated": {
+            "keys": {
+              "amount": 2
+            }
+          }
+        }
+      }
+    ],
+    "this": {
+      "type": "object",
+      "preview": "[object Object]",
+      "ownProperties": {}
+    },
+    "parents": [
+      {
+        "invocationId": "0.39396259123198507-2",
+        "type": "async",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 11,
+        "column": 20
+      },
+      "end": {
+        "line": 17,
+        "column": 2
+      },
+      "id": "http://localhost:3004/javascripts/home.js-function-11-20-17-2",
+      "source": "function () {\n  \"iso_7c1d8190-b28b-4641-b060-5e386e8515b5_iso\";\n  document.getElementById(\"jsonRes\").innerText = \"\";\n  request.open(\"GET\", \"http://localhost:3004/javascripts/sample.json\", true);\n  request.onload = jsonResponseHandler;\n  request.send();\n }",
+      "type": "function",
+      "name": "jsonGetterFn",
+      "params": [],
+      "startLine": 11,
+      "startColumn": 20,
+      "endLine": 17,
+      "endColumn": 2
+    },
+    "callStack": [],
+    "nodeName": "jsonGetterFn"
+  },
+  {
+    "timestamp": 1488229950564,
+    "tick": 6,
+    "invocationId": "0.39396259123198507-6",
+    "topLevelInvocationId": "0.39396259123198507-5",
+    "nodeId": "http://localhost:3004/javascripts/home.js-callsite-13-2-13-36",
+    "arguments": [
+      {
+        "value": {
+          "type": "string",
+          "value": "jsonRes"
+        }
+      }
+    ],
+    "this": {
+      "type": "object",
+      "preview": "[object Object]",
+      "ownProperties": {
+        "effect1": {
+          "type": "undefined"
+        },
+        "effect3": {
+          "type": "undefined"
+        }
+      }
+    },
+    "parents": [
+      {
+        "invocationId": "0.39396259123198507-5",
+        "type": "call",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 13,
+        "column": 2
+      },
+      "end": {
+        "line": 13,
+        "column": 36
+      },
+      "id": "http://localhost:3004/javascripts/home.js-callsite-13-2-13-36",
+      "source": "document.getElementById(\"jsonRes\")",
+      "type": "callsite",
+      "name": "document.getElementById",
+      "nameStart": {
+        "line": 13,
+        "column": 11
+      },
+      "nameEnd": {
+        "line": 13,
+        "column": 25
+      },
+      "startLine": 13,
+      "startColumn": 2,
+      "endLine": 13,
+      "endColumn": 36
+    },
+    "callStack": [
+      {
+        "timestamp": 1488229950563,
+        "tick": 5,
+        "invocationId": "0.39396259123198507-5",
+        "topLevelInvocationId": "0.39396259123198507-5",
+        "nodeId": "http://localhost:3004/javascripts/home.js-function-11-20-17-2",
+        "arguments": [
+          {
+            "value": {
+              "type": "object",
+              "preview": "[object Object]",
+              "ownProperties": {
+                "eventName": {
+                  "type": "string",
+                  "value": "[object MouseEvent]"
+                },
+                "altKey": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "bubbles": {
+                  "type": "boolean",
+                  "value": true
+                },
+                "button": {
+                  "type": "number",
+                  "value": 0
+                },
+                "buttons": {
+                  "type": "number",
+                  "value": 0
+                },
+                "cancelBubble": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "cancelable": {
+                  "type": "boolean",
+                  "value": true
+                },
+                "clientX": {
+                  "type": "number",
+                  "value": 79
+                },
+                "clientY": {
+                  "type": "number",
+                  "value": 347
+                },
+                "composed": {
+                  "type": "boolean",
+                  "value": true
+                },
+                "ctrlKey": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "currentTarget": {
+                  "type": "string",
+                  "value": "<button id=\"test4\" class=\"btn btn-danger\">Ajax JSON A</button>"
+                },
+                "defaultPrevented": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "detail": {
+                  "type": "number",
+                  "value": 1
+                },
+                "eventPhase": {
+                  "type": "number",
+                  "value": 2
+                },
+                "fromElement": {
+                  "type": "null",
+                  "preview": "null"
+                },
+                "isTrusted": {
+                  "type": "boolean",
+                  "value": true
+                },
+                "layerX": {
+                  "type": "number",
+                  "value": 81
+                },
+                "layerY": {
+                  "type": "number",
+                  "value": -16
+                },
+                "metaKey": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "movementX": {
+                  "type": "number",
+                  "value": 0
+                },
+                "movementY": {
+                  "type": "number",
+                  "value": 0
+                },
+                "offsetX": {
+                  "type": "number",
+                  "value": 65
+                },
+                "offsetY": {
+                  "type": "number",
+                  "value": 16
+                },
+                "pageX": {
+                  "type": "number",
+                  "value": 79
+                },
+                "pageY": {
+                  "type": "number",
+                  "value": 347
+                },
+                "path": {
+                  "type": "string",
+                  "value": "body>div:eq(4)>div:eq(0)>button"
+                },
+                "relatedTarget": {
+                  "type": "null",
+                  "preview": "null"
+                },
+                "returnValue": {
+                  "type": "boolean",
+                  "value": true
+                },
+                "screenX": {
+                  "type": "number",
+                  "value": 87
+                },
+                "screenY": {
+                  "type": "number",
+                  "value": 503
+                },
+                "shiftKey": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "sourceCapabilities": {
+                  "type": "string",
+                  "value": "[object InputDeviceCapabilities]"
+                },
+                "target": {
+                  "type": "string",
+                  "value": "<button id=\"test4\" class=\"btn btn-danger\">Ajax JSON A</button>"
+                },
+                "timeStamp": {
+                  "type": "number",
+                  "value": 27707.295000000002
+                },
+                "toElement": {
+                  "type": "string",
+                  "value": "<button id=\"test4\" class=\"btn btn-danger\">Ajax JSON A</button>"
+                },
+                "type": {
+                  "type": "string",
+                  "value": "click"
+                },
+                "view": {
+                  "type": "string",
+                  "value": "[object Window]"
+                },
+                "which": {
+                  "type": "number",
+                  "value": 1
+                },
+                "x": {
+                  "type": "number",
+                  "value": 79
+                },
+                "y": {
+                  "type": "number",
+                  "value": 347
+                }
+              },
+              "truncated": {
+                "keys": {
+                  "amount": 2
+                }
+              }
+            }
+          }
+        ],
+        "this": {
+          "type": "object",
+          "preview": "[object Object]",
+          "ownProperties": {}
+        }
+      }
+    ],
+    "nodeName": "document.getElementById"
+  },
+  {
+    "timestamp": 1488229950565,
+    "tick": 7,
+    "invocationId": "0.39396259123198507-7",
+    "topLevelInvocationId": "0.39396259123198507-5",
+    "nodeId": "http://localhost:3004/javascripts/home.js-callsite-14-2-14-76",
+    "arguments": [
+      {
+        "value": {
+          "type": "string",
+          "value": "GET"
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "http://localhost:3004/javascripts/sample.json"
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      }
+    ],
+    "this": {
+      "type": "object",
+      "preview": "[object Object]",
+      "ownProperties": {}
+    },
+    "parents": [
+      {
+        "invocationId": "0.39396259123198507-5",
+        "type": "call",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 14,
+        "column": 2
+      },
+      "end": {
+        "line": 14,
+        "column": 76
+      },
+      "id": "http://localhost:3004/javascripts/home.js-callsite-14-2-14-76",
+      "source": "request.open(\"GET\", \"http://localhost:3004/javascripts/sample.json\", true)",
+      "type": "callsite",
+      "name": "request.open",
+      "nameStart": {
+        "line": 14,
+        "column": 10
+      },
+      "nameEnd": {
+        "line": 14,
+        "column": 14
+      },
+      "startLine": 14,
+      "startColumn": 2,
+      "endLine": 14,
+      "endColumn": 76
+    },
+    "callStack": [
+      {
+        "timestamp": 1488229950563,
+        "tick": 5,
+        "invocationId": "0.39396259123198507-5",
+        "topLevelInvocationId": "0.39396259123198507-5",
+        "nodeId": "http://localhost:3004/javascripts/home.js-function-11-20-17-2",
+        "arguments": [
+          {
+            "value": {
+              "type": "object",
+              "preview": "[object Object]",
+              "ownProperties": {
+                "eventName": {
+                  "type": "string",
+                  "value": "[object MouseEvent]"
+                },
+                "altKey": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "bubbles": {
+                  "type": "boolean",
+                  "value": true
+                },
+                "button": {
+                  "type": "number",
+                  "value": 0
+                },
+                "buttons": {
+                  "type": "number",
+                  "value": 0
+                },
+                "cancelBubble": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "cancelable": {
+                  "type": "boolean",
+                  "value": true
+                },
+                "clientX": {
+                  "type": "number",
+                  "value": 79
+                },
+                "clientY": {
+                  "type": "number",
+                  "value": 347
+                },
+                "composed": {
+                  "type": "boolean",
+                  "value": true
+                },
+                "ctrlKey": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "currentTarget": {
+                  "type": "string",
+                  "value": "<button id=\"test4\" class=\"btn btn-danger\">Ajax JSON A</button>"
+                },
+                "defaultPrevented": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "detail": {
+                  "type": "number",
+                  "value": 1
+                },
+                "eventPhase": {
+                  "type": "number",
+                  "value": 2
+                },
+                "fromElement": {
+                  "type": "null",
+                  "preview": "null"
+                },
+                "isTrusted": {
+                  "type": "boolean",
+                  "value": true
+                },
+                "layerX": {
+                  "type": "number",
+                  "value": 81
+                },
+                "layerY": {
+                  "type": "number",
+                  "value": -16
+                },
+                "metaKey": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "movementX": {
+                  "type": "number",
+                  "value": 0
+                },
+                "movementY": {
+                  "type": "number",
+                  "value": 0
+                },
+                "offsetX": {
+                  "type": "number",
+                  "value": 65
+                },
+                "offsetY": {
+                  "type": "number",
+                  "value": 16
+                },
+                "pageX": {
+                  "type": "number",
+                  "value": 79
+                },
+                "pageY": {
+                  "type": "number",
+                  "value": 347
+                },
+                "path": {
+                  "type": "string",
+                  "value": "body>div:eq(4)>div:eq(0)>button"
+                },
+                "relatedTarget": {
+                  "type": "null",
+                  "preview": "null"
+                },
+                "returnValue": {
+                  "type": "boolean",
+                  "value": true
+                },
+                "screenX": {
+                  "type": "number",
+                  "value": 87
+                },
+                "screenY": {
+                  "type": "number",
+                  "value": 503
+                },
+                "shiftKey": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "sourceCapabilities": {
+                  "type": "string",
+                  "value": "[object InputDeviceCapabilities]"
+                },
+                "target": {
+                  "type": "string",
+                  "value": "<button id=\"test4\" class=\"btn btn-danger\">Ajax JSON A</button>"
+                },
+                "timeStamp": {
+                  "type": "number",
+                  "value": 27707.295000000002
+                },
+                "toElement": {
+                  "type": "string",
+                  "value": "<button id=\"test4\" class=\"btn btn-danger\">Ajax JSON A</button>"
+                },
+                "type": {
+                  "type": "string",
+                  "value": "click"
+                },
+                "view": {
+                  "type": "string",
+                  "value": "[object Window]"
+                },
+                "which": {
+                  "type": "number",
+                  "value": 1
+                },
+                "x": {
+                  "type": "number",
+                  "value": 79
+                },
+                "y": {
+                  "type": "number",
+                  "value": 347
+                }
+              },
+              "truncated": {
+                "keys": {
+                  "amount": 2
+                }
+              }
+            }
+          }
+        ],
+        "this": {
+          "type": "object",
+          "preview": "[object Object]",
+          "ownProperties": {}
+        }
+      }
+    ],
+    "nodeName": "request.open"
+  },
+  {
+    "timestamp": 1488229950565,
+    "tick": 8,
+    "invocationId": "0.39396259123198507-8",
+    "topLevelInvocationId": "0.39396259123198507-5",
+    "nodeId": "http://localhost:3004/javascripts/home.js-callsite-16-2-16-16",
+    "arguments": [],
+    "this": {
+      "type": "object",
+      "preview": "[object Object]",
+      "ownProperties": {}
+    },
+    "parents": [
+      {
+        "invocationId": "0.39396259123198507-5",
+        "type": "call",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 16,
+        "column": 2
+      },
+      "end": {
+        "line": 16,
+        "column": 16
+      },
+      "id": "http://localhost:3004/javascripts/home.js-callsite-16-2-16-16",
+      "source": "request.send()",
+      "type": "callsite",
+      "name": "request.send",
+      "nameStart": {
+        "line": 16,
+        "column": 10
+      },
+      "nameEnd": {
+        "line": 16,
+        "column": 14
+      },
+      "startLine": 16,
+      "startColumn": 2,
+      "endLine": 16,
+      "endColumn": 16
+    },
+    "callStack": [
+      {
+        "timestamp": 1488229950563,
+        "tick": 5,
+        "invocationId": "0.39396259123198507-5",
+        "topLevelInvocationId": "0.39396259123198507-5",
+        "nodeId": "http://localhost:3004/javascripts/home.js-function-11-20-17-2",
+        "arguments": [
+          {
+            "value": {
+              "type": "object",
+              "preview": "[object Object]",
+              "ownProperties": {
+                "eventName": {
+                  "type": "string",
+                  "value": "[object MouseEvent]"
+                },
+                "altKey": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "bubbles": {
+                  "type": "boolean",
+                  "value": true
+                },
+                "button": {
+                  "type": "number",
+                  "value": 0
+                },
+                "buttons": {
+                  "type": "number",
+                  "value": 0
+                },
+                "cancelBubble": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "cancelable": {
+                  "type": "boolean",
+                  "value": true
+                },
+                "clientX": {
+                  "type": "number",
+                  "value": 79
+                },
+                "clientY": {
+                  "type": "number",
+                  "value": 347
+                },
+                "composed": {
+                  "type": "boolean",
+                  "value": true
+                },
+                "ctrlKey": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "currentTarget": {
+                  "type": "string",
+                  "value": "<button id=\"test4\" class=\"btn btn-danger\">Ajax JSON A</button>"
+                },
+                "defaultPrevented": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "detail": {
+                  "type": "number",
+                  "value": 1
+                },
+                "eventPhase": {
+                  "type": "number",
+                  "value": 2
+                },
+                "fromElement": {
+                  "type": "null",
+                  "preview": "null"
+                },
+                "isTrusted": {
+                  "type": "boolean",
+                  "value": true
+                },
+                "layerX": {
+                  "type": "number",
+                  "value": 81
+                },
+                "layerY": {
+                  "type": "number",
+                  "value": -16
+                },
+                "metaKey": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "movementX": {
+                  "type": "number",
+                  "value": 0
+                },
+                "movementY": {
+                  "type": "number",
+                  "value": 0
+                },
+                "offsetX": {
+                  "type": "number",
+                  "value": 65
+                },
+                "offsetY": {
+                  "type": "number",
+                  "value": 16
+                },
+                "pageX": {
+                  "type": "number",
+                  "value": 79
+                },
+                "pageY": {
+                  "type": "number",
+                  "value": 347
+                },
+                "path": {
+                  "type": "string",
+                  "value": "body>div:eq(4)>div:eq(0)>button"
+                },
+                "relatedTarget": {
+                  "type": "null",
+                  "preview": "null"
+                },
+                "returnValue": {
+                  "type": "boolean",
+                  "value": true
+                },
+                "screenX": {
+                  "type": "number",
+                  "value": 87
+                },
+                "screenY": {
+                  "type": "number",
+                  "value": 503
+                },
+                "shiftKey": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "sourceCapabilities": {
+                  "type": "string",
+                  "value": "[object InputDeviceCapabilities]"
+                },
+                "target": {
+                  "type": "string",
+                  "value": "<button id=\"test4\" class=\"btn btn-danger\">Ajax JSON A</button>"
+                },
+                "timeStamp": {
+                  "type": "number",
+                  "value": 27707.295000000002
+                },
+                "toElement": {
+                  "type": "string",
+                  "value": "<button id=\"test4\" class=\"btn btn-danger\">Ajax JSON A</button>"
+                },
+                "type": {
+                  "type": "string",
+                  "value": "click"
+                },
+                "view": {
+                  "type": "string",
+                  "value": "[object Window]"
+                },
+                "which": {
+                  "type": "number",
+                  "value": 1
+                },
+                "x": {
+                  "type": "number",
+                  "value": 79
+                },
+                "y": {
+                  "type": "number",
+                  "value": 347
+                }
+              },
+              "truncated": {
+                "keys": {
+                  "amount": 2
+                }
+              }
+            }
+          }
+        ],
+        "this": {
+          "type": "object",
+          "preview": "[object Object]",
+          "ownProperties": {}
+        }
+      }
+    ],
+    "nodeName": "request.send"
+  },
+  {
+    "timestamp": 1488229950568,
+    "tick": 9,
+    "invocationId": "0.39396259123198507-9",
+    "topLevelInvocationId": "0.39396259123198507-9",
+    "nodeId": "http://localhost:3004/javascripts/home.js-function-5-27-10-2",
+    "arguments": [
+      {
+        "value": {
+          "type": "object",
+          "preview": "[object Object]",
+          "ownProperties": {
+            "eventName": {
+              "type": "string",
+              "value": "[object ProgressEvent]"
+            },
+            "altKey": {
+              "type": "undefined"
+            },
+            "bubbles": {
+              "type": "boolean",
+              "value": false
+            },
+            "button": {
+              "type": "undefined"
+            },
+            "buttons": {
+              "type": "undefined"
+            },
+            "cancelBubble": {
+              "type": "boolean",
+              "value": false
+            },
+            "cancelable": {
+              "type": "boolean",
+              "value": false
+            },
+            "clientX": {
+              "type": "undefined"
+            },
+            "clientY": {
+              "type": "undefined"
+            },
+            "composed": {
+              "type": "boolean",
+              "value": false
+            },
+            "ctrlKey": {
+              "type": "undefined"
+            },
+            "currentTarget": {
+              "type": "undefined"
+            },
+            "defaultPrevented": {
+              "type": "boolean",
+              "value": false
+            },
+            "detail": {
+              "type": "undefined"
+            },
+            "eventPhase": {
+              "type": "number",
+              "value": 2
+            },
+            "fromElement": {
+              "type": "null",
+              "preview": "null"
+            },
+            "isTrusted": {
+              "type": "boolean",
+              "value": true
+            },
+            "layerX": {
+              "type": "undefined"
+            },
+            "layerY": {
+              "type": "undefined"
+            },
+            "metaKey": {
+              "type": "undefined"
+            },
+            "movementX": {
+              "type": "undefined"
+            },
+            "movementY": {
+              "type": "undefined"
+            },
+            "offsetX": {
+              "type": "undefined"
+            },
+            "offsetY": {
+              "type": "undefined"
+            },
+            "pageX": {
+              "type": "undefined"
+            },
+            "pageY": {
+              "type": "undefined"
+            },
+            "path": {
+              "type": "null",
+              "preview": "null"
+            },
+            "relatedTarget": {
+              "type": "null",
+              "preview": "null"
+            },
+            "returnValue": {
+              "type": "boolean",
+              "value": true
+            },
+            "screenX": {
+              "type": "undefined"
+            },
+            "screenY": {
+              "type": "undefined"
+            },
+            "shiftKey": {
+              "type": "undefined"
+            },
+            "sourceCapabilities": {
+              "type": "null",
+              "preview": "null"
+            },
+            "target": {
+              "type": "undefined"
+            },
+            "timeStamp": {
+              "type": "number",
+              "value": 27715.435
+            },
+            "toElement": {
+              "type": "null",
+              "preview": "null"
+            },
+            "type": {
+              "type": "string",
+              "value": "load"
+            },
+            "view": {
+              "type": "null",
+              "preview": "null"
+            },
+            "which": {
+              "type": "undefined"
+            },
+            "x": {
+              "type": "undefined"
+            },
+            "y": {
+              "type": "undefined"
+            }
+          }
+        }
+      }
+    ],
+    "this": {
+      "type": "object",
+      "preview": "[object Object]",
+      "ownProperties": {}
+    },
+    "parents": [
+      {
+        "invocationId": "0.39396259123198507-2",
+        "type": "async",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 5,
+        "column": 27
+      },
+      "end": {
+        "line": 10,
+        "column": 2
+      },
+      "id": "http://localhost:3004/javascripts/home.js-function-5-27-10-2",
+      "source": "function () {\n  \"iso_1414e80e-036f-4bbd-81af-0d7aea34b985_iso\";\n  if (request.status >= 200 && request.status < 400) {\n   document.getElementById(\"jsonRes\").innerText = request.responseText;\n  }\n }",
+      "type": "function",
+      "name": "jsonResponseHandler",
+      "params": [],
+      "startLine": 5,
+      "startColumn": 27,
+      "endLine": 10,
+      "endColumn": 2
+    },
+    "callStack": [],
+    "nodeName": "jsonResponseHandler"
+  },
+  {
+    "timestamp": 1488229950569,
+    "tick": 10,
+    "invocationId": "0.39396259123198507-10",
+    "topLevelInvocationId": "0.39396259123198507-9",
+    "nodeId": "http://localhost:3004/javascripts/home.js-callsite-8-3-8-37",
+    "arguments": [
+      {
+        "value": {
+          "type": "string",
+          "value": "jsonRes"
+        }
+      }
+    ],
+    "this": {
+      "type": "object",
+      "preview": "[object Object]",
+      "ownProperties": {
+        "effect1": {
+          "type": "undefined"
+        },
+        "effect3": {
+          "type": "undefined"
+        }
+      }
+    },
+    "parents": [
+      {
+        "invocationId": "0.39396259123198507-9",
+        "type": "call",
+        "inbetween": []
+      }
+    ],
+    "node": {
+      "path": "http://localhost:3004/javascripts/home.js",
+      "start": {
+        "line": 8,
+        "column": 3
+      },
+      "end": {
+        "line": 8,
+        "column": 37
+      },
+      "id": "http://localhost:3004/javascripts/home.js-callsite-8-3-8-37",
+      "source": "document.getElementById(\"jsonRes\")",
+      "type": "callsite",
+      "name": "document.getElementById",
+      "nameStart": {
+        "line": 8,
+        "column": 12
+      },
+      "nameEnd": {
+        "line": 8,
+        "column": 26
+      },
+      "startLine": 8,
+      "startColumn": 3,
+      "endLine": 8,
+      "endColumn": 37
+    },
+    "callStack": [
+      {
+        "timestamp": 1488229950568,
+        "tick": 9,
+        "invocationId": "0.39396259123198507-9",
+        "topLevelInvocationId": "0.39396259123198507-9",
+        "nodeId": "http://localhost:3004/javascripts/home.js-function-5-27-10-2",
+        "arguments": [
+          {
+            "value": {
+              "type": "object",
+              "preview": "[object Object]",
+              "ownProperties": {
+                "eventName": {
+                  "type": "string",
+                  "value": "[object ProgressEvent]"
+                },
+                "altKey": {
+                  "type": "undefined"
+                },
+                "bubbles": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "button": {
+                  "type": "undefined"
+                },
+                "buttons": {
+                  "type": "undefined"
+                },
+                "cancelBubble": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "cancelable": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "clientX": {
+                  "type": "undefined"
+                },
+                "clientY": {
+                  "type": "undefined"
+                },
+                "composed": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "ctrlKey": {
+                  "type": "undefined"
+                },
+                "currentTarget": {
+                  "type": "undefined"
+                },
+                "defaultPrevented": {
+                  "type": "boolean",
+                  "value": false
+                },
+                "detail": {
+                  "type": "undefined"
+                },
+                "eventPhase": {
+                  "type": "number",
+                  "value": 2
+                },
+                "fromElement": {
+                  "type": "null",
+                  "preview": "null"
+                },
+                "isTrusted": {
+                  "type": "boolean",
+                  "value": true
+                },
+                "layerX": {
+                  "type": "undefined"
+                },
+                "layerY": {
+                  "type": "undefined"
+                },
+                "metaKey": {
+                  "type": "undefined"
+                },
+                "movementX": {
+                  "type": "undefined"
+                },
+                "movementY": {
+                  "type": "undefined"
+                },
+                "offsetX": {
+                  "type": "undefined"
+                },
+                "offsetY": {
+                  "type": "undefined"
+                },
+                "pageX": {
+                  "type": "undefined"
+                },
+                "pageY": {
+                  "type": "undefined"
+                },
+                "path": {
+                  "type": "null",
+                  "preview": "null"
+                },
+                "relatedTarget": {
+                  "type": "null",
+                  "preview": "null"
+                },
+                "returnValue": {
+                  "type": "boolean",
+                  "value": true
+                },
+                "screenX": {
+                  "type": "undefined"
+                },
+                "screenY": {
+                  "type": "undefined"
+                },
+                "shiftKey": {
+                  "type": "undefined"
+                },
+                "sourceCapabilities": {
+                  "type": "null",
+                  "preview": "null"
+                },
+                "target": {
+                  "type": "undefined"
+                },
+                "timeStamp": {
+                  "type": "number",
+                  "value": 27715.435
+                },
+                "toElement": {
+                  "type": "null",
+                  "preview": "null"
+                },
+                "type": {
+                  "type": "string",
+                  "value": "load"
+                },
+                "view": {
+                  "type": "null",
+                  "preview": "null"
+                },
+                "which": {
+                  "type": "undefined"
+                },
+                "x": {
+                  "type": "undefined"
+                },
+                "y": {
+                  "type": "undefined"
+                }
+              }
+            }
+          }
+        ],
+        "this": {
+          "type": "object",
+          "preview": "[object Object]",
+          "ownProperties": {}
+        }
+      }
+    ],
+    "nodeName": "document.getElementById"
+  }
+]
