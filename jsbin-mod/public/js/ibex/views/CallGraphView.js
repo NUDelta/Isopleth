@@ -224,47 +224,47 @@ def([
 
     markAjax: function () {
       _(this.invokes).each(function (invoke) {
-        if (
-          invoke.arguments &&
-          invoke.arguments[0] &&
-          invoke.arguments[0].value &&
-          invoke.arguments[0].value.ownProperties &&
-          invoke.arguments[0].value.ownProperties.eventName &&
-          invoke.arguments[0].value.ownProperties.eventName.value &&
-          invoke.arguments[0].value.ownProperties.eventName.value.toLowerCase().indexOf("event") > -1 &&
-          invoke.arguments[0].value.ownProperties.type &&
-          invoke.arguments[0].value.ownProperties.type.value
-        ) {
-          if (invoke.arguments[0].value.ownProperties.type.value === "load" ||
-            invoke.arguments[0].value.ownProperties.type.value === "readystatechange") {
-            this.graphData.nodes.update({
-              id: invoke.invocationId,
-              color: "pink"
-            });
+        var arg = _(invoke.arguments).find(function (arg) {
+          try {
+            if (arg.value.ownProperties.type.value === "load" ||
+              arg.value.ownProperties.type.value === "readystatechange" ||
+              arg.value.ownProperties.type.value === "xmlhttprequest"
+            ) {
+              return arg;
+            }
+          } catch (ignored) {
           }
+          return false;
+        }, this);
+
+        if (arg) {
+          this.graphData.nodes.update({
+            id: invoke.invocationId,
+            color: "pink"
+          });
         }
       }, this);
     },
 
     markClick: function () {
       _(this.invokes).each(function (invoke) {
-        if (
-          invoke.arguments &&
-          invoke.arguments[0] &&
-          invoke.arguments[0].value &&
-          invoke.arguments[0].value.ownProperties &&
-          invoke.arguments[0].value.ownProperties.eventName &&
-          invoke.arguments[0].value.ownProperties.eventName.value &&
-          invoke.arguments[0].value.ownProperties.eventName.value.toLowerCase().indexOf("event") > -1 &&
-          invoke.arguments[0].value.ownProperties.type &&
-          invoke.arguments[0].value.ownProperties.type.value
-        ) {
-          if (invoke.arguments[0].value.ownProperties.type.value === "click") {
-            this.graphData.nodes.update({
-              id: invoke.invocationId,
-              color: "orange"
-            });
+        var arg = _(invoke.arguments).find(function (arg) {
+          try {
+            if (invoke.arguments[0].value.ownProperties.eventName.value.toLowerCase().indexOf("event") > -1 &&
+              invoke.arguments[0].value.ownProperties.type.value === "click"
+            ) {
+              return arg;
+            }
+          } catch (ignored) {
           }
+          return false;
+        });
+
+        if (arg) {
+          this.graphData.nodes.update({
+            id: invoke.invocationId,
+            color: "orange"
+          });
         }
       }, this);
     },
