@@ -147,35 +147,33 @@ define([], function () {
             }
             console.log("emitNodeActivity:", arrInvocations.length, "invocations");
 
-            var nodeMap = __tracer.getNodeMap();
+            // var nodeMap = __tracer.getNodeMap();
             //For each one, get its callStack, up to 10 deep
-            unravelAgent._(arrInvocations).each(function (invocation) {
-              //Give this invocation a nodename too
-              var node = nodeMap[invocation.nodeId];
-              if (!node.startLine) {
-                node.startLine = node.start.line;
-                node.startColumn = node.start.column;
-                node.endLine = node.end.line;
-                node.endColumn = node.end.column;
-              }
-
-              invocation.node = node;
-              // if (node.domQuery || this.isDomQueryNode(node)) {
-
-              //TODO CAUTION, Backtracing is majorly perf intensive!!!
-              invocation.callStack = unravelAgent._(__tracer.backtrace({
-                invocationId: invocation.invocationId,
-                range: [0, FondueBridge.MAX_STACK_DEPTH]
-              })).reverse();
-
-              //Remove the last item on the stack, === the invocation
-              if (invocation.callStack.length > 0) {
-                invocation.callStack.pop();
-              }
-              // } else {
-              //   invocation.callStack = [];
-              // }
-            }, this);
+            // unravelAgent._(arrInvocations).each(function (invocation) {
+            //   var node = nodeMap[invocation.nodeId];
+            //   if (!node.startLine) {
+            //     node.startLine = node.start.line;
+            //     node.startColumn = node.start.column;
+            //     node.endLine = node.end.line;
+            //     node.endColumn = node.end.column;
+            //   }
+            //
+            //   invocation.node = node;
+            //   if (node.domQuery || this.isDomQueryNode(node)) {
+            //
+            //     invocation.callStack = unravelAgent._(__tracer.backtrace({
+            //       invocationId: invocation.invocationId,
+            //       range: [0, FondueBridge.MAX_STACK_DEPTH]
+            //     })).reverse();
+            //
+            //     //Remove the last item on the stack, === the invocation
+            //     if (invocation.callStack.length > 0) {
+            //       invocation.callStack.pop();
+            //     }
+            //   } else {
+            //     invocation.callStack = [];
+            //   }
+            // }, this);
 
             // if (arrInvocations.length < FondueBridge.MAX_LOG_COUNT) {
             // if (unravelAgent.scriptLoadComplete) {

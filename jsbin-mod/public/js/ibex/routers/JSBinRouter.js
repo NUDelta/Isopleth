@@ -10,6 +10,7 @@ def([
   "../views/CodeMirrorCSSView",
   "../views/HTMLJSLinksView",
   "../views/FluidView",
+  "../graphs/InvokeGraph",
   "../collections/SourceCollection",
   "../collections/ActiveNodeCollection",
   "../routers/JSBinSocketRouter"
@@ -22,6 +23,7 @@ def([
              CodeMirrorCSSView,
              HTMLJSLinksView,
              FluidView,
+             InvokeGraph,
              SourceCollection,
              ActiveNodeCollection,
              JSBinSocketRouter) {
@@ -46,7 +48,8 @@ def([
       });
 
       this.codeMirrorJSView = new CodeMirrorJSView(this.codeMirrors, this.sourceCollection, this.activeNodeCollection, this);
-      this.fluidView = new FluidView(this.codeMirrors, this.sourceCollection, this.activeNodeCollection, this);
+      this.invokeGraph = new InvokeGraph(this.codeMirrors, this.sourceCollection, this.activeNodeCollection, this);
+      this.fluidView = new FluidView(this.codeMirrors, this.sourceCollection, this.activeNodeCollection, this.invokeGraph, this);
       this.fluidView.render();
       this.codeMirrorHTMLView = new CodeMirrorHTMLView(this.codeMirrors, this.activeNodeCollection, this);
       this.dropDownJSView = new DropDownJSView(this.sourceCollection, this.codeMirrorJSView);
@@ -83,7 +86,8 @@ def([
         this.totalInvocations += obj.invocations.length;
         console.log("Total Invocations Stored:", this.totalInvocations);
 
-        this.activeNodeCollection.mergeInvocations(obj.invocations);
+        this.invokeGraph.addInvokes(obj.invocations);
+        // this.activeNodeCollection.mergeInvocations(obj.invocations);
 
         if (!this.sourceCollection.length) {
           return;
@@ -94,7 +98,6 @@ def([
             this.codeMirrorJSView.showSources();
             this.codeMirrorHTMLView.render();
             this.headerControlView.renderSlider();
-            this.fluidView.onInvokes();
             // this.headerControlView.renderPlot();
           }
         }

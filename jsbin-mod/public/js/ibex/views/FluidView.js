@@ -13,7 +13,8 @@ def([
 
     el: "#fluidView",
 
-    initialize: function (codeMirrors, sourceCollection, activeNodeCollection, jsBinRouter) {
+    initialize: function (codeMirrors, sourceCollection, activeNodeCollection, invokeGraph, jsBinRouter) {
+      this.invokeGraph = invokeGraph;
       this.codeMirrors = codeMirrors;
       this.sourceCollection = sourceCollection;
       this.activeNodeCollection = activeNodeCollection;
@@ -25,83 +26,16 @@ def([
       this.$el.append(this.template());
     },
 
-    onInvokes: function () {
-      // this.$(".container").empty();
-      // this.backtraceAsyncEvent();
-    },
-
-    processInvokes: function () {
-      this.invocations = [];
-      this.invokeIdMap = {};
-      this.topLevelInvokes = [];
-
-      _(this.activeNodeCollection.getGeneralNodes()).each(function (nodeModel) {
-        var invokes = nodeModel.get("invokes");
-        _(invokes).each(function (invoke) {
-          if (!invoke.timestamp) {
-            return;
-          }
-
-          this.invokeIdMap[invoke.invocationId] = invoke;
-          this.invocations.push(invoke);
-        }, this);
-      }, this);
-
-      this.invocations.sort(function (a, b) {
-        if (a.timestamp > b.timestamp) {
-          return 1;
-        } else if (a.timestamp < b.timestamp) {
-          return -1;
-        } else {
-          // Secondary sort on tick
-          if (a.tick > b.tick) {
-            return 1;
-          } else if (a.tick < b.tick) {
-            return -1;
-          } else {
-            return 0;
-          }
-        }
-      });
-
-      // Draw missing async links in graph
-      // _(invocations).each(function (invoke) {
-      //   if (invoke.node.type === "function") {
-      //     if (invoke.topLevelInvocationId === invoke.invocationId) {
-      //       topLevelInvokes.push(invoke);
-      //
-      //       // Search for async parent
-      //       _(invocations).each(function (bInvoke) {
-      //         var argMatch = _(bInvoke.arguments).find(function (arg) {
-      //           return arg.value && arg.value.type === "function"
-      //             && arg.value.json === invoke.node.source;
-      //         });
-      //
-      //         if (argMatch) {
-      //           if (invoke.asyncParentInvokeIds) {
-      //             invoke.asyncParentInvokeIds.push(bInvoke.invocationId);
-      //           } else {
-      //             invoke.asyncParentInvokeIds = [bInvoke.invocationId];
-      //           }
-      //         }
-      //       });
-      //     }
-      //   }
-      // });
-    },
-
     showCallGraph: function () {
       this.$(".container").empty();
-      this.processInvokes();
 
-      var callGraphView = new CallGraphView(this.invocations, this.invokeIdMap);
-      this.$(".container").append(callGraphView.el);
+      var callGraphView = new CallGraphView(this.invokeGraph);
+      this.$(".container").append(callGraphView.$el);
       callGraphView.drawGraph();
     },
 
     backtraceAsyncEvent: function () {
       this.$(".container").empty();
-      this.processInvokes();
 
       var lastInvoke = _(this.topLevelInvokes).last();
       if (!lastInvoke || !lastInvoke.asyncParentInvokeIds) {

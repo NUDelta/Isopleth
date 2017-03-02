@@ -31,8 +31,6 @@ def([
       }, this);
 
       this.empty = _.bind(this.empty, this);
-
-      window.activeNodeCollection = this;
     },
 
     getEarliestTimeStamp: function () {
@@ -67,7 +65,7 @@ def([
     setTimeStampBounds: function (minInvokeTime, maxInvokeTime) {
       this.minInvokeTime = minInvokeTime;
       this.maxInvokeTime = maxInvokeTime;
-      this.populateQueryNodeMap();
+      // this.populateQueryNodeMap();
     },
 
     mergeNodes: function (arrNodes) {
@@ -86,7 +84,7 @@ def([
         console.log("\tActiveNodeCollection: Added " + nodesCreated + " new nodes.");
       }
 
-      this.populateQueryNodeMap();
+      // this.populateQueryNodeMap();
     },
 
     mergeInvocations: function (arrInvocations) {
@@ -95,39 +93,39 @@ def([
       //   return;
       // }
 
-      var nodesCreated = 0;
-      _(arrInvocations).each(function (invocation) {
-        var node = invocation.node;
-        invocation.nodeName = node && node.name ? node.name : "";
+      // var nodesCreated = 0;
+      // _(arrInvocations).each(function (invocation) {
+      //   var node = invocation.node;
+      //   invocation.nodeName = node && node.name ? node.name : "";
+      //
+      //   var timestamp = invocation.timestamp;
+      //
+      //   if (!this.earliestTimeStamp || timestamp < this.earliestTimeStamp) {
+      //     this.earliestTimeStamp = timestamp;
+      //   }
+      //   if (!this.latestTimeStamp || timestamp > this.latestTimeStamp) {
+      //     this.latestTimeStamp = timestamp;
+      //   }
+      //
+      //   var activeNodeModel = this.get(invocation.nodeId);
+      //   if (!activeNodeModel) {
+      //     activeNodeModel = new ActiveNodeModel(node);
+      //     this.add(activeNodeModel);
+      //     nodesCreated++;
+      //   }
+      //
+      //   var invokeArr = activeNodeModel.get("invokes") || [];
+      //
+      //   if (invokeArr.length < 100) {
+      //     invokeArr.push(invocation);
+      //     activeNodeModel.set("invokes", invokeArr);
+      //   }
+      // }, this);
+      // if (nodesCreated) {
+      //   console.log("\tActiveNodeCollection: Added " + nodesCreated + " new nodes.");
+      // }
 
-        var timestamp = invocation.timestamp;
-
-        if (!this.earliestTimeStamp || timestamp < this.earliestTimeStamp) {
-          this.earliestTimeStamp = timestamp;
-        }
-        if (!this.latestTimeStamp || timestamp > this.latestTimeStamp) {
-          this.latestTimeStamp = timestamp;
-        }
-
-        var activeNodeModel = this.get(invocation.nodeId);
-        if (!activeNodeModel) {
-          activeNodeModel = new ActiveNodeModel(node);
-          this.add(activeNodeModel);
-          nodesCreated++;
-        }
-
-        var invokeArr = activeNodeModel.get("invokes") || [];
-
-        if (invokeArr.length < 100) {
-          invokeArr.push(invocation);
-          activeNodeModel.set("invokes", invokeArr);
-        }
-      }, this);
-      if (nodesCreated) {
-        console.log("\tActiveNodeCollection: Added " + nodesCreated + " new nodes.");
-      }
-
-      this.populateQueryNodeMap();
+      // this.populateQueryNodeMap();
     },
 
     empty: function () {

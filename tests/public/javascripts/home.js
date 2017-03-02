@@ -50,8 +50,13 @@
 // jsonA();
 
 function jsonB() {
-  var jsonResponseHandler = function (data,status,xhr) {
+  var secondHandler = function(){
+    console.log('foo bar')
+  };
+
+  var jsonResponseHandler = function (data, status, xhr) {
     $("#jsonRes").text(JSON.stringify(data));
+    setTimeout(secondHandler, 1000);
   };
 
   var jsonGetterFn = function () {

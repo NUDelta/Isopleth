@@ -3,8 +3,9 @@ def([
   "backbone",
   "underscore",
   "handlebars",
+  "../util/util",
   "text!../templates/SourceListPanel.html"
-], function ($, Backbone, _, Handlebars, panelTemplate) {
+], function ($, Backbone, _, Handlebars, util, panelTemplate) {
   return Backbone.View.extend({
     template: Handlebars.compile(panelTemplate),
 
@@ -15,25 +16,6 @@ def([
       "click .fondue-file-link": "scrollFileClicked",
       "click .fondue-toggle-file": "toggleFileClicked"
     },
-
-    // But don't block instrumentation on the server,
-    // because we need the full traces through the libs
-    _blockLibs: _([
-      "a3c5de",
-      "jquery",
-      "moderniz",
-      "zepto",
-      "plugins",
-      "moment",
-      "underscore",
-      "backbone",
-      "require",
-      "angular",
-      "react",
-      "handlebars",
-      "html5shiv",
-      "underscore"
-    ]),
 
     initialize: function (sourceCollection, codeMirrorJSView) {
       this.sourceCollection = sourceCollection;
@@ -116,11 +98,7 @@ def([
         var $el = this.$el.find(el);
         var text = $el.text();
 
-        var blockedLib = this._blockLibs.find(function (lib) {
-          if (text.toLowerCase().indexOf(lib) > -1) {
-            return true;
-          }
-        }, this);
+        var blockedLib = util.isKnownLibrary(text);
 
         var sourceModel = this.getModelFromEl($el);
         if (blockedLib) {

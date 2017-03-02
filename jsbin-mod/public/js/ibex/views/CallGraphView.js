@@ -20,100 +20,33 @@ def([
       "click #drawJoshAsync": "drawJoshAsync",
       "click #pruneGraph": "pruneGraph",
       "click #resetGraph": "resetGraph",
-      "click #markAjax": "markAjax",
+      "click #markAjaxRequest": "markAjaxRequest",
+      "click #markAjaxResponse": "markAjaxResponse",
       "click #markClick": "markClick",
+      "click #drawWithLib": "drawWithLib",
     },
 
-    initialize: function (invokes, invokeIdMap) {
-      this.invokes = invokes;
-      this.invokeIdMap = invokeIdMap;
-      this.$el.append(this.template({}));
-    },
-
-    calculateInvokeGraph: function () {
-      this.nativeInvokes = [];
-      this.topLevelInvokes = [];
-      var invokes = this.invokes;
-      var nodes = [];
-      var edges = [];
-      _(invokes).each(function (invoke) {
-        invoke.children = null;
-        invoke.visited = null;
-        invoke.isLib = null;
-      });
-
-      _(invokes).each(function (invoke) {
-        if (invoke.topLevelInvocationId === invoke.invocationId) {
-          this.topLevelInvokes.push(invoke);
-        }
-
-        invoke.isLib = invoke.node.id.indexOf("zepto") > -1;
-        var graphNode = {
-          id: invoke.invocationId,
-          label: invoke.node.name && invoke.node.name.length < 44 ? invoke.node.name : "",
-          title: invoke.node.source,
-          color: "yellow"
-        };
-
-        if (!invoke.isLib) {
-          this.nativeInvokes.push(invoke);
-        }
-
-        nodes.push(graphNode);
-        invoke.graphNode = graphNode;
-
-        _(invoke.parents).each(function (parent) {
-          if (parent.type === "async") {
-            //do nothing;
-          } else {
-            edges.push({from: parent.invocationId, to: invoke.invocationId, color: 'blue'});
-            if (!this.invokeIdMap[parent.invocationId].children) {
-              this.invokeIdMap[parent.invocationId].children = [];
-            }
-            this.invokeIdMap[parent.invocationId].children.push(invoke);
-          }
-        }, this);
-      }, this);
-
-      var count = 0;
-      this.nativeRoots = [];
-      var findNativeRoots = _.bind(function (invoke) {
-        invoke.visited = true;
-
-        var hasAsyncOrLibParent = _(invoke.parents).find(function (p) {
-          return p.type === "async" || this.invokeIdMap[p.invocationId].isLib
-        }, this);
-        if (!invoke.isLib && (!invoke.parents || hasAsyncOrLibParent)) {
-          this.nativeRoots.push(invoke);
-        }
-
-        _(invoke.children).each(function (childNode) {
-          findNativeRoots(childNode);
-        });
-
-        invoke.visited = false;
-
-        count++;
-      }, this);
-
-      _(this.topLevelInvokes).each(findNativeRoots, this);
-
-      return {
-        nodes: nodes, edges: edges
-      };
+    initialize: function (invokeGraph) {
+      this.invokeGraph = invokeGraph;
+      this.$el.attr("id", "callGraphView");
+      this.$el.html(this.template({}));
+      this.showLibs = false;
     },
 
     drawGraph: function () {
-      var invokeGraph = this.calculateInvokeGraph();
-
       var layoutMethod = "directed";
       this.$("#invokeGraph").empty();
       var container = this.$("#invokeGraph")[0];
 
       var nodeDataSet = new vis.DataSet();
-      nodeDataSet.add(invokeGraph.nodes);
+
+      if (this.showLibs) {
+        nodeDataSet.add(this.invokeGraph.visualGraph.nodes);
+      } else {
+        nodeDataSet.add(this.invokeGraph.visualGraph.nativeNodes);
+      }
       var edgeDataSet = new vis.DataSet();
-      edgeDataSet.add(invokeGraph.edges);
+      edgeDataSet.add(this.invokeGraph.visualGraph.edges);
 
       this.graphData = {
         nodes: nodeDataSet,
@@ -136,15 +69,42 @@ def([
         }
       };
 
-      var network = new vis.Network(container, this.graphData, options);
+      this.network = new vis.Network(container, this.graphData, options);
     },
 
-    resetGraph: function () {
+    drawWithLib: function () {
+      this.showLibs = true;
       this.drawGraph();
     },
 
-    markNonLib: function () {
-      _(this.nativeInvokes).each(function (invoke) {
+    resetGraph: function () {
+      this.showLibs = false;
+      this.drawGraph();
+    },
+
+    markTopLevelNonLib: function () {
+      _(this.invokeGraph.nativeRootInvokes).each(function (invoke) {
+        this.graphData.nodes.update({
+          id: invoke.invocationId,
+          color: "teal"
+        });
+      }, this);
+    },
+
+    drawJoshAsync: function () {
+      _(this.invokeGraph.visualGraph.asyncSerialEdges).each(function (edge) {
+        this.graphData.edges.add(edge);
+      }, this);
+    },
+
+    drawTomAsync: function () {
+      _(this.invokeGraph.visualGraph.asyncEdges).each(function (edge) {
+        this.graphData.edges.add(edge);
+      }, this);
+    },
+
+    markAjaxRequest: function () {
+      _(this.invokeGraph.ajaxRequests).each(function (invoke) {
         this.graphData.nodes.update({
           id: invoke.invocationId,
           color: "red"
@@ -152,121 +112,81 @@ def([
       }, this);
     },
 
-    markTopLevelNonLib: function () {
-      _(this.nativeRoots).each(function (invoke) {
+    markAjaxResponse: function () {
+      _(this.invokeGraph.ajaxResponses).each(function (invoke) {
         this.graphData.nodes.update({
           id: invoke.invocationId,
-          color: "green"
+          color: "pink"
         });
-      }, this);
-    },
-
-    drawJoshAsync: function () {
-      var traverseInvokeTreeForArg = function (invoke, fromId, source, edges) {
-        var argMatch = _(invoke.arguments).find(function (arg) {
-          return arg.value && arg.value.type === "function"
-            && arg.value.json === source;
-        });
-
-        if (argMatch) {
-          edges.push({from: fromId, to: invoke.invocationId, color: "purple"});
-        }
-
-        _(invoke.children).each(function (child) {
-          traverseInvokeTreeForArg(child, fromId, source, edges);
-        });
-      };
-
-      _(this.nativeRoots).each(function (aInvoke) {
-        var edges = [];
-
-        _(this.nativeRoots).each(function (bInvoke) {
-          if (aInvoke.invocationId !== bInvoke.invocationId) {
-            if (aInvoke.node.source) {
-              traverseInvokeTreeForArg(bInvoke, aInvoke.invocationId, aInvoke.node.source, edges);
-            }
-          }
-        });
-
-        _(edges).each(function (edge) {
-          this.graphData.edges.add(edge);
-        }, this);
-      }, this);
-    },
-
-    drawTomAsync: function () {
-      _(this.nativeRoots).each(function (aInvoke) {
-        var edges = [];
-
-        _(this.nativeRoots).each(function (bInvoke) {
-          if (aInvoke.invocationId !== bInvoke.invocationId) {
-            if (aInvoke.parents && aInvoke.parents[0] &&
-              aInvoke.parents[0].type && aInvoke.parents[0].type === "async") {
-              edges.push({from: aInvoke.invocationId, to: aInvoke.parents[0].invocationId, color: "green"})
-            }
-          }
-        });
-
-        _(edges).each(function (edge) {
-          this.graphData.edges.add(edge);
-        }, this);
-      }, this);
-    },
-
-    pruneGraph: function () {
-      var ids = _(this.nativeInvokes).pluck("invocationId");
-      var without = _(this.invokeIdMap).chain().keys().difference(ids).value();
-
-      _(without).each(function (id) {
-        this.graphData.nodes.remove({id: id})
-      }, this);
-    },
-
-    markAjax: function () {
-      _(this.invokes).each(function (invoke) {
-        var arg = _(invoke.arguments).find(function (arg) {
-          try {
-            if (arg.value.ownProperties.type.value === "load" ||
-              arg.value.ownProperties.type.value === "readystatechange" ||
-              arg.value.ownProperties.type.value === "xmlhttprequest"
-            ) {
-              return arg;
-            }
-          } catch (ignored) {
-          }
-          return false;
-        }, this);
-
-        if (arg) {
-          this.graphData.nodes.update({
-            id: invoke.invocationId,
-            color: "pink"
-          });
-        }
       }, this);
     },
 
     markClick: function () {
-      _(this.invokes).each(function (invoke) {
-        var arg = _(invoke.arguments).find(function (arg) {
-          try {
-            if (invoke.arguments[0].value.ownProperties.eventName.value.toLowerCase().indexOf("event") > -1 &&
-              invoke.arguments[0].value.ownProperties.type.value === "click"
-            ) {
-              return arg;
-            }
-          } catch (ignored) {
-          }
-          return false;
+      _(this.invokeGraph.clickHandlers).each(function (invoke) {
+        this.graphData.nodes.update({
+          id: invoke.invocationId,
+          color: "violet"
         });
-
-        if (arg) {
-          this.graphData.nodes.update({
-            id: invoke.invocationId,
-            color: "orange"
-          });
-        }
       }, this);
     },
+
+    // drawGraphCyto: function () {
+    //   this.$("#invokeGraph").empty();
+    //
+    //   var useNodes = this.invokeGraph.visualGraph.nodes;
+    //
+    //   if (!this.showLibs) {
+    //     useNodes = this.invokeGraph.visualGraph.nativeNodes;
+    //   }
+    //
+    //   var nodes = _(useNodes).map(function (node) {
+    //     return {
+    //       data: {
+    //         id: node.id
+    //       }
+    //     };
+    //   });
+    //
+    //   var edges = _(this.invokeGraph.visualGraph.edges).map(function (node) {
+    //     return {
+    //       data: {source: node.from, target: node.to}
+    //     };
+    //   });
+    //
+    //   cytoscape({
+    //     container: this.$("#invokeGraph")[0],
+    //     boxSelectionEnabled: false,
+    //     autounselectify: true,
+    //     layout: {
+    //       name: 'dagre'
+    //     },
+    //     style: [
+    //       {
+    //         selector: 'node',
+    //         style: {
+    //           'content': 'data(id)',
+    //           'text-opacity': 0.5,
+    //           'text-valign': 'center',
+    //           'text-halign': 'right',
+    //           'background-color': '#11479e'
+    //         }
+    //       },
+    //       {
+    //         selector: 'edge',
+    //         style: {
+    //           'width': 4,
+    //           'target-arrow-shape': 'triangle',
+    //           'line-color': '#9dbaea',
+    //           'target-arrow-color': '#9dbaea',
+    //           'curve-style': 'bezier'
+    //         }
+    //       }
+    //     ],
+    //     elements: {
+    //       nodes: nodes,
+    //       edges: edges
+    //     },
+    //   });
+    // },
   });
 });

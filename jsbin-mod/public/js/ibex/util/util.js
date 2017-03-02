@@ -5,6 +5,29 @@ def([
 ], function ($, Backbone, _) {
 
   return {
+    isKnownLibrary: function (testStr) {
+      return  !!_([
+        "a3c5de",
+        "jquery",
+        "moderniz",
+        "zepto",
+        "plugins",
+        "moment",
+        "underscore",
+        "backbone",
+        "require",
+        "angular",
+        "react",
+        "handlebars",
+        "html5shiv",
+        "underscore"
+      ]).find(function (lib) {
+        if (testStr.toLowerCase().indexOf(lib) > -1) {
+          return true;
+        }
+      });
+    },
+
     stringifyObjToHTML: function (obj) {
       var json = JSON.stringify(obj, null, 2);
 
