@@ -499,7 +499,7 @@ if (typeof {name} === 'undefined') {
 
 
     if (object && object.toString) {
-      if (object.toString().toLowerCase().indexOf("event") > -1) {
+      if (object.toString().toLowerCase().indexOf(" event]") > -1) {
         object = {
           eventName: object.toString ? object.toString() : null,
           altKey: object.altKey,
@@ -542,8 +542,16 @@ if (typeof {name} === 'undefined') {
           which: object.which,
           x: object.x,
           y: object.y
+        };
+
+        for (var k in object) {
+          if (object.hasOwnProperty(k)) {
+            if(object[k] === undefined){
+            	delete object[k];
+						}
+          }
         }
-      } else if (object.toString().toLowerCase().indexOf("xmlhttprequest") > -1){
+      } else if (object.toString().toLowerCase().indexOf(" xmlhttprequest]") > -1){
         object = {
           type: "xmlhttprequest",
           onabort: object.onabort,
@@ -562,6 +570,14 @@ if (typeof {name} === 'undefined') {
           statusText: object.statusText,
           timeout: object.timeout,
           withCredentials: object.withCredentials
+        };
+
+        for (var k in object) {
+          if (object.hasOwnProperty(k)) {
+            if(object[k] === undefined){
+            	delete object[k];
+						}
+          }
         }
       }
 
@@ -625,7 +641,7 @@ if (typeof {name} === 'undefined') {
 		this.f = nodeById[info.nodeId];
 		this.childLinks = [];
 		this.parentLinks = [];
-		this.returnValue = undefined;
+		this.returnValue = scrapeObject(info.returnValue);
 		this.exception = undefined;
 		this.topLevelInvocationId = undefined;
 		this.epochID = undefined;
@@ -1148,14 +1164,17 @@ if (typeof {name} === 'undefined') {
 
 		return function () {
 			info.arguments = Array.prototype.slice.apply(arguments); // XXX: mutating info may not be okay, but we want the arguments
-			var invocation = pushNewInvocation(info, 'callsite');
-
 			try {
 				// this used to be func.apply(t, arguments), but not all functions
 				// have apply. so we apply Function.apply instead.
 				var t = customThis ? fthis : this;
-				return Function.apply.apply(func, [t].concat(arguments));
+        var returnValue = Function.apply.apply(func, [t].concat(arguments));
+        debugger;
+        info.returnValue = returnValue;
+        return returnValue;
 			} finally {
+			  debugger;
+			  pushNewInvocation(info, 'callsite');
 				popInvocation();
 			}
 		}
