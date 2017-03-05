@@ -227,7 +227,7 @@ def([
       this.codeMirrors.js = codeMirrorInstance;
       this.codeMirrorJSView.showSources();
       //TODO ISOPLETH super hack, ship it!
-      $("#bin").css("width", "50%");
+      $("#bin").css("width", "20%");
       $(".binview.stretch").css("width", "100%");
       $($(".stretch.panelwrapper")[0]).hide();
       $("body").css("background", "#fff");

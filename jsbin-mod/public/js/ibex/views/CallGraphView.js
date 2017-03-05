@@ -33,7 +33,7 @@ def([
       this.showLibs = false;
     },
 
-    drawGraph: function () {
+    drawGraphVis: function () {
       var layoutMethod = "directed";
       this.$("#invokeGraph").empty();
       var container = this.$("#invokeGraph")[0];
@@ -84,109 +84,134 @@ def([
 
     markTopLevelNonLib: function () {
       _(this.invokeGraph.nativeRootInvokes).each(function (invoke) {
-        this.graphData.nodes.update({
-          id: invoke.invocationId,
-          color: "teal"
-        });
+        this.cy.elements('node[id = "' + invoke.invocationId + '"]')
+          .style({"background-color": "teal"});
+        // this.graphData.nodes.update({
+        //   id: invoke.invocationId,
+        //   color: "teal"
+        // });
       }, this);
     },
 
     drawJoshAsync: function () {
       _(this.invokeGraph.visualGraph.asyncSerialEdges).each(function (edge) {
-        this.graphData.edges.add(edge);
+        this.cy.add({
+          group: 'edges', data: {
+            source: edge.from,
+            target: edge.to,
+            color: edge.color
+          }
+        });
+        // this.graphData.edges.add(edge);
       }, this);
     },
 
     drawTomAsync: function () {
       _(this.invokeGraph.visualGraph.asyncEdges).each(function (edge) {
-        this.graphData.edges.add(edge);
+        this.cy.add({
+          group: 'edges', data: {
+            source: edge.from,
+            target: edge.to,
+            color: edge.color
+          }
+        });
+        //this.graphData.edges.add(edge);
       }, this);
     },
 
     markAjaxRequest: function () {
       _(this.invokeGraph.ajaxRequests).each(function (invoke) {
-        this.graphData.nodes.update({
-          id: invoke.invocationId,
-          color: "red"
-        });
+        this.cy.elements('node[id = "' + invoke.invocationId + '"]')
+          .style({"background-color": "red"});
+        // this.graphData.nodes.update({
+        //   id: invoke.invocationId,
+        //   color: "red"
+        // });
       }, this);
     },
 
     markAjaxResponse: function () {
       _(this.invokeGraph.ajaxResponses).each(function (invoke) {
-        this.graphData.nodes.update({
-          id: invoke.invocationId,
-          color: "pink"
-        });
+        this.cy.elements('node[id = "' + invoke.invocationId + '"]')
+          .style({"background-color": "pink"});
+        // this.graphData.nodes.update({
+        //   id: invoke.invocationId,
+        //   color: "pink"
+        // });
       }, this);
     },
 
     markClick: function () {
       _(this.invokeGraph.clickHandlers).each(function (invoke) {
-        this.graphData.nodes.update({
-          id: invoke.invocationId,
-          color: "violet"
-        });
+        this.cy.elements('node[id = "' + invoke.invocationId + '"]')
+          .style({"background-color": "violet"});
+        // this.graphData.nodes.update({
+        //   id: invoke.invocationId,
+        //   color: "violet"
+        // });
       }, this);
     },
 
-    // drawGraphCyto: function () {
-    //   this.$("#invokeGraph").empty();
-    //
-    //   var useNodes = this.invokeGraph.visualGraph.nodes;
-    //
-    //   if (!this.showLibs) {
-    //     useNodes = this.invokeGraph.visualGraph.nativeNodes;
-    //   }
-    //
-    //   var nodes = _(useNodes).map(function (node) {
-    //     return {
-    //       data: {
-    //         id: node.id
-    //       }
-    //     };
-    //   });
-    //
-    //   var edges = _(this.invokeGraph.visualGraph.edges).map(function (node) {
-    //     return {
-    //       data: {source: node.from, target: node.to}
-    //     };
-    //   });
-    //
-    //   cytoscape({
-    //     container: this.$("#invokeGraph")[0],
-    //     boxSelectionEnabled: false,
-    //     autounselectify: true,
-    //     layout: {
-    //       name: 'dagre'
-    //     },
-    //     style: [
-    //       {
-    //         selector: 'node',
-    //         style: {
-    //           'content': 'data(id)',
-    //           'text-opacity': 0.5,
-    //           'text-valign': 'center',
-    //           'text-halign': 'right',
-    //           'background-color': '#11479e'
-    //         }
-    //       },
-    //       {
-    //         selector: 'edge',
-    //         style: {
-    //           'width': 4,
-    //           'target-arrow-shape': 'triangle',
-    //           'line-color': '#9dbaea',
-    //           'target-arrow-color': '#9dbaea',
-    //           'curve-style': 'bezier'
-    //         }
-    //       }
-    //     ],
-    //     elements: {
-    //       nodes: nodes,
-    //       edges: edges
-    //     },
-    //   });
-    // },
+    drawGraph: function () {
+      this.$("#invokeGraph").empty();
+
+      var useNodes = this.invokeGraph.visualGraph.nodes;
+
+      if (!this.showLibs) {
+        useNodes = this.invokeGraph.visualGraph.nativeNodes;
+      }
+
+      var nodes = _(useNodes).map(function (node) {
+        return {data: node};
+      });
+
+      var edges = _(this.invokeGraph.visualGraph.edges).map(function (node) {
+        return {
+          data: {
+            source: node.from,
+            target: node.to,
+            color: node.color
+          }
+        };
+      });
+
+      this.cy = cytoscape({
+        container: this.$("#invokeGraph")[0],
+        boxSelectionEnabled: false,
+        autounselectify: true,
+        layout: {
+          name: 'dagre',
+          pan: 'fix',
+          padding: '10',
+          minLen: function( edge ){ return 1; }
+        },
+        style: [
+          {
+            selector: 'node',
+            style: {
+              'content': 'data(label)',
+              'text-opacity': 0.5,
+              'text-valign': 'center',
+              'text-halign': 'center',
+              'background-color': 'data(color)'
+            }
+          },
+          {
+            selector: 'edge',
+            style: {
+              'width': 4,
+              'target-arrow-shape': 'triangle',
+              'line-color': 'data(color)',
+              'target-arrow-color': 'data(color)',
+              'curve-style': 'bezier'
+            }
+          }
+        ],
+        elements: {
+          nodes: nodes,
+          edges: edges
+        },
+      });
+    }
   });
 });

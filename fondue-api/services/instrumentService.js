@@ -57,21 +57,35 @@ module.exports = {
 
       var arrJS = [];
       var $ = cheerio.load(body);
-      var scripts = $("script");
-      _.each(scripts, function (scriptNode, i) {
+      var scripts = $("script").toArray();
+
+      var beautifyNext = function (scriptNode, i) {
+        var next = function () {
+          if (scripts.length) {
+            i++;
+            beautifyNext(scripts.pop(), i);
+          } else {
+            callback(arrJS);
+          }
+        };
+
         var $scriptEl = $(scriptNode);
         if (!$scriptEl.attr("src")) {
           var src = $scriptEl.html();
-          src = util.beautifyJS(src, url);
+          util.beautifyJS(src, url, function (src) {
+            arrJS.push({
+              order: i,
+              js: src
+            });
 
-          arrJS.push({
-            order: i,
-            js: src
+            next();
           });
+        } else {
+          next();
         }
-      });
+      };
 
-      callback(arrJS);
+      beautifyNext(scripts.pop(), 0);
     });
   },
 

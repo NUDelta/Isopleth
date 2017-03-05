@@ -499,59 +499,77 @@ if (typeof {name} === 'undefined') {
 
 
     if (object && object.toString) {
-      if (object.toString().toLowerCase().indexOf(" event]") > -1) {
-        object = {
-          eventName: object.toString ? object.toString() : null,
-          altKey: object.altKey,
-          bubbles: object.bubbles,
-          button: object.button,
-          buttons: object.buttons,
-          cancelBubble: object.cancelBubble,
-          cancelable: object.cancelable,
-          clientX: object.clientX,
-          clientY: object.clientY,
-          composed: object.composed,
-          ctrlKey: object.ctrlKey,
-          currentTarget: object.currentTarget ? object.currentTarget.outerHTML : null,
-          defaultPrevented: object.defaultPrevented,
-          detail: object.detail,
-          eventPhase: object.eventPhase,
-          fromElement: object.fromElement ? object.fromElement.outerHTML : null,
-          isTrusted: object.isTrusted,
-          layerX: object.layerX,
-          layerY: object.layerY,
-          metaKey: object.metaKey,
-          movementX: object.movementX,
-          movementY: object.movementY,
-          offsetX: object.offsetX,
-          offsetY: object.offsetY,
-          pageX: object.pageX,
-          pageY: object.pageY,
-          path: pathToSelector(object.path && object.path.length ? object.path[0] : null),
-          relatedTarget: object.relatedTarget ? object.relatedTarget.outerHTML : null,
-          returnValue: object.returnValue,
-          screenX: object.screenX,
-          screenY: object.screenY,
-          shiftKey: object.shiftKey,
-          sourceCapabilities: object.sourceCapabilities ? object.sourceCapabilities.toString() : null,
-          target: object.target ? object.target.outerHTML : null,
-          timeStamp: object.timeStamp,
-          toElement: object.toElement ? object.toElement.outerHTML : null,
-          type: object.type,
-          view: object.view ? object.view.toString() : null,
-          which: object.which,
-          x: object.x,
-          y: object.y
-        };
+      if (object.toString().toLowerCase().indexOf("mouseevent]") > -1) {
+      	var path;
+      	try{
+      		path = pathToSelector(object.path && object.path.length ? object.path[0] : null);
+				}catch(ig){}
 
-        for (var k in object) {
-          if (object.hasOwnProperty(k)) {
-            if(object[k] === undefined){
-            	delete object[k];
-						}
+        try {
+          object = {
+            eventName: object.toString ? object.toString() : null,
+            altKey: object.altKey,
+            bubbles: object.bubbles,
+            button: object.button,
+            buttons: object.buttons,
+            cancelBubble: object.cancelBubble,
+            cancelable: object.cancelable,
+            clientX: object.clientX,
+            clientY: object.clientY,
+            composed: object.composed,
+            ctrlKey: object.ctrlKey,
+            currentTarget: object.currentTarget ? object.currentTarget.outerHTML : null,
+            defaultPrevented: object.defaultPrevented,
+            detail: object.detail,
+            eventPhase: object.eventPhase,
+            fromElement: object.fromElement ? object.fromElement.outerHTML : null,
+            isTrusted: object.isTrusted,
+            layerX: object.layerX,
+            layerY: object.layerY,
+            metaKey: object.metaKey,
+            movementX: object.movementX,
+            movementY: object.movementY,
+            offsetX: object.offsetX,
+            offsetY: object.offsetY,
+            pageX: object.pageX,
+            pageY: object.pageY,
+            path: path,
+            relatedTarget: object.relatedTarget ? object.relatedTarget.outerHTML : null,
+            returnValue: object.returnValue,
+            screenX: object.screenX,
+            screenY: object.screenY,
+            shiftKey: object.shiftKey,
+            sourceCapabilities: object.sourceCapabilities ? object.sourceCapabilities.toString() : null,
+            target: object.target ? object.target.outerHTML : null,
+            timeStamp: object.timeStamp,
+            toElement: object.toElement ? object.toElement.outerHTML : null,
+            type: object.type,
+            view: object.view ? object.view.toString() : null,
+            which: object.which,
+            x: object.x,
+            y: object.y
+          };
+
+          for (var k in object) {
+            if (object.hasOwnProperty(k)) {
+              if (object[k] === undefined) {
+                delete object[k];
+              }
+            }
           }
+        } catch (ig) {
+
         }
-      } else if (object.toString().toLowerCase().indexOf(" xmlhttprequest]") > -1){
+      } else if (
+        object.toString().toLowerCase().indexOf(" xmlhttprequest]") > -1 ||
+        object.toString().toLowerCase().indexOf(" progressevent]") > -1
+      ){
+        if (object.toString().toLowerCase().indexOf(" progressevent]") > -1 &&
+            object.currentTarget &&
+          object.currentTarget.toString().toLowerCase().indexOf(" xmlhttprequest]") > -1){
+          // sometimes request comes nested inside a progress event
+          object = object.currentTarget;
+        }
         object = {
           type: "xmlhttprequest",
           onabort: object.onabort,
@@ -1169,11 +1187,9 @@ if (typeof {name} === 'undefined') {
 				// have apply. so we apply Function.apply instead.
 				var t = customThis ? fthis : this;
         var returnValue = Function.apply.apply(func, [t].concat(arguments));
-        debugger;
         info.returnValue = returnValue;
         return returnValue;
 			} finally {
-			  debugger;
 			  pushNewInvocation(info, 'callsite');
 				popInvocation();
 			}

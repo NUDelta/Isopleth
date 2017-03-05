@@ -28,16 +28,21 @@
 //
 // loadB();
 //
+// var getXHR = function () {
+//   return new XMLHttpRequest();
+// };
+//
 // function jsonA() {
 //   var button3 = document.getElementById("test4");
-//   var request = new XMLHttpRequest();
-//   var jsonResponseHandler = function () {
-//     if (request.status >= 200 && request.status < 400) {
-//       document.getElementById("jsonRes").innerText = request.responseText;
-//     }
-//   };
 //
 //   var jsonGetterFn = function () {
+//     var request = getXHR();
+//     var jsonResponseHandler = function () {
+//       if (request.status >= 200 && request.status < 400) {
+//         document.getElementById("jsonRes").innerText = request.responseText;
+//       }
+//     };
+//
 //     document.getElementById("jsonRes").innerText = "";
 //     request.open('GET', 'http://localhost:3004/javascripts/sample.json', true);
 //     request.onload = jsonResponseHandler;
@@ -67,9 +72,6 @@ function jsonB() {
 }
 
 jsonB();
-
-
-
 
 
 //

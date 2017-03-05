@@ -23,9 +23,61 @@ def([
       };
     },
 
+    toJSON: function () {
+      var serializableInvokes = _(this.invokes).map(function (invoke) {
+        var str = invoke.node.source;
+        var isos = [];
+        if (str) {
+          _(str.split("iso_")).each(function (s) {
+            var arr = s.split("_iso");
+            if (arr.length > 1) {
+              isos.push(arr[0])
+            }
+          });
+        }
+
+        return {
+          childCalls: _(invoke.childCalls).map(function (i) {
+            return i.invocationId
+          }),
+          childAsyncLinks: _(invoke.childAsyncLinks).map(function (i) {
+            return i.invocationId
+          }),
+          childAsyncSerialLinks: _(invoke.childAsyncSerialLinks).map(function (i) {
+            return i.invocationId
+          }),
+
+          parentCalls: _(invoke.parentCalls).map(function (i) {
+            return i.invocationId
+          }),
+          parentAsyncLink: invoke.parentAsyncLink ? invoke.parentAsyncLink.invocationId : null,
+          parentAsyncSerialLinks: _(invoke.parentAsyncSerialLinks).map(function (i) {
+            return i.invocationId
+          }),
+
+          invocationId: invoke.invocationId,
+          topLevelInvocationId: invoke.invocationId,
+          isLib: invoke.invocationId,
+          nodeId: invoke.nodeId,
+          nodeName: invoke.node.name,
+          nodeType: invoke.node.type,
+          nodeSource: invoke.node.source ? invoke.node.source.substr(0, 300) : null,
+          tick: invoke.invocationId,
+          timestamp: invoke.invocationId,
+          parents: invoke.invocationId,
+
+          arguments: invoke.arguments,
+          returnValue: invoke.returnValue,
+
+          functionSerials: isos
+        };
+      }, this);
+
+      return JSON.stringify(serializableInvokes, null, 2);
+    },
+
     addInvokes: function (invokes) {
       var edges = [];
-
       // Parse through invokes and populate simple lists of native/lib/top-levels
       _(invokes).each(function (invoke) {
         this.invokes.push(invoke);
@@ -194,36 +246,52 @@ def([
         }
       }, this);
 
-      _(this.invokes).map(this.classifyArguments, this);
+      _(this.invokes).map(this.classifyInvoke, this);
     },
 
     clickHandlers: [],
     ajaxRequests: [],
     ajaxResponses: [],
 
-    classifyArguments: function (invoke) {
+    classifyInvoke: function (invoke) {
       var climbTree = _.bind(function (node, decorator) {
         decorator = _.bind(decorator, this);
         decorator(node);
 
-        if (node.isLib) {
+        // if (node.isLib) {
           _(node.parentCalls).each(function (parentNode) {
             climbTree(parentNode, decorator)
           });
-        }
+        // }
       }, this);
 
       var descendTree = _.bind(function (node, decorator) {
         decorator = _.bind(decorator, this);
         decorator(node);
 
-        if (node.isLib) {
+        // if (node.isLib) {
           _(node.childCalls).each(function (node) {
             descendTree(node, decorator)
           });
-        }
+        // }
       }, this);
 
+      //Check return values for ajax requests
+      var isAjaxReq = false;
+      try {
+        isAjaxReq = invoke.returnValue.ownProperties.type.value === "xmlhttprequest" ||
+          invoke.returnValue.ownProperties.status.value === 0;
+      } catch (ignored) {
+      }
+      if (isAjaxReq) {
+        climbTree(invoke, function (invokeNode) {
+          invokeNode.aspects = invokeNode.aspects || [];
+          invokeNode.aspects.push("ajaxRequest");
+          this.ajaxRequests.push(invokeNode);
+        });
+      }
+
+      // Comb through arguments for click handlers and ajax responses
       _(invoke.arguments).each(function (arg) {
         var isClick = false;
         try {
@@ -232,26 +300,10 @@ def([
         } catch (ignored) {
         }
         if (isClick) {
-          climbTree(invoke, function (invokeNode) {
+          descendTree(invoke, function (invokeNode) {
             invokeNode.aspects = invokeNode.aspects || [];
             invokeNode.aspects.push("clickHandler");
             this.clickHandlers.push(invokeNode);
-          });
-        }
-
-        var isAjaxReq = false;
-        try {
-          isAjaxReq = (arg.value.ownProperties.type.value === "load" ||
-            arg.value.ownProperties.type.value === "readystatechange" ||
-            arg.value.ownProperties.type.value === "xmlhttprequest") &&
-            arg.value.ownProperties.status.value === 0;
-        } catch (ignored) {
-        }
-        if (isAjaxReq) {
-          climbTree(invoke, function (invokeNode) {
-            invokeNode.aspects = invokeNode.aspects || [];
-            invokeNode.aspects.push("ajaxRequest");
-            this.ajaxRequests.push(invokeNode);
           });
         }
 
