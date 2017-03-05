@@ -163,7 +163,7 @@ module.exports = {
             return true;
           }
         })) {
-        console.log("Blocking source request and returning original for:", url);
+        console.log("Blocking Ad source request and returning original for:", url);
 
         callback(body);
         return;

@@ -8,6 +8,8 @@ def([
     isKnownLibrary: function (testStr) {
       return  !!_([
         "a3c5de",
+        "b66ed7",
+        "1b9456",
         "jquery",
         "moderniz",
         "zepto",

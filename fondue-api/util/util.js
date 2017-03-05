@@ -112,7 +112,6 @@ var util = {
         console.log("Retrieved beautification for source.");
         return callback(foundSrc);
       } else {
-
         try {
           src = src.split("use strict").join("");
           src = UglifyJS.minify(src, {

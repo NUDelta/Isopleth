@@ -14,45 +14,56 @@ module.exports = {
    Returns instrumented JavaScript. From the cache, if it's there.
    */
   instrumentJavaScript: function (src, fondueOptions, callback, passedSource, i, iterLoc) {
-    // TODO ISOPLETH caching is off!
-    // var md5 = crypto.createHash("md5");
-    // var store = {
-    //   passedSource: passedSource,
-    //   path: fondueOptions.path,
-    //   include_prefix: fondueOptions.include_prefix,
-    //   i: i,
-    //   iterLoc: iterLoc
-    // };
-    // var phrase = JSON.stringify(store);
-    // md5.update(phrase);
-    // var digest = md5.digest("hex");
+    // TODO-CACHING move to config
+    var caching = true;
 
-    // redisClient.get(digest, function (err, foundSrc) {
-    var errOpt = {};
-    //   if (foundSrc != null) {
-    //     console.log("Retrieved instrumentation for", fondueOptions.path);
-    //     callback(foundSrc, passedSource, i, iterLoc, errOpt);
-    //   } else {
-    console.log("Instrument Start:\t", fondueOptions.path);
+    var doInstrument = function (instrumentedCallback) {
+      fondue.instrument(src, fondueOptions, errOpt, function (src) {
+        console.log("Instrument Start:\t", fondueOptions.path);
 
-    fondue.instrument(src, fondueOptions, errOpt, function (src) {
-      var instrumentedSrc = src.toString();
-      if (!errOpt.beautifyErr) {
-        console.log("Instrument Finish:\t", fondueOptions.path);
-      }
+        var instrumentedSrc = src.toString();
+        if (!errOpt.beautifyErr) {
+          console.log("Instrument Finish:\t", fondueOptions.path);
+        }
 
-      callback(instrumentedSrc, passedSource, i, iterLoc, errOpt);
-    });
+        callback(instrumentedSrc, passedSource, i, iterLoc, errOpt);
+        if (instrumentedCallback) {
+          instrumentedCallback(instrumentedSrc);
+        }
+      });
+    };
 
-    //     redisClient.set(digest, instrumentedSrc, function (err, reply) {
-    //       if (err) {
-    //         console.log("Error on saving source!");
-    //       } else {
-    //
-    //       }
-    //     });
-    //   }
-    // });
+    if (caching) {
+      var md5 = crypto.createHash("md5");
+      var store = {
+        passedSource: passedSource,
+        path: fondueOptions.path,
+        include_prefix: fondueOptions.include_prefix,
+        i: i,
+        iterLoc: iterLoc
+      };
+      var phrase = JSON.stringify(store);
+      md5.update(phrase);
+      var digest = md5.digest("hex");
+      var errOpt = {};
+
+      redisClient.get(digest, function (err, foundSrc) {
+        if (foundSrc != null) {
+          console.log("Retrieved instrumentation for", fondueOptions.path);
+          callback(foundSrc, passedSource, i, iterLoc, errOpt);
+        } else {
+          doInstrument(function (instrumentedSrc) {
+            redisClient.set(digest, instrumentedSrc, function (err, reply) {
+              if (err) {
+                console.log("Error on saving source!");
+              }
+            });
+          });
+        }
+      });
+    } else {
+      doInstrument();
+    }
   },
 
   /**
