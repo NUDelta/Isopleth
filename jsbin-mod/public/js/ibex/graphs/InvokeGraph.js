@@ -1,26 +1,30 @@
 def([
   "backbone",
   "underscore",
-  "../util/util"
-], function (Backbone, _, util) {
+  "../util/util",
+  "text!../util/invokeSample.txt",
+], function (Backbone, _, util, invokeSample) {
   return Backbone.View.extend({
 
     initialize: function (codeMirrors, sourceCollection, activeNodeCollection, jsBinRouter) {
       this.activeNodeCollection = activeNodeCollection;
       this.invokes = [];
       this.invokeIdMap = {};
+
       this.nativeInvokes = [];
       this.rootInvokes = [];
       this.nativeRootInvokes = [];
       this.argSourceToInvokes = {};
 
-      this.visualGraph = {
-        nodes: [],
-        edges: [], // blue
-        nativeNodes: [], // yellow
-        asyncEdges: [],  // black
-        asyncSerialEdges: [] //purple
-      };
+      this.edges = [];
+
+      this.asyncEdgeMap = [];
+      this.asyncEdges = [];
+
+      this.asyncSerialEdgeMap = {};
+      this.asyncSerialEdges = [];
+
+      this.addInvokes(JSON.parse(invokeSample));
     },
 
     toJSON: function () {
@@ -46,7 +50,6 @@ def([
           childAsyncSerialLinks: _(invoke.childAsyncSerialLinks).map(function (i) {
             return i.invocationId
           }),
-
           parentCalls: _(invoke.parentCalls).map(function (i) {
             return i.invocationId
           }),
@@ -55,6 +58,7 @@ def([
             return i.invocationId
           }),
 
+
           invocationId: invoke.invocationId,
           topLevelInvocationId: invoke.invocationId,
           isLib: invoke.invocationId,
@@ -62,14 +66,15 @@ def([
           nodeName: invoke.node.name,
           nodeType: invoke.node.type,
           nodeSource: invoke.node.source ? invoke.node.source.substr(0, 300) : null,
-          tick: invoke.invocationId,
-          timestamp: invoke.invocationId,
-          parents: invoke.invocationId,
-
+          tick: invoke.tick,
+          timestamp: invoke.timestamp,
+          parents: invoke.parents,
           arguments: invoke.arguments,
           returnValue: invoke.returnValue,
 
-          functionSerials: isos
+          functionSerials: isos,
+
+          repeatCallCount: invoke.repeatCallCount
         };
       }, this);
 
@@ -77,7 +82,7 @@ def([
     },
 
     addInvokes: function (invokes) {
-      var edges = [];
+      var pendingEdges = [];
       // Parse through invokes and populate simple lists of native/lib/top-levels
       _(invokes).each(function (invoke) {
         this.invokes.push(invoke);
@@ -96,18 +101,8 @@ def([
         }
         invoke.isLib = util.isKnownLibrary(invoke.nodeId);
 
-        var graphNode = {
-          id: invoke.invocationId,
-          label: invoke.node.name && invoke.node.name.length < 44 ? invoke.node.name : "",
-          title: invoke.node.source,
-          color: "yellow"
-        };
-
         if (!invoke.isLib) {
           this.nativeInvokes.push(invoke);
-
-          graphNode.color = "orange";
-          this.visualGraph.nativeNodes.push(graphNode);
 
           var hasParentCaller = !!_(invoke.parents).find(function (parent) {
             return parent.type === "call";
@@ -118,11 +113,9 @@ def([
           }
         }
 
-        this.visualGraph.nodes.push(graphNode);
-
         // Store parent links to process when the full invokeMap is done
         _(invoke.parents).each(function (parent) {
-          edges.push({
+          pendingEdges.push({
             parentAttributes: parent,
             childInvoke: invoke
           });
@@ -153,7 +146,7 @@ def([
 
       // Parse through edges found and create two-way links between parent and child invokes
       // in two different types: direct call and tom's asyn context
-      _(edges).each(function (edge) {
+      _(pendingEdges).each(function (edge) {
         if (!edge.parentAttributes || !edge.childInvoke) {
           console.warn("Got some disconnected parent/child invocations.");
           return;
@@ -179,11 +172,17 @@ def([
 
           childInvoke.parentAsyncLink = parentInvoke;
           parentInvoke.childAsyncLinks.push(childInvoke);
-          this.visualGraph.asyncEdges.push({
-            from: parentInvoke.invocationId,
-            to: childInvoke.invocationId,
-            color: "black"
-          });
+
+          var asyncEdge = {
+            parentInvoke: parentInvoke,
+            childInvoke: childInvoke
+          };
+
+          var edgeId = asyncEdge.parentInvoke.invocationId + asyncEdge.childInvoke.invocationId;
+          if (!this.asyncEdgeMap[edgeId]) {
+            this.asyncEdgeMap[edgeId] = asyncEdge;
+            this.asyncEdges.push(asyncEdge);
+          }
         } else if (parentType === "call") {
           if (!parentInvoke.childCalls) {
             parentInvoke.childCalls = [];
@@ -195,10 +194,9 @@ def([
 
           childInvoke.parentCalls.push(parentInvoke);
           parentInvoke.childCalls.push(childInvoke);
-          this.visualGraph.edges.push({
-            from: parentInvoke.invocationId,
-            to: childInvoke.invocationId,
-            color: "blue"
+          this.edges.push({
+            parentInvoke: parentInvoke,
+            childInvoke: childInvoke
           });
         } else {
           console.log("Found a new parent type", parentType);
@@ -217,7 +215,21 @@ def([
       }, this);
 
       // Parse through invoke arguments to determine final missing async serial links
+      var rollingNodeIdInvokeMap = {};
       _(this.nativeRootInvokes).each(function (childInvoke) {
+
+        // Mark repeat recurring root nodes
+        if (rollingNodeIdInvokeMap[childInvoke.nodeId]) {
+          rollingNodeIdInvokeMap[childInvoke.nodeId].sequentialRepeats += 1;
+
+          this.descendTree(childInvoke, function (oInvoke) {
+            oInvoke.isSequentialRepeat = true;
+          });
+        } else {
+          childInvoke.sequentialRepeats = 1;
+          rollingNodeIdInvokeMap[childInvoke.nodeId] = childInvoke;
+        }
+
         if (!childInvoke.node.source) {
           return;
         }
@@ -236,16 +248,22 @@ def([
 
             childInvoke.parentAsyncSerialLinks.push(parentInvoke);
             parentInvoke.childAsyncSerialLinks.push(childInvoke);
-            this.visualGraph.asyncSerialEdges.push({
-              from: parentInvoke.invocationId,
-              to: childInvoke.invocationId,
-              color: "purple"
-            });
-          }, this);
 
+            var asyncSerialEdge = {
+              parentInvoke: parentInvoke,
+              childInvoke: childInvoke
+            };
+
+            var edgeId = asyncSerialEdge.parentInvoke.invocationId + asyncSerialEdge.childInvoke.invocationId;
+            if (!this.asyncSerialEdgeMap[edgeId]) {
+              this.asyncSerialEdgeMap[edgeId] = asyncSerialEdge;
+              this.asyncSerialEdges.push(asyncSerialEdge);
+            }
+          }, this);
         }
       }, this);
 
+      // Place invokes into queryable buckets
       _(this.invokes).map(this.classifyInvoke, this);
     },
 
@@ -253,29 +271,25 @@ def([
     ajaxRequests: [],
     ajaxResponses: [],
 
+    climbTree: function (node, decorator) {
+      decorator = _.bind(decorator, this);
+      decorator(node);
+
+      _(node.parentCalls).each(function (parentNode) {
+        this.climbTree(parentNode, decorator)
+      }, this);
+    },
+
+    descendTree: function (node, decorator) {
+      decorator = _.bind(decorator, this);
+      decorator(node);
+
+      _(node.childCalls).each(function (node) {
+        this.descendTree(node, decorator)
+      }, this);
+    },
+
     classifyInvoke: function (invoke) {
-      var climbTree = _.bind(function (node, decorator) {
-        decorator = _.bind(decorator, this);
-        decorator(node);
-
-        // if (node.isLib) {
-          _(node.parentCalls).each(function (parentNode) {
-            climbTree(parentNode, decorator)
-          });
-        // }
-      }, this);
-
-      var descendTree = _.bind(function (node, decorator) {
-        decorator = _.bind(decorator, this);
-        decorator(node);
-
-        // if (node.isLib) {
-          _(node.childCalls).each(function (node) {
-            descendTree(node, decorator)
-          });
-        // }
-      }, this);
-
       //Check return values for ajax requests
       var isAjaxReq = false;
       try {
@@ -284,7 +298,7 @@ def([
       } catch (ignored) {
       }
       if (isAjaxReq) {
-        climbTree(invoke, function (invokeNode) {
+        this.climbTree(invoke, function (invokeNode) {
           invokeNode.aspects = invokeNode.aspects || [];
           invokeNode.aspects.push("ajaxRequest");
           this.ajaxRequests.push(invokeNode);
@@ -300,7 +314,7 @@ def([
         } catch (ignored) {
         }
         if (isClick) {
-          descendTree(invoke, function (invokeNode) {
+          this.descendTree(invoke, function (invokeNode) {
             invokeNode.aspects = invokeNode.aspects || [];
             invokeNode.aspects.push("clickHandler");
             this.clickHandlers.push(invokeNode);
@@ -317,7 +331,7 @@ def([
         } catch (ignored) {
         }
         if (isAjaxRes) {
-          descendTree(invoke, function (invokeNode) {
+          this.descendTree(invoke, function (invokeNode) {
             invokeNode.aspects = invokeNode.aspects || [];
             invokeNode.aspects.push("ajaxResponse");
             this.ajaxResponses.push(invokeNode);

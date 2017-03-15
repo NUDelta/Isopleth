@@ -60,8 +60,11 @@ function jsonB() {
   };
 
   var jsonResponseHandler = function (data, status, xhr) {
-    $("#jsonRes").text(JSON.stringify(data));
-    setTimeout(secondHandler, 1000);
+    var shipImage = "<img src='" + data.imagePath + "' height=100/>";
+
+    $("#appendShipHere").append(shipImage);
+
+    // setTimeout(secondHandler, 1000);
   };
 
   var jsonGetterFn = function () {

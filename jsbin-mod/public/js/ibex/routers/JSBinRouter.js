@@ -47,7 +47,7 @@ def([
         activeNodeCollection: this.activeNodeCollection
       });
 
-      this.codeMirrorJSView = new CodeMirrorJSView(this.codeMirrors, this.sourceCollection, this.activeNodeCollection, this);
+      // this.codeMirrorJSView = new CodeMirrorJSView(this.codeMirrors, this.sourceCollection, this.activeNodeCollection, this);
       this.invokeGraph = new InvokeGraph(this.codeMirrors, this.sourceCollection, this.activeNodeCollection, this);
       this.fluidView = new FluidView(this.codeMirrors, this.sourceCollection, this.activeNodeCollection, this.invokeGraph, this);
       this.fluidView.render();
@@ -57,16 +57,18 @@ def([
       this.headerControlView.render();
       this.codeMirrorCSSView = new CodeMirrorCSSView(this.codeMirrors);
       this.htmlJSLinksView = new HTMLJSLinksView(this.codeMirrorJSView, this.codeMirrorHTMLView, this.activeNodeCollection, this.sourceCollection, this);
-      this.codeMirrorJSView.htmlJSLinksView = this.htmlJSLinksView;
-      this.codeMirrorHTMLView.htmlJSLinksView = this.htmlJSLinksView;
+      // this.codeMirrorJSView.htmlJSLinksView = this.htmlJSLinksView;
+      // this.codeMirrorHTMLView.htmlJSLinksView = this.htmlJSLinksView;
 
       this.jsBinSocketRouter = JSBinSocketRouter.getInstance();
 
       this.bindSocketHandlers();
       this.bindViewListeners();
-      this.fetchData();
+      // this.fetchData();
 
       this.totalInvocations = 0;
+
+      this.fluidView.showCallGraph();
     },
 
     fetchData: function () {
@@ -95,9 +97,9 @@ def([
 
         if (this.activeNodeCollection.hasFullNodeList) {
           if (!this.uiPaused) {
-            this.codeMirrorJSView.showSources();
-            this.codeMirrorHTMLView.render();
-            this.headerControlView.renderSlider();
+            // this.codeMirrorJSView.showSources();
+            // this.codeMirrorHTMLView.render();
+            // this.headerControlView.renderSlider();
             // this.headerControlView.renderPlot();
           }
         }
@@ -111,14 +113,14 @@ def([
 
       this.jsBinSocketRouter.onSocketData("fondueDTO:css", function (obj) {
         console.log("fondueDTO:css");
-        this.codeMirrorCSSView.setCode(obj.css);
+        // this.codeMirrorCSSView.setCode(obj.css);
       }, this);
 
       this.jsBinSocketRouter.onSocketData("fondueDTO:html", function (obj) {
         console.log("fondueDTO:html");
         if (!this.uiPaused) {
-          this.codeMirrorHTMLView.htmlSource = obj.html;
-          this.codeMirrorHTMLView.render();
+          // this.codeMirrorHTMLView.htmlSource = obj.html;
+          // this.codeMirrorHTMLView.render();
         }
       }, this);
 
@@ -127,16 +129,16 @@ def([
 
         this.sourceCollection.empty();
         this.sourceCollection.add(obj.scripts);
-        this.dropDownJSView.render();
+        // this.dropDownJSView.render();
 
         if (!this.uiPaused) {
           // this.dropDownJSView.detailChange(1);
-          this.headerControlView.lastDetailSlideVal = 1;
-          this.headerControlView.jsDetailChange(null, {value: 120});
+          // this.headerControlView.lastDetailSlideVal = 1;
+          // this.headerControlView.jsDetailChange(null, {value: 120});
           // this.headerControlView.$detailSlider.slider({
           //   value: 100,
           // });
-          this.codeMirrorHTMLView.render();
+          // this.codeMirrorHTMLView.render();
         }
       }, this);
 
@@ -145,24 +147,24 @@ def([
         this.activeNodeCollection.mergeNodes(obj.nodes);
 
         this.uiPaused = false;
-        this.codeMirrorJSView.showSources();
-        this.codeMirrorHTMLView.render();
-        this.headerControlView.renderSlider();
-        this.headerControlView.resume();
+        // this.codeMirrorJSView.showSources();
+        // this.codeMirrorHTMLView.render();
+        // this.headerControlView.renderSlider();
+        // this.headerControlView.resume();
       }, this);
 
       this.headerControlView.on("aspectChange", function (callback) {
-        this.pauseUIUpdates();
-        this.htmlJSLinksView.collapseAll();
-        this.codeMirrorHTMLView.removeAllHighlights();
+        // this.pauseUIUpdates();
+        // this.htmlJSLinksView.collapseAll();
+        // this.codeMirrorHTMLView.removeAllHighlights();
         callback();
       }, this);
 
       this.headerControlView.on("jsDetailChange", function (val) {
         this.pauseUIUpdates();
-        this.htmlJSLinksView.collapseAll();
-        this.codeMirrorHTMLView.removeAllHighlights();
-        this.dropDownJSView.detailChange(val);
+        // this.htmlJSLinksView.collapseAll();
+        // this.codeMirrorHTMLView.removeAllHighlights();
+        // this.dropDownJSView.detailChange(val);
       }, this);
     },
 
@@ -182,7 +184,7 @@ def([
 
       this.headerControlView.on("activeCodePanel:reset", function () {
         this.pauseUIUpdates();
-        this.htmlJSLinksView.collapseAll();
+        // this.htmlJSLinksView.collapseAll();
         this.activeNodeCollection.empty();
         this.jsBinSocketRouter.emit("jsbin:reset", {});
       }, this);
@@ -197,10 +199,10 @@ def([
 
       this.headerControlView.on("timeSlideChange", function () {
         this.uiPaused = true;
-        this.htmlJSLinksView.collapseAll();
+        // this.htmlJSLinksView.collapseAll();
         //this.headerControlView.pause();
-        this.codeMirrorHTMLView.render();
-        this.codeMirrorJSView.showSources();
+        // this.codeMirrorHTMLView.render();
+        // this.codeMirrorJSView.showSources();
       }, this);
 
       this.headerControlView.on("aspect:tiles", function () {
@@ -215,8 +217,8 @@ def([
     pauseUIUpdates: function () {
       console.warn("Ignoring UI Pause Request");
       return;
-      this.uiPaused = true;
-      this.headerControlView.pause();
+      // this.uiPaused = true;
+      // this.headerControlView.pause();
     },
 
     nav: function (panelType, codeMirrorInstance) {
@@ -225,24 +227,25 @@ def([
 
     javascript: function (codeMirrorInstance) {
       this.codeMirrors.js = codeMirrorInstance;
-      this.codeMirrorJSView.showSources();
+      // this.codeMirrorJSView.showSources();
       //TODO ISOPLETH super hack, ship it!
-      $("#bin").css("width", "20%");
+      $("#bin").hide();
       $(".binview.stretch").css("width", "100%");
       $($(".stretch.panelwrapper")[0]).hide();
       $("body").css("background", "#fff");
       $($(".stretch.panelwrapper")[2]).css("width", "100%");
       $($(".stretch.panelwrapper")[2]).css("left", "0");
+      $("#control").hide();
     },
 
     html: function (codeMirrorInstance) {
       this.codeMirrors.html = codeMirrorInstance;
-      this.codeMirrorHTMLView.render();
+      // this.codeMirrorHTMLView.render();
     },
 
     css: function (codeMirrorInstance) {
       this.codeMirrors.css = codeMirrorInstance;
-      this.codeMirrorCSSView.render();
+      // this.codeMirrorCSSView.render();
     }
   });
 

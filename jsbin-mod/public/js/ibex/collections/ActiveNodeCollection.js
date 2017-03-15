@@ -4,8 +4,9 @@ def([
   "underscore",
   "../models/ActiveNodeModel",
   "../routers/JSBinSocketRouter",
+  "text!../util/nodeSample.txt",
   "raphael"
-], function ($, Backbone, _, ActiveNodeModel, JSBinSocketRouter) {
+], function ($, Backbone, _, ActiveNodeModel, JSBinSocketRouter, nodeSample) {
   return Backbone.Collection.extend({
     model: ActiveNodeModel,
 
@@ -31,6 +32,8 @@ def([
       }, this);
 
       this.empty = _.bind(this.empty, this);
+
+      this.mergeNodes(JSON.parse(nodeSample));
     },
 
     getEarliestTimeStamp: function () {
