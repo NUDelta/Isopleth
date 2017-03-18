@@ -10,7 +10,7 @@ def([
 
     tagName: "div",
 
-    className: "card",
+    className: "cardView",
 
     events: {
       "click": "flip"

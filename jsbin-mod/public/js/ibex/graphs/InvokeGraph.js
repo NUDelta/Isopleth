@@ -273,11 +273,15 @@ def([
 
     climbTree: function (node, decorator) {
       decorator = _.bind(decorator, this);
-      decorator(node);
+      var stopCondition = decorator(node);
+      if (stopCondition) {
+        return false;
+      }
 
-      _(node.parentCalls).each(function (parentNode) {
-        this.climbTree(parentNode, decorator)
+      _(node.parentCalls).find(function (parentNode) {
+        return this.climbTree(parentNode, decorator)
       }, this);
+      return true;
     },
 
     descendTree: function (node, decorator) {
@@ -302,6 +306,14 @@ def([
           invokeNode.aspects = invokeNode.aspects || [];
           invokeNode.aspects.push("ajaxRequest");
           this.ajaxRequests.push(invokeNode);
+
+          if(invokeNode.node.name === "jsonGetterFn"){
+            debugger;
+          }
+
+          if(!invokeNode.isLib && invokeNode.node.type === "function"){
+            return true;
+          }
         });
       }
 

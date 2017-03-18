@@ -10,17 +10,24 @@ def([
 
     initialize: function (invokeGraph) {
       this.invokeGraph = invokeGraph;
-      this.setElement($("#deckView"));  // el should be in the dom at instantiation time
+      this.setElement($("#deckView"));
 
       this.drawCard = _.bind(this.drawCard, this);
+
+      _.times(4, this.drawCard);
     },
 
     drawCard: function (nodeId) {
       var invoke = this.invokeGraph.invokeIdMap[nodeId];
+
+      if(!invoke){
+        invoke = {node:{name:"foo", source:"bar();"}}
+      }
+
       var cardView = new CardView(
         invoke.node.name,
         invoke.node.source);
-      this.$el.html(cardView.el);
+      this.$el.append(cardView.el);
     },
 
     backtraceAsyncEvent: function () {

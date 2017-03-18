@@ -10,6 +10,10 @@
     width: 100%;
     height: 50%;
     float: left;
+
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap
   }
 
   #graphView {
@@ -38,7 +42,9 @@
     }
   }
 
-  .card {
+  .cardView {
+    display: inline-block;
+
     width: 500px;
     height: 300px;
     position: relative;
