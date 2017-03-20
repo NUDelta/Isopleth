@@ -1,4 +1,4 @@
-try {
+                  try {
   console.log('Dave is ready.');
 } catch (e) {
   window.console = {
