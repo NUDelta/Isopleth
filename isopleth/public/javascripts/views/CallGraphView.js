@@ -1,10 +1,9 @@
-def([
+define([
   "jquery",
   "backbone",
   "underscore",
   "handlebars",
-  "vis",
-], function ($, Backbone, _, Handlebars, vis) {
+], function ($, Backbone, _, Handlebars) {
   return Backbone.View.extend({
     events: {
       "click #markNonLib": "markNonLib",
@@ -13,6 +12,7 @@ def([
       "click #drawJoshAsync": "drawJoshAsync",
       "click #pruneGraph": "pruneGraph",
       "click #resetGraph": "resetGraph",
+      "click #markAllBlue": "markAllBlue",
       "click #markAjaxRequest": "markAjaxRequest",
       "click #markAjaxResponse": "markAjaxResponse",
       "click #markClick": "markClick",
@@ -27,9 +27,9 @@ def([
       nativeRootInvoke: "#48ff60",
       asyncEdge: "#e6da74",
       asyncSerialEdge: "#bc95ff",
-      ajaxRequestNode: "#fff",
-      ajaxResponseNode: "#dd7382",
-      clickResponseNode: "#5fddbd"
+      ajaxRequest: "#fff",
+      ajaxResponse: "#dd7382",
+      clickHandler: "#5fddbd"
     },
 
     initialize: function (invokeGraph) {
@@ -87,29 +87,53 @@ def([
       }, this);
     },
 
+    markAllBlue: function () {
+      _(this.invokeGraph.invokes).each(function (invoke) {
+        this.cy.elements('node[id = "' + invoke.invocationId + '"]')
+          .style({"background-color": this.colors.nativeNode});
+      }, this);
+    },
+
     markAjaxRequest: function () {
       _(this.invokeGraph.ajaxRequests).each(function (invoke) {
         this.cy.elements('node[id = "' + invoke.invocationId + '"]')
-          .style({"background-color": this.colors.ajaxRequestNode});
+          .style({"background-color": this.colors.ajaxRequest});
       }, this);
     },
 
     markAjaxResponse: function () {
       _(this.invokeGraph.ajaxResponses).each(function (invoke) {
         this.cy.elements('node[id = "' + invoke.invocationId + '"]')
-          .style({"background-color": this.colors.ajaxResponseNode});
+          .style({"background-color": this.colors.ajaxResponse});
       }, this);
     },
 
     markClick: function () {
       _(this.invokeGraph.clickHandlers).each(function (invoke) {
         this.cy.elements('node[id = "' + invoke.invocationId + '"]')
-          .style({"background-color": this.colors.clickResponseNode});
+          .style({"background-color": this.colors.clickHandler});
       }, this);
     },
 
-    handleNodeClick:function(nodeId){
+    handleNodeClick: function (nodeId) {
       this.trigger("nodeClick", nodeId);
+    },
+
+    getNodeColor: function (node) {
+      if (node.isLib) {
+        return this.colors.libNode;
+      }
+
+      if (node.aspectMap) {
+        var aspectArr = _(node.aspectMap).keys();
+        if (aspectArr.length) {
+          if (this.colors[aspectArr[0]]) {
+            return this.colors[aspectArr[0]];
+          }
+        }
+      }
+
+      return this.colors.nativeNode;
     },
 
     drawGraph: function () {
@@ -124,14 +148,14 @@ def([
           return displayNodes;
         }
 
-        var label = invoke.node.name && invoke.node.name.length < 44 ? invoke.node.name : "";
+        var label = invoke.getLabel();
         var node = {
           data: {
             id: invoke.invocationId,
             label: label,
             shape: "rectangle",
             width: label ? (label.length * 10) + "px" : "25px",
-            color: invoke.isLib ? this.colors.libNode : this.colors.nativeNode
+            color: this.getNodeColor(invoke)
           }
         };
 

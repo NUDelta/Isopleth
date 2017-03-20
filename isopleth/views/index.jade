@@ -1,0 +1,68 @@
+doctype html
+head
+  title Isopleth
+  script(src='//localhost:35729/livereload.js')
+  //link(href='/stylesheets/bootstrap.min.css', rel='stylesheet')
+  //link(href='/stylesheets/bootstrap-theme.min.css', rel='stylesheet')
+  link(href='/stylesheets/style.css', rel='stylesheet')
+  link(rel='stylesheet', href='/stylesheets/octicons/octicons.css')
+  link(rel='stylesheet', href='/stylesheets/codemirror.css')
+  link(rel='stylesheet', href='/stylesheets/codemirror-theme.css')
+  link(rel='stylesheet', href='/stylesheets/foldgutter.css')
+
+  script(src='/javascripts/lib/codemirror.js')
+  script(src='/javascripts/lib/codemirror-addon/javascript.js')
+  script(src='/javascripts/lib/codemirror-addon/active-line.js')
+  script(src='/javascripts/lib/codemirror-addon/foldcode.js')
+  script(src='/javascripts/lib/codemirror-addon/foldgutter.js')
+  script(src='/javascripts/lib/codemirror-addon/matchbrackets.js')
+  script(src='/javascripts/lib/cytoscape.min.js')
+  script(src='/javascripts/lib/dagre.min.js')
+  script(src='/javascripts/lib/cytoscape-dagre.js')
+  script(src='/javascripts/lib/socket.io-1.4.5.js')
+
+  script.
+    var require = {
+      baseUrl: "/javascripts",
+      // paths configuration
+      paths: {
+        jquery: 'lib/jquery',
+        underscore: 'lib/underscore',
+        backbone: 'lib/backbone',
+        handlebars: 'lib/handlebars',
+        moment: 'lib/moment',
+        raphael: 'lib/raphael',
+        text: 'lib/require-text'
+      },
+      // non-amd library loaders
+      shim: {
+        'jquery': {
+          exports: '$'
+        },
+        'underscore': {
+          exports: '_'
+        },
+        'backbone': {
+          deps: ['underscore', 'jquery'],
+          init: function () {
+            return this.Backbone.noConflict();
+          }
+        },
+        'handlebars': {
+          exports: 'Handlebars'
+        }
+      }
+    };
+  script(src = '/javascripts/lib/require.js')
+
+html
+  body
+    #fluidView
+
+    script.
+      require([
+        "routers/JSBinRouter"
+      ], function (JSBinRouter) {
+        var jSBinRouter = JSBinRouter.getInstance();
+        jSBinRouter.nav("javascript", null);
+      })

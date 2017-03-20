@@ -1,4 +1,4 @@
-def([
+define([
   "jquery",
   "backbone",
   "underscore",
@@ -13,21 +13,11 @@ def([
       this.setElement($("#deckView"));
 
       this.drawCard = _.bind(this.drawCard, this);
-
-      _.times(4, this.drawCard);
     },
 
     drawCard: function (nodeId) {
-      var invoke = this.invokeGraph.invokeIdMap[nodeId];
-
-      if(!invoke){
-        invoke = {node:{name:"foo", source:"bar();"}}
-      }
-
-      var cardView = new CardView(
-        invoke.node.name,
-        invoke.node.source);
-      this.$el.append(cardView.el);
+      var cardView = new CardView(nodeId, this.invokeGraph);
+      this.$el.html(cardView.el);
     },
 
     backtraceAsyncEvent: function () {

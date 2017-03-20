@@ -1,4 +1,4 @@
-def([
+define([
   "backbone",
   "underscore",
   "../util/util",
@@ -74,7 +74,9 @@ def([
 
           functionSerials: isos,
 
-          repeatCallCount: invoke.repeatCallCount
+          repeatCallCount: invoke.repeatCallCount,
+
+          aspectMap: invoke.aspectMap
         };
       }, this);
 
@@ -83,8 +85,13 @@ def([
 
     addInvokes: function (invokes) {
       var pendingEdges = [];
+      var nativeRootInvokes = [];
       // Parse through invokes and populate simple lists of native/lib/top-levels
       _(invokes).each(function (invoke) {
+        invoke.aspectMap = {};
+        invoke.getLabel = _.bind(function(){
+          return this.getInvokeLabel(invoke);
+        }, this);
         this.invokes.push(invoke);
         this.invokeIdMap[invoke.invocationId] = invoke;
 
@@ -109,7 +116,7 @@ def([
           });
 
           if (!hasParentCaller) {
-            this.nativeRootInvokes.push(invoke);
+            nativeRootInvokes.push(invoke);
           }
         }
 
@@ -209,14 +216,14 @@ def([
           });
 
           if (!nativeRoot) {
-            this.nativeRootInvokes.push(childInvoke);
+            nativeRootInvokes.push(childInvoke);
           }
         }
       }, this);
 
       // Parse through invoke arguments to determine final missing async serial links
       var rollingNodeIdInvokeMap = {};
-      _(this.nativeRootInvokes).each(function (childInvoke) {
+      _(nativeRootInvokes).each(function (childInvoke) {
 
         // Mark repeat recurring root nodes
         if (rollingNodeIdInvokeMap[childInvoke.nodeId]) {
@@ -263,6 +270,17 @@ def([
         }
       }, this);
 
+      // Save our new nativeRootInvokes
+      this.nativeRootInvokes = this.nativeRootInvokes.concat(nativeRootInvokes);
+
+      // Add setup attribute to all first tree nodes
+      if (this.nativeInvokes[0]) {
+        this.nativeInvokes[0].aspectMap["page load"] = true;
+        this.descendTree(this.nativeInvokes[0], function (node) {
+          node.aspectMap["setup"] = true;
+        });
+      }
+
       // Place invokes into queryable buckets
       _(this.invokes).map(this.classifyInvoke, this);
     },
@@ -271,26 +289,52 @@ def([
     ajaxRequests: [],
     ajaxResponses: [],
 
-    climbTree: function (node, decorator) {
-      decorator = _.bind(decorator, this);
-      var stopCondition = decorator(node);
-      if (stopCondition) {
-        return false;
+    climbTree: function (node, decorator, stopCondition) {
+      decorator(node);
+
+      if (stopCondition && stopCondition(node)) {
+        return;
       }
 
+      // Otherwise keep climbing
       _(node.parentCalls).find(function (parentNode) {
         return this.climbTree(parentNode, decorator)
       }, this);
-      return true;
     },
 
-    descendTree: function (node, decorator) {
-      decorator = _.bind(decorator, this);
+    descendTree: function (node, decorator, stopCondition) {
       decorator(node);
+
+      if (stopCondition && stopCondition(node)) {
+        return;
+      }
 
       _(node.childCalls).each(function (node) {
         this.descendTree(node, decorator)
       }, this);
+    },
+
+    climbDescendUntilNonLib: function (node, decorator) {
+      var stopCondition = function (node) {
+        return !!node.isLib;
+      };
+
+      this.climbTree(node, decorator, stopCondition);
+      this.descendTree(node, decorator, stopCondition)
+    },
+
+    decorateUntilNonLib: function (node, aspect, nodeAspectArr) {
+      var decorator = function (invokeNode) {
+        invokeNode.aspectMap[aspect] = true;
+        nodeAspectArr.push(invokeNode);
+      };
+
+      decorator(node);
+
+      if (node.isLib) {
+        decorator = _.bind(decorator, this);
+        this.climbDescendUntilNonLib(node, decorator);
+      }
     },
 
     classifyInvoke: function (invoke) {
@@ -302,19 +346,7 @@ def([
       } catch (ignored) {
       }
       if (isAjaxReq) {
-        this.climbTree(invoke, function (invokeNode) {
-          invokeNode.aspects = invokeNode.aspects || [];
-          invokeNode.aspects.push("ajaxRequest");
-          this.ajaxRequests.push(invokeNode);
-
-          if(invokeNode.node.name === "jsonGetterFn"){
-            debugger;
-          }
-
-          if(!invokeNode.isLib && invokeNode.node.type === "function"){
-            return true;
-          }
-        });
+        this.decorateUntilNonLib(invoke, "ajaxRequest", this.ajaxRequests);
       }
 
       // Comb through arguments for click handlers and ajax responses
@@ -326,11 +358,7 @@ def([
         } catch (ignored) {
         }
         if (isClick) {
-          this.descendTree(invoke, function (invokeNode) {
-            invokeNode.aspects = invokeNode.aspects || [];
-            invokeNode.aspects.push("clickHandler");
-            this.clickHandlers.push(invokeNode);
-          });
+          this.decorateUntilNonLib(invoke, "clickHandler", this.clickHandlers);
         }
 
         var isAjaxRes = false;
@@ -343,13 +371,19 @@ def([
         } catch (ignored) {
         }
         if (isAjaxRes) {
-          this.descendTree(invoke, function (invokeNode) {
-            invokeNode.aspects = invokeNode.aspects || [];
-            invokeNode.aspects.push("ajaxResponse");
-            this.ajaxResponses.push(invokeNode);
-          });
+          this.decorateUntilNonLib(invoke, "ajaxResponse", this.ajaxResponses);
         }
       }, this);
+    },
+
+    getInvokeLabel: function (invoke) {
+      var label = invoke.aspectMap ? _(invoke.aspectMap).keys().join(",") : "";
+
+      if (!label) {
+        label = invoke.node.type;
+      }
+
+      return label;
     },
 
     sort: function () {
