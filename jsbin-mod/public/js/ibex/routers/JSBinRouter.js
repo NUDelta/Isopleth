@@ -9,8 +9,6 @@ def([
   "../views/CodeMirrorHTMLView",
   "../views/CodeMirrorCSSView",
   "../views/HTMLJSLinksView",
-  "../views/FluidView",
-  "../graphs/InvokeGraph",
   "../collections/SourceCollection",
   "../collections/ActiveNodeCollection",
   "../routers/JSBinSocketRouter"
@@ -22,8 +20,6 @@ def([
              CodeMirrorHTMLView,
              CodeMirrorCSSView,
              HTMLJSLinksView,
-             FluidView,
-             InvokeGraph,
              SourceCollection,
              ActiveNodeCollection,
              JSBinSocketRouter) {
@@ -47,28 +43,23 @@ def([
         activeNodeCollection: this.activeNodeCollection
       });
 
-      // this.codeMirrorJSView = new CodeMirrorJSView(this.codeMirrors, this.sourceCollection, this.activeNodeCollection, this);
-      this.invokeGraph = new InvokeGraph(this.codeMirrors, this.sourceCollection, this.activeNodeCollection, this);
-      this.fluidView = new FluidView(this.codeMirrors, this.sourceCollection, this.activeNodeCollection, this.invokeGraph, this);
-      this.fluidView.render();
+      this.codeMirrorJSView = new CodeMirrorJSView(this.codeMirrors, this.sourceCollection, this.activeNodeCollection, this);
       this.codeMirrorHTMLView = new CodeMirrorHTMLView(this.codeMirrors, this.activeNodeCollection, this);
       this.dropDownJSView = new DropDownJSView(this.sourceCollection, this.codeMirrorJSView);
       this.headerControlView = new HeaderControlView(this.activeNodeCollection);
       this.headerControlView.render();
       this.codeMirrorCSSView = new CodeMirrorCSSView(this.codeMirrors);
       this.htmlJSLinksView = new HTMLJSLinksView(this.codeMirrorJSView, this.codeMirrorHTMLView, this.activeNodeCollection, this.sourceCollection, this);
-      // this.codeMirrorJSView.htmlJSLinksView = this.htmlJSLinksView;
-      // this.codeMirrorHTMLView.htmlJSLinksView = this.htmlJSLinksView;
+      this.codeMirrorJSView.htmlJSLinksView = this.htmlJSLinksView;
+      this.codeMirrorHTMLView.htmlJSLinksView = this.htmlJSLinksView;
 
       this.jsBinSocketRouter = JSBinSocketRouter.getInstance();
 
       this.bindSocketHandlers();
       this.bindViewListeners();
-      // this.fetchData();
+      this.fetchData();
 
       this.totalInvocations = 0;
-
-      this.fluidView.showCallGraph();
     },
 
     fetchData: function () {
@@ -88,8 +79,7 @@ def([
         this.totalInvocations += obj.invocations.length;
         console.log("Total Invocations Stored:", this.totalInvocations);
 
-        this.invokeGraph.addInvokes(obj.invocations);
-        // this.activeNodeCollection.mergeInvocations(obj.invocations);
+        this.activeNodeCollection.mergeInvocations(obj.invocations);
 
         if (!this.sourceCollection.length) {
           return;
@@ -97,30 +87,23 @@ def([
 
         if (this.activeNodeCollection.hasFullNodeList) {
           if (!this.uiPaused) {
-            // this.codeMirrorJSView.showSources();
-            // this.codeMirrorHTMLView.render();
-            // this.headerControlView.renderSlider();
-            // this.headerControlView.renderPlot();
+            this.codeMirrorJSView.showSources();
+            this.codeMirrorHTMLView.render();
+            this.headerControlView.renderSlider();
           }
         }
       }, this);
 
-      // this.jsBinSocketRouter.onSocketData("fondueDTO:screenCapture", function (obj) {
-      //   console.log("fondueDTO:screenCapture");
-      //   var $img = $("<img>", {src: obj.dataURL});
-      //   $("#plotter").html($img);
-      // }, this);
-
       this.jsBinSocketRouter.onSocketData("fondueDTO:css", function (obj) {
         console.log("fondueDTO:css");
-        // this.codeMirrorCSSView.setCode(obj.css);
+        this.codeMirrorCSSView.setCode(obj.css);
       }, this);
 
       this.jsBinSocketRouter.onSocketData("fondueDTO:html", function (obj) {
         console.log("fondueDTO:html");
         if (!this.uiPaused) {
-          // this.codeMirrorHTMLView.htmlSource = obj.html;
-          // this.codeMirrorHTMLView.render();
+          this.codeMirrorHTMLView.htmlSource = obj.html;
+          this.codeMirrorHTMLView.render();
         }
       }, this);
 
@@ -129,16 +112,11 @@ def([
 
         this.sourceCollection.empty();
         this.sourceCollection.add(obj.scripts);
-        // this.dropDownJSView.render();
+        this.dropDownJSView.render();
 
         if (!this.uiPaused) {
-          // this.dropDownJSView.detailChange(1);
-          // this.headerControlView.lastDetailSlideVal = 1;
-          // this.headerControlView.jsDetailChange(null, {value: 120});
-          // this.headerControlView.$detailSlider.slider({
-          //   value: 100,
-          // });
-          // this.codeMirrorHTMLView.render();
+          this.dropDownJSView.detailChange(1);
+          this.codeMirrorHTMLView.render();
         }
       }, this);
 
@@ -147,78 +125,61 @@ def([
         this.activeNodeCollection.mergeNodes(obj.nodes);
 
         this.uiPaused = false;
-        // this.codeMirrorJSView.showSources();
-        // this.codeMirrorHTMLView.render();
-        // this.headerControlView.renderSlider();
-        // this.headerControlView.resume();
-      }, this);
-
-      this.headerControlView.on("aspectChange", function (callback) {
-        // this.pauseUIUpdates();
-        // this.htmlJSLinksView.collapseAll();
-        // this.codeMirrorHTMLView.removeAllHighlights();
-        callback();
+        this.codeMirrorJSView.showSources();
+        this.codeMirrorHTMLView.render();
+        this.headerControlView.renderSlider();
+        this.headerControlView.resume();
       }, this);
 
       this.headerControlView.on("jsDetailChange", function (val) {
         this.pauseUIUpdates();
-        // this.htmlJSLinksView.collapseAll();
-        // this.codeMirrorHTMLView.removeAllHighlights();
-        // this.dropDownJSView.detailChange(val);
+        this.htmlJSLinksView.collapseAll();
+        this.codeMirrorHTMLView.removeAllHighlights();
+        this.dropDownJSView.detailChange(val);
       }, this);
     },
 
     bindViewListeners: function () {
       this.headerControlView.on("activeCodePanel:pause", function (pause) {
-        // if (pause) {
-        //   this.pauseUIUpdates();
-        // } else {
-        //   this.uiPaused = false;
-        //   this.htmlJSLinksView.collapseAll();
-        //   this.codeMirrorJSView.showSources();
-        //   this.codeMirrorHTMLView.render();
-        //   this.headerControlView.renderSlider();
-        //   this.headerControlView.resume();
-        // }
+        if (pause) {
+          this.pauseUIUpdates();
+        } else {
+          this.uiPaused = false;
+          this.htmlJSLinksView.collapseAll();
+          this.codeMirrorJSView.showSources();
+          this.codeMirrorHTMLView.render();
+          this.headerControlView.renderSlider();
+          this.headerControlView.resume();
+        }
       }, this);
 
       this.headerControlView.on("activeCodePanel:reset", function () {
         this.pauseUIUpdates();
-        // this.htmlJSLinksView.collapseAll();
+        this.htmlJSLinksView.collapseAll();
         this.activeNodeCollection.empty();
         this.jsBinSocketRouter.emit("jsbin:reset", {});
       }, this);
 
       this.headerControlView.on("controlView:order", function (jsOrderReversed) {
-        // this.sourceCollection.setOrder(jsOrderReversed);
-        // this.htmlJSLinksView.collapseAll();
-        // this.codeMirrorHTMLView.render();
-        // this.dropDownJSView.render();
-        // this.codeMirrorJSView.showSources();
+        this.sourceCollection.setOrder(jsOrderReversed);
+        this.htmlJSLinksView.collapseAll();
+        this.codeMirrorHTMLView.render();
+        this.dropDownJSView.render();
+        this.codeMirrorJSView.showSources();
       }, this);
 
       this.headerControlView.on("timeSlideChange", function () {
         this.uiPaused = true;
-        // this.htmlJSLinksView.collapseAll();
-        //this.headerControlView.pause();
-        // this.codeMirrorHTMLView.render();
-        // this.codeMirrorJSView.showSources();
-      }, this);
-
-      this.headerControlView.on("aspect:tiles", function () {
-        this.fluidView.backtraceAsyncEvent();
-      }, this);
-
-      this.headerControlView.on("aspect:graph", function () {
-        this.fluidView.showCallGraph();
+        this.htmlJSLinksView.collapseAll();
+        this.headerControlView.pause();
+        this.codeMirrorHTMLView.render();
+        this.codeMirrorJSView.showSources();
       }, this);
     },
 
     pauseUIUpdates: function () {
-      console.warn("Ignoring UI Pause Request");
-      return;
-      // this.uiPaused = true;
-      // this.headerControlView.pause();
+      this.uiPaused = true;
+      this.headerControlView.pause();
     },
 
     nav: function (panelType, codeMirrorInstance) {
@@ -227,25 +188,17 @@ def([
 
     javascript: function (codeMirrorInstance) {
       this.codeMirrors.js = codeMirrorInstance;
-      // this.codeMirrorJSView.showSources();
-      //TODO ISOPLETH super hack, ship it!
-      $("#bin").hide();
-      $(".binview.stretch").css("width", "100%");
-      $($(".stretch.panelwrapper")[0]).hide();
-      $("body").css("background", "#fff");
-      $($(".stretch.panelwrapper")[2]).css("width", "100%");
-      $($(".stretch.panelwrapper")[2]).css("left", "0");
-      $("#control").hide();
+      this.codeMirrorJSView.showSources();
     },
 
     html: function (codeMirrorInstance) {
       this.codeMirrors.html = codeMirrorInstance;
-      // this.codeMirrorHTMLView.render();
+      this.codeMirrorHTMLView.render();
     },
 
     css: function (codeMirrorInstance) {
       this.codeMirrors.css = codeMirrorInstance;
-      // this.codeMirrorCSSView.render();
+      this.codeMirrorCSSView.render();
     }
   });
 

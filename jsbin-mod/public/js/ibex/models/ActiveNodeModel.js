@@ -16,7 +16,7 @@ def([
       "querySelectorAll"
     ]),
 
-    getHitsWithinDisplayRange: function () {
+    getHits: function () {
       var invokes = this.get("invokes");
       var i = 0;
 

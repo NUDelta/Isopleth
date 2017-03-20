@@ -3,10 +3,9 @@ def([
   "backbone",
   "underscore",
   "handlebars",
-  "Plotly",
   "moment",
   "text!../templates/UIControls.html"
-], function ($, Backbone, _, Handlebars, Plotly, moment, UIControlsTemplate) {
+], function ($, Backbone, _, Handlebars, moment, UIControlsTemplate) {
   return Backbone.View.extend({
     template: Handlebars.compile(UIControlsTemplate),
 
@@ -21,10 +20,7 @@ def([
     events: {
       "click #pauseUpdates": "togglePauseClicked",
       "click #resetTraces": "resetClicked",
-      "click #jsScriptOrder": "toggleJSOrder",
-      "click #aspect-setup": "aspectSetup",
-      "click #aspect-tiles": "aspectTiles",
-      "click #aspect-graph": "aspectGraph"
+      "click #jsScriptOrder": "toggleJSOrder"
     },
 
     initialize: function (activeNodeCollection) {
@@ -78,104 +74,6 @@ def([
         slide: this.timeSlideChange
       });
       this.updateCallTimeSliderLabel()
-    },
-
-    aspectSetup: function () {
-    },
-
-    aspectTiles: function () {
-      this.trigger("aspect:tiles");
-    },
-
-    aspectGraph: function () {
-      this.trigger("aspect:graph");
-    },
-
-    renderPlot: function () {
-      var callTimes = _(this.activeNodeCollection.models).chain()
-        .map(function (model) {
-          return model.get("invokes")
-        })
-        .flatten()
-        .pluck("timestamp")
-        .value()
-        .sort(function (a, b) {
-          return b - a;
-        });
-
-      var interval = 1000;
-
-      // Get values for range of histogram's x axis
-      var greatestVal = callTimes[0];
-      var leastVal = callTimes[callTimes.length - 1];
-      var x = _.range(leastVal + interval, greatestVal + interval, interval);
-
-      // Get value counts for histogram's y axis
-      var y = _(x).map(function (num) {
-        var count = 0;
-
-        // Remove elements from end of array while we iterate through
-        // to avoid duplicate lookups
-        for (var i = callTimes.length - 1; i >= 0; i--) {
-          // Put everything less than the histogram x in that x value
-          if (callTimes[i] <= num) {
-            // console.log(callTimes[i], "<=", num)
-            count++;
-            callTimes.pop();
-          } else {
-            break;
-          }
-        }
-
-        return count;
-      });
-
-      x = _(x).map(function(num){
-        return Math.floor((num - leastVal) / 1000);
-      });
-
-      var $plotEl = $("#plotter");
-      if ($plotEl.children().length < 1) {
-        var trace1 = {
-          x: x,
-          y: y,
-          name: 'Rest of world',
-          marker: {color: 'rgb(55, 83, 109)'},
-          type: 'bar'
-        };
-
-        var data = [trace1];
-
-        var layout = {
-          xaxis: {
-            title: "Runtime in Seconds",
-            tickfont: {
-              size: 14,
-              color: 'rgb(107, 107, 107)'
-            }
-          },
-          yaxis: {
-            title: "Calls",
-            titlefont: {
-              size: 16,
-              color: 'rgb(107, 107, 107)'
-            },
-            tickfont: {
-              size: 14,
-              color: 'rgb(107, 107, 107)'
-            }
-          },
-          barmode: 'group',
-          bargap: 0.1
-        };
-
-        Plotly.newPlot($plotEl[0], data, layout);
-      } else {
-        Plotly.restyle($plotEl[0], {
-          x: [x],
-          y: [y]
-        });
-      }
     },
 
     timeSlideChange: function (event, ui) {
@@ -264,6 +162,7 @@ def([
       }
       this.trigger("controlView:order", this.jsOrderReversed);
     },
+
 
     pause: function () {
       this.paused = true;

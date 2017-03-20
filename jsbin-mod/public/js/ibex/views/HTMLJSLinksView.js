@@ -71,7 +71,7 @@ def([
           this.jsNodeIdGutterPill[activeNodeModel.get("id")] = pill;
         }
 
-        pill.setCount(activeNodeModel.getHitsWithinDisplayRange());
+        pill.setCount(activeNodeModel.getHits());
         pill.setExpandFn(this.pillExpandFn);
         pill.setCollapseFn(this.pillCollapseFn);
       }, this);

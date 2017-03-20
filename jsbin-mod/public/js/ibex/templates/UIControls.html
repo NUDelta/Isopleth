@@ -75,63 +75,6 @@
       margin-left: 24px;
     }
 
-    .aspect-slider-wrap {
-      float: left;
-      padding-left: 8px;
-      padding-right: 8px;
-      margin-right: 4px;
-      margin-top: 5px;
-      border-radius: 3px;
-      background-color: white;
-      width: 165px;
-    }
-
-    .aspect-slider-label {
-      padding-top: 0px;
-      position: absolute;
-      width: 100px;
-      top: 8px;
-      color: #39464E;
-      -webkit-font-smoothing: antialiased;
-      font-size: 14px;
-      margin-left: 43px;
-    }
-
-    .aspect-toggle-group {
-      padding-top: 4px;
-      position: absolute;
-      width: 205px;
-      top: 29px;
-      color: #39464E;
-      -webkit-font-smoothing: antialiased;
-      font-size: 14px;
-      margin-left: -23px;
-      height: 26px;
-      background-color: #F0F0F0;
-    }
-
-    .aspect-option-wrap {
-      padding-top: 0px;
-      padding-bottom: 3px;
-      width: 33%;
-      float: left;
-      text-align: center;
-    }
-
-    .aspect-option {
-      text-decoration: none;
-      color: #39464E;
-
-    }
-
-    .aspect-option-wrap:hover {
-      border-bottom: solid 3px #1C90F3;
-    }
-
-    .aspect-option-wrap.active {
-      border-bottom: solid 3px #08f30f;
-    }
-
     #detailSlider {
       margin-top: 31px;
     }
@@ -286,7 +229,7 @@
     }
 
     .detail-slider-wrap.control-slider .ui-widget-content {
-      background: linear-gradient(to right, #2cee49 0%, #ffffff 80%);
+      background: linear-gradient(to right, #2cee49 0%,#ffffff 80%);
       /*background: #2cee49;*/
     }
 
@@ -518,11 +461,11 @@
 
   </style>
 
-  <div class="telescope-logo" style="display:none;">
+  <div class="telescope-logo">
     <span class="mega-octicon octicon-telescope"></span>
   </div>
 
-  <div class="actionItem receiver inactive" style="display:none;">
+  <div class="actionItem receiver inactive">
     <a id="pauseUpdates" class="fondue-option" href="javascript:;">
       <span class="octicon octicon-rss"></span>
       <span id="pauseStatusOn">Receiving</span>
@@ -530,7 +473,7 @@
     </a>
   </div>
 
-  <div class="actionItem"  style="display:none;">
+  <div class="actionItem">
     <a id="resetTraces" class="fondue-option" href="javascript:;">
       <span class="octicon octicon-sync"></span>
       <span>Reset Traces</span>
@@ -538,7 +481,7 @@
   </div>
 
   <div class="actionItem">
-    <a id="jsScriptOrder" class="fondue-option" href="javascript:;" style="display:none;">
+    <a id="jsScriptOrder" class="fondue-option" href="javascript:;">
       <span class="octicon octicon-list-ordered"></span>
       <span>JS Order</span>
       <span class="orderUpDown reverse"> &#8593;</span>
@@ -548,30 +491,7 @@
 
   <div class="actionDivider"></div>
 
-  <div class="aspect-slider-wrap">
-    <div class="aspect-slider-label"><span class="octicon octicon-beaker"></span>Aspect</div>
-    <div class="aspect-toggle-group">
-      <div class="aspect-option-wrap">
-        <a id="aspect-setup" class="aspect-option" href="javascript:;">
-          <span>Setup</span>
-        </a>
-      </div>
-      <div class="aspect-option-wrap">
-        <a id="aspect-tiles" class="aspect-option" href="javascript:;">
-          <span>Tiles</span>
-        </a>
-      </div>
-      <div class="aspect-option-wrap">
-        <a id="aspect-graph" class="aspect-option" href="javascript:;">
-          <span>Graph</span>
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <div class="actionDivider"></div>
-
-  <div class="detail-slider-wrap control-slider"  style="display:none;">
+  <div class="detail-slider-wrap control-slider">
     <div class="detail-slider-label"><span class="octicon octicon-settings"></span>JS Detail:&nbsp;<span
       id="detailLevel">1</span></div>
     <div id="detailSlider"></div>
@@ -579,9 +499,8 @@
 
   <div class="actionDivider"></div>
 
-  <div class="timeline-slider-wrap control-slider"  style="display:none;">
-    <div class="timeline-slider-label"><span class="octicon octicon-watch"></span>JS Call Time: <span
-      id="slideValLower"></span> &#8596; <span id="slideValUpper"></span></div>
+  <div class="timeline-slider-wrap control-slider">
+    <div class="timeline-slider-label"><span class="octicon octicon-watch"></span>JS Call Time: <span id="slideValLower"></span> &#8596; <span id="slideValUpper"></span></div>
     <div id="timeLineSlider"></div>
   </div>
 

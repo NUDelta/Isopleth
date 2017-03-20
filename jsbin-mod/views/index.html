@@ -28,9 +28,6 @@
   <meta property="og:image" content="{{static}}/images/logo.png" />
 
   <link rel="stylesheet" href="/css/octicons/octicons.css">
-  <script src="/js/ibex/lib/cytoscape.min.js"></script>
-  <script src="/js/ibex/lib/dagre.min.js"></script>
-  <script src="/js/ibex/lib/cytoscape-dagre.js"></script>
   <script src="/js/ibex/lib/socket.io-1.4.5.js"></script>
   <script>
     var require = {
@@ -41,10 +38,8 @@
         underscore: 'lib/reqMod-underscore',
         backbone: 'lib/reqMod-backbone',
         handlebars: 'lib/reqMod-handlebars',
-        Plotly: 'lib/reqMod-plotly-1.21.2',
         moment: 'lib/reqMod-moment',
         raphael: 'lib/reqMod-raphael-min',
-        vis: 'lib/reqMod-vis',
         text: 'lib/reqMod-text'
       },
       // non-amd library loaders
@@ -58,13 +53,19 @@
         'backbone': {
           deps: ['underscore', 'jquery'],
           init: function () {
+            // exports
             return this.Backbone.noConflict();
           }
         },
         'bootstrap': {
           deps: ['jquery']
         },
-        'handlebars': {
+//        'handlebars_original': {
+//          deps: ['bootstrap'], // automatically require bootstrap when requiring an handlebars template
+//          exports: 'Handlebars'
+//        },
+        'handlebars': { // handlebars with custom block helpers
+//          deps: ['handlebars_original'],
           exports: 'Handlebars'
         }
       }
@@ -148,7 +149,7 @@ if(top != self) {
   <div id="source" class="binview stretch">
   </div>
   <div id="panelswaiting">
-    <div class="code stretch html panel" style="display:none;">
+    <div class="code stretch html panel">
       <div class="label menu"><span class="name"><strong><a href="#htmlprocessors" class="fake-dropdown button-dropdown">HTML</a></strong></span><div class="dropdown" id="htmlprocessors">
           <div class="dropdownmenu processorSelector" data-type="html">
             <a href="#html">HTML</a>
@@ -235,7 +236,6 @@ Include alerts, prompts &amp; confirm boxes">Run with JS</button>
   </form>
   {{/unless}}
 </div>
-<div id="fluidView"></div>
 <div id="tip" class="{{#if flash_tip_type}}{{flash_tip_type}}{{/if}}{{#unless flash_tip_type}} notification{{/unless}}">
   <p>
     {{#if flash_tip}}{{{flash_tip}}}{{/if}}
@@ -401,20 +401,7 @@ Include alerts, prompts &amp; confirm boxes">Run with JS</button>
 {{#if custom_js}}
 <script src="{{makeURL custom_js static}}{{cacheBust}}"></script>
 {{/if}}
-  <style>
-    #plotter{
-      position: absolute;
-      top:100px;
-      left:100px;
-      height: 500px;
-      width: 600px;
-      background-color: #414141;
-      border-radius: 5px;
-      z-index: 2;
-      display:none;
-    }
-  </style>
-  <div id="plotter"></div>
+
 </body>
 </html>
 

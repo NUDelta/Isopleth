@@ -3,10 +3,8 @@ def([
   "backbone",
   "underscore",
   "../models/ActiveNodeModel",
-  "../routers/JSBinSocketRouter",
-  "text!../util/nodeSample.txt",
-  "raphael"
-], function ($, Backbone, _, ActiveNodeModel, JSBinSocketRouter, nodeSample) {
+  "../routers/JSBinSocketRouter"
+], function ($, Backbone, _, ActiveNodeModel, JSBinSocketRouter) {
   return Backbone.Collection.extend({
     model: ActiveNodeModel,
 
@@ -32,8 +30,6 @@ def([
       }, this);
 
       this.empty = _.bind(this.empty, this);
-
-      this.mergeNodes(JSON.parse(nodeSample));
     },
 
     getEarliestTimeStamp: function () {
@@ -46,7 +42,7 @@ def([
 
     getActiveNodes: function (path, domModifiersOnly) {
       return this.filter(function (model) {
-        var hasHits = !!model.getHitsWithinDisplayRange();
+        var hasHits = !!model.getHits();
         var hasPath = !!model.get("path");
         var matchesPath = path ? path === model.get("path") : true;
         var domModifier = domModifiersOnly ? !!model.get("domModifier") : true;
@@ -56,19 +52,10 @@ def([
       });
     },
 
-    getGeneralNodes: function () {
-      return this.filter(function (model) {
-        var hasHits = !!model.get("invokes").length;
-        var hasPath = !!model.get("path");
-
-        return hasHits && hasPath;
-      });
-    },
-
     setTimeStampBounds: function (minInvokeTime, maxInvokeTime) {
       this.minInvokeTime = minInvokeTime;
       this.maxInvokeTime = maxInvokeTime;
-      // this.populateQueryNodeMap();
+      this.populateQueryNodeMap();
     },
 
     mergeNodes: function (arrNodes) {
@@ -87,7 +74,7 @@ def([
         console.log("\tActiveNodeCollection: Added " + nodesCreated + " new nodes.");
       }
 
-      // this.populateQueryNodeMap();
+      this.populateQueryNodeMap();
     },
 
     mergeInvocations: function (arrInvocations) {
@@ -96,39 +83,39 @@ def([
       //   return;
       // }
 
-      // var nodesCreated = 0;
-      // _(arrInvocations).each(function (invocation) {
-      //   var node = invocation.node;
-      //   invocation.nodeName = node && node.name ? node.name : "";
-      //
-      //   var timestamp = invocation.timestamp;
-      //
-      //   if (!this.earliestTimeStamp || timestamp < this.earliestTimeStamp) {
-      //     this.earliestTimeStamp = timestamp;
-      //   }
-      //   if (!this.latestTimeStamp || timestamp > this.latestTimeStamp) {
-      //     this.latestTimeStamp = timestamp;
-      //   }
-      //
-      //   var activeNodeModel = this.get(invocation.nodeId);
-      //   if (!activeNodeModel) {
-      //     activeNodeModel = new ActiveNodeModel(node);
-      //     this.add(activeNodeModel);
-      //     nodesCreated++;
-      //   }
-      //
-      //   var invokeArr = activeNodeModel.get("invokes") || [];
-      //
-      //   if (invokeArr.length < 100) {
-      //     invokeArr.push(invocation);
-      //     activeNodeModel.set("invokes", invokeArr);
-      //   }
-      // }, this);
-      // if (nodesCreated) {
-      //   console.log("\tActiveNodeCollection: Added " + nodesCreated + " new nodes.");
-      // }
+      var nodesCreated = 0;
+      _(arrInvocations).each(function (invocation) {
+        var node = invocation.node;
+        invocation.nodeName = node && node.name ? node.name : "";
 
-      // this.populateQueryNodeMap();
+        var timestamp = invocation.timestamp;
+
+        if (!this.earliestTimeStamp || timestamp < this.earliestTimeStamp) {
+          this.earliestTimeStamp = timestamp;
+        }
+        if (!this.latestTimeStamp || timestamp > this.latestTimeStamp) {
+          this.latestTimeStamp = timestamp;
+        }
+
+        var activeNodeModel = this.get(invocation.nodeId);
+        if (!activeNodeModel) {
+          activeNodeModel = new ActiveNodeModel(node);
+          this.add(activeNodeModel);
+          nodesCreated++;
+        }
+
+        var invokeArr = activeNodeModel.get("invokes") || [];
+
+        if (invokeArr.length < 100) {
+          invokeArr.push(invocation);
+          activeNodeModel.set("invokes", invokeArr);
+        }
+      }, this);
+      if (nodesCreated) {
+        console.log("\tActiveNodeCollection: Added " + nodesCreated + " new nodes.");
+      }
+
+      this.populateQueryNodeMap();
     },
 
     empty: function () {
@@ -202,7 +189,7 @@ def([
       this.each(function (model) {
         model.set("domModifier", false);
 
-        var hasHits = !!model.getHitsWithinDisplayRange();
+        var hasHits = !!model.getHits();
         var hasPath = !!model.get("path");
 
         if (hasHits && hasPath) {
@@ -244,113 +231,6 @@ def([
           }, this);
         }
       }, this);
-    },
-
-    drawSomeLines: function () {
-      // var i = 0;
-      // var marker;
-      // var lastLine = null, lastCol = null, $lastRDrawing = null;
-      // var nextLine;
-      // var nextCol;
-      //
-      // var highlightNext = function () {
-      //   if (marker) {
-      //     marker.clear();
-      //   }
-      //
-      //   if (!runList[i]) {
-      //     return;
-      //   }
-      //
-      //   if ($lastRDrawing) {
-      //     $lastRDrawing.remove();
-      //     $lastRDrawing = null;
-      //   }
-      //
-      //   nextLine = runList[i].nodeModel.attributes.startLine - 1;
-      //   nextCol = runList[i].nodeModel.attributes.startColumn;
-      //
-      //   if (lastLine !== null && nextLine !== null) {
-      //     //draw line
-      //     var $jsMirror = $($(".CodeMirror-code")[2]);
-      //     var el = $jsMirror.find("div:nth-child(" + (lastLine + 1) + ")")[0];
-      //     var fromEl = $(el)[0];
-      //     var fromPos;
-      //     if (fromEl) {
-      //       fromPos = fromEl.getBoundingClientRect();
-      //     }
-      //
-      //     var elNext = $jsMirror.find("div:nth-child(" + (nextLine + 1) + ")")[0];
-      //     var toEl = $(elNext)[0];
-      //     var toPos;
-      //     if (toEl) {
-      //       toPos = toEl.getBoundingClientRect();
-      //     }
-      //
-      //     var x, y, zx, zy, leftAbsolutePosition, topAbsolutePosition;
-      //     leftAbsolutePosition = fromPos.left;
-      //     topAbsolutePosition = fromPos.top;
-      //     x = fromPos.left - leftAbsolutePosition + 8 * lastCol;
-      //     y = fromPos.top - topAbsolutePosition + (fromPos.height / 2);
-      //     zx = toPos.left - leftAbsolutePosition + 8 * nextCol;
-      //     zy = toPos.top - topAbsolutePosition + toPos.height / 2;
-      //
-      //     var ax = x + (zx - x) * (2 / 5);
-      //     var ay = y;
-      //     var bx = x + (zx - x) * (3 / 5);
-      //     var by = zy;
-      //
-      //     var colors = [
-      //       "hsb(0, .75, .75)",  //red
-      //       "hsb(.8, .75, .75)", //purple
-      //       "hsb(.3, .75, .75)", // green
-      //       "hsb(.6, .75, .75)", // blue
-      //       "hsb(.1, .75, .75)" // orange
-      //     ];
-      //
-      //     var color = colors[_.random(0, 4)];
-      //
-      //     var $div = $("div");
-      //
-      //     var r = Raphael($div, 1, 1);
-      //
-      //     $(r.canvas).attr("style", "overflow: visible; position: absolute; z-index: 3;" +
-      //       "left: " + leftAbsolutePosition + "px;" +
-      //       "top: " + topAbsolutePosition + "px;"
-      //     );
-      //     // var path = [["M", x, y], ["C", ax, ay, bx, by, zx, zy]];
-      //
-      //     r.path(["M", x, y]).animate({path: ["C", 0, 0, 0, 0, zx, zy]}, 500).attr({
-      //       stroke: color,
-      //       "stroke-width": 1,
-      //       "stroke-linecap": "round"
-      //     });
-      //
-      //     $lastRDrawing = $(r.canvas);
-      //   }
-      //
-      //   lastLine = nextLine;
-      //   lastCol = nextCol;
-      //
-      //   marker = codeMirrorJSView.jsMirror.markText(
-      //     {
-      //       line: runList[i].nodeModel.attributes.startLine - 1,
-      //       ch: runList[i].nodeModel.attributes.startColumn
-      //     },
-      //     {
-      //       line: runList[i].nodeModel.attributes.endLine - 1,
-      //       ch: runList[i].nodeModel.attributes.endColumn
-      //     },
-      //     {
-      //       css: "background-color:#fded02"
-      //     }
-      //   );
-      //
-      //   i++;
-      //   window.myTimeout = setTimeout(highlightNext, 1000);
-      // };
-      //
-      // highlightNext();
     }
 
   })

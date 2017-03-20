@@ -12,8 +12,7 @@ $.fn.splitter = function () {
         $parent = $el.parent(),
         type = 'x',
         $prev = type === 'x' ? $el.prevAll(':visible:first') : $el.nextAll(':visible:first'),
-        //TODO ISOPLETH super hack
-        $handle = $('<div class="resize" style="display:none;"></div>'),
+        $handle = $('<div class="resize"></div>'),
         dragging = false,
         width = $parent.width(),
         parentOffset = $parent.offset(),
@@ -218,8 +217,7 @@ $.fn.splitter = function () {
     $prev.css('width', 'auto');
     $prev.css('height', 'auto');
     $el.data('splitter', $handle);
-    //TODO ISOPLETH super hack
-    // $el.before($handle);
+    $el.before($handle);
 
     // if (settings.y) {
     //   $handle.trigger('change', 'y');
