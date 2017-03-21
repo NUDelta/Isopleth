@@ -51,11 +51,73 @@ textarea {
 }
 #fluidView .cardView {
   display: inline-block;
-  width: 500px;
+  width: 564px;
   height: 300px;
   margin: 2em;
   border-radius: 6px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+#fluidView .cardView .sec {
+  float: left;
+  display: block;
+  height: 100%;
+}
+#fluidView .cardView .left-column {
+  width: 0px;
+  background-color: #e2e6f3;
+}
+#fluidView .cardView .left-button-column {
+  width: 32px;
+  background-color: #e2e6f3;
+}
+#fluidView .cardView .left-button-column .buttonPane {
+  float: left;
+  transform: rotate(90deg);
+  transform-origin: 0 0 0;
+  height: 30%;
+  margin-left: 27px;
+}
+#fluidView .cardView .left-button-column .buttonPane span {
+  cursor: pointer;
+  text-align: center;
+  background-color: #387fbd;
+  color: #fff;
+  padding: 4px;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+#fluidView .cardView .left-button-column .buttonPane span:hover {
+  background-color: #3c90d2;
+}
+#fluidView .cardView .center-column {
+  width: 500px;
+}
+#fluidView .cardView .right-column {
+  width: 0px;
+  background-color: #e2e6f3;
+}
+#fluidView .cardView .right-button-column {
+  width: 32px;
+  background-color: #e2e6f3;
+}
+#fluidView .cardView .right-button-column .buttonPane {
+  float: left;
+  transform: rotate(90deg);
+  transform-origin: 0 0 0;
+  height: 30%;
+  margin-left: 25px;
+}
+#fluidView .cardView .right-button-column .buttonPane span {
+  cursor: pointer;
+  text-align: center;
+  background-color: #387fbd;
+  color: #fff;
+  padding: 4px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+#fluidView .cardView .right-button-column .buttonPane span:hover {
+  background-color: #3c90d2;
 }
 #fluidView button {
   padding: 4px 4px;

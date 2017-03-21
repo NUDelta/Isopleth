@@ -34,13 +34,13 @@ module.exports = function(grunt) {
     //Live-reloading
     watch: {
       css: {
-        files: ['public/stylesheets/**/*.less'],
+        files: ['public/stylesheets/**/*.css'],
         options: {
           livereload: true
         }
       },
       jade: {
-        files: ['views/**/*.jade'],
+        files: ['views/**/*.jade', 'public/javascripts/templates/**/*.jade', ],
         options: {
           livereload: true
         }

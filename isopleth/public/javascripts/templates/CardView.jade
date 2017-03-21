@@ -1,19 +1,25 @@
-.card-container
-  .left-column
-  .left-button-column
-    .buttonPane.invoke-inputs Inputs
-    .buttonPane.invoke-binding Binding
-    .buttonPane.invoke-declaration Declaration
+.left-column.sec
+.left-button-column.sec
+  .buttonPane.invoke-inputs
+    span Inputs
+  .buttonPane.invoke-binding
+    span Binding
+  .buttonPane.invoke-declaration
+    span Declaration
 
-  .center-column
-    .main-javascript
-      h4="{{description}}"
-      textarea.cardMirror="{{code}}"
+.center-column.sec
+  h4="{{description}}"
 
-  .right-column
-  .right-button-column
-    .buttonPane.invoke-outputs Output
-    .buttonPane.invoke-delegates Calls
+  .main-javascript
+    textarea.cardMirror="{{code}}"
+
+.right-button-column.sec
+  .buttonPane.invoke-outputs
+    span Output
+  .buttonPane.invoke-delegates
+    span Calls
+
+.right-column.sec
 
 
 
