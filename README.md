@@ -1,6 +1,6 @@
-# Ibex
+# Isopleth
 
-A platform for extracting UI behaviors into learning examples.
+A platform for following interesting paths through JavaScript.
 
 #To install:
     #install nvm or node
