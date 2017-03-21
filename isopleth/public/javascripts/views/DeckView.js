@@ -13,6 +13,8 @@ define([
       this.setElement($("#deckView"));
 
       this.drawCard = _.bind(this.drawCard, this);
+
+      this.drawCard(this.invokeGraph.nativeRootInvokes[1].invocationId)
     },
 
     drawCard: function (nodeId) {

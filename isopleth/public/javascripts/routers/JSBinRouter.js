@@ -227,15 +227,6 @@ define([
 
     javascript: function (codeMirrorInstance) {
       this.codeMirrors.js = codeMirrorInstance;
-      // this.codeMirrorJSView.showSources();
-      //TODO ISOPLETH super hack, ship it!
-      $("#bin").hide();
-      $(".binview.stretch").css("width", "100%");
-      $($(".stretch.panelwrapper")[0]).hide();
-      $("body").css("background", "#fff");
-      $($(".stretch.panelwrapper")[2]).css("width", "100%");
-      $($(".stretch.panelwrapper")[2]).css("left", "0");
-      $("#control").hide();
     },
 
     html: function (codeMirrorInstance) {
