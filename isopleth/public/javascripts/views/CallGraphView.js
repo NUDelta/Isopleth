@@ -51,6 +51,7 @@ define([
 
     resetGraph: function () {
       this.showLibs = false;
+      this.showSequentialRepeats = false;
       this.drawGraph();
     },
 
@@ -65,6 +66,7 @@ define([
 
     drawJoshAsync: function () {
       _(this.invokeGraph.asyncSerialEdges).each(function (edge) {
+        this.cy.remove('edge[source = "' + edge.parentInvoke.invocationId + '"][target="' + edge.childInvoke.invocationId + '"]');
         this.cy.add({
           group: 'edges', data: {
             source: edge.parentInvoke.invocationId,
@@ -77,6 +79,7 @@ define([
 
     drawTomAsync: function () {
       _(this.invokeGraph.asyncEdges).each(function (edge) {
+        this.cy.remove('edge[source = "' + edge.parentInvoke.invocationId + '"][target="' + edge.childInvoke.invocationId + '"]');
         this.cy.add({
           group: 'edges', data: {
             source: edge.parentInvoke.invocationId,

@@ -35,19 +35,30 @@ textarea {
   background-color: #2f2f2f;
 }
 #fluidView #graphView #graphControl {
+  width: 100%;
   float: left;
-  width: 125px;
-  height: 100%;
-  background-color: #e7e7e7;
+  height: 14%;
 }
 #fluidView #graphView #graphControl ul {
   list-style: none;
   padding: 0;
+  margin: 0;
+}
+#fluidView #graphView #graphControl ul li {
+  float: left;
+}
+#fluidView #graphView #graphControl ul li div {
+  color: white;
+  background-color: #545454;
+  border-radius: 2px;
+  margin: 3px;
+  padding: 3px;
+  font-size: 12px;
+  cursor: pointer;
 }
 #fluidView #graphView #invokeGraph {
   width: 100%;
-  height: 100%;
-  margin-left: 130px;
+  height: 80%;
 }
 #fluidView .cardView {
   display: inline-block;
@@ -57,9 +68,10 @@ textarea {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 #fluidView .cardView .sec {
-  float: left;
-  display: block;
+  display: inline-block;
   height: 100%;
+  vertical-align: top;
+  margin-right: -5px;
 }
 #fluidView .cardView .left-column {
   width: 0px;
@@ -81,7 +93,6 @@ textarea {
   transform: rotate(90deg);
   transform-origin: 0 0 0;
   height: 30%;
-  margin-left: 27px;
 }
 #fluidView .cardView .buttonPane span {
   cursor: pointer;
@@ -89,8 +100,6 @@ textarea {
   background-color: #387fbd;
   color: #fff;
   padding: 4px;
-  border-bottom-left-radius: 3px;
-  border-bottom-right-radius: 3px;
 }
 #fluidView .cardView .buttonPane span.active {
   background-color: #ffb533;
@@ -113,7 +122,7 @@ textarea {
   background-color: #e2e6f3;
 }
 #fluidView .cardView .right-button-column .buttonPane {
-  margin-left: 25px;
+  margin-left: 24px;
 }
 #fluidView .cardView .right-button-column .buttonPane span {
   border-top-left-radius: 3px;
