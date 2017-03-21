@@ -55,7 +55,6 @@ body {
   .cardView {
     display: inline-block;
 
-    width: 564px;
     height: 300px;
     margin: 2em;
     border-radius: 6px;
@@ -77,24 +76,41 @@ body {
       background-color: #e2e6f3;
 
       .buttonPane {
-        float: left;
-        transform: rotate(90deg);
-        transform-origin: 0 0 0;
-        height: 30%;
         margin-left: 27px;
 
         span {
-          cursor: pointer;
-          text-align: center;
-          background-color: #387fbd;
-          color: #fff;
-          padding: 4px;
           border-bottom-left-radius: 3px;
           border-bottom-right-radius: 3px;
+        }
+      }
+    }
+
+    .buttonPane {
+      float: left;
+      transform: rotate(90deg);
+      transform-origin: 0 0 0;
+      height: 30%;
+      margin-left: 27px;
+
+      span {
+        cursor: pointer;
+        text-align: center;
+        background-color: #387fbd;
+        color: #fff;
+        padding: 4px;
+        border-bottom-left-radius: 3px;
+        border-bottom-right-radius: 3px;
+
+        &.active {
+          background-color: #ffb533;
 
           &:hover {
-            background-color: #3c90d2;
+            background-color: #ffc97e;
           }
+        }
+
+        &:hover {
+          background-color: #3c90d2;
         }
       }
     }
@@ -114,24 +130,11 @@ body {
       background-color: #e2e6f3;
 
       .buttonPane {
-        float: left;
-        transform: rotate(90deg);
-        transform-origin: 0 0 0;
-        height: 30%;
         margin-left: 25px;
 
         span {
-          cursor: pointer;
-          text-align: center;
-          background-color: #387fbd;
-          color: #fff;
-          padding: 4px;
           border-top-left-radius: 3px;
           border-top-right-radius: 3px;
-
-          &:hover {
-            background-color: #3c90d2;
-          }
         }
       }
     }
