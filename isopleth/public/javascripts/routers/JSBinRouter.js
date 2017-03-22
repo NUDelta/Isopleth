@@ -89,6 +89,8 @@ define([
         console.log("Total Invocations Stored:", this.totalInvocations);
 
         this.invokeGraph.addInvokes(obj.invocations);
+        this.isoplethView.showCallGraph();
+
         // this.activeNodeCollection.mergeInvocations(obj.invocations);
 
         if (!this.sourceCollection.length) {
@@ -154,55 +156,55 @@ define([
       }, this);
 
       // this.headerControlView.on("aspectChange", function (callback) {
-        // this.pauseUIUpdates();
-        // this.htmlJSLinksView.collapseAll();
-        // this.codeMirrorHTMLView.removeAllHighlights();
-        // callback();
+      // this.pauseUIUpdates();
+      // this.htmlJSLinksView.collapseAll();
+      // this.codeMirrorHTMLView.removeAllHighlights();
+      // callback();
       // }, this);
 
       // this.headerControlView.on("jsDetailChange", function (val) {
       //   this.pauseUIUpdates();
-        // this.htmlJSLinksView.collapseAll();
-        // this.codeMirrorHTMLView.removeAllHighlights();
-        // this.dropDownJSView.detailChange(val);
+      // this.htmlJSLinksView.collapseAll();
+      // this.codeMirrorHTMLView.removeAllHighlights();
+      // this.dropDownJSView.detailChange(val);
       // }, this);
     },
 
     bindViewListeners: function () {
       // this.headerControlView.on("activeCodePanel:pause", function (pause) {
-        // if (pause) {
-        //   this.pauseUIUpdates();
-        // } else {
-        //   this.uiPaused = false;
-        //   this.htmlJSLinksView.collapseAll();
-        //   this.codeMirrorJSView.showSources();
-        //   this.codeMirrorHTMLView.render();
-        //   this.headerControlView.renderSlider();
-        //   this.headerControlView.resume();
-        // }
+      // if (pause) {
+      //   this.pauseUIUpdates();
+      // } else {
+      //   this.uiPaused = false;
+      //   this.htmlJSLinksView.collapseAll();
+      //   this.codeMirrorJSView.showSources();
+      //   this.codeMirrorHTMLView.render();
+      //   this.headerControlView.renderSlider();
+      //   this.headerControlView.resume();
+      // }
       // }, this);
 
       // this.headerControlView.on("activeCodePanel:reset", function () {
       //   this.pauseUIUpdates();
-        // this.htmlJSLinksView.collapseAll();
-        // this.activeNodeCollection.empty();
-        // this.jsBinSocketRouter.emit("jsbin:reset", {});
+      // this.htmlJSLinksView.collapseAll();
+      // this.activeNodeCollection.empty();
+      // this.jsBinSocketRouter.emit("jsbin:reset", {});
       // }, this);
 
       // this.headerControlView.on("controlView:order", function (jsOrderReversed) {
-        // this.sourceCollection.setOrder(jsOrderReversed);
-        // this.htmlJSLinksView.collapseAll();
-        // this.codeMirrorHTMLView.render();
-        // this.dropDownJSView.render();
-        // this.codeMirrorJSView.showSources();
+      // this.sourceCollection.setOrder(jsOrderReversed);
+      // this.htmlJSLinksView.collapseAll();
+      // this.codeMirrorHTMLView.render();
+      // this.dropDownJSView.render();
+      // this.codeMirrorJSView.showSources();
       // }, this);
 
       // this.headerControlView.on("timeSlideChange", function () {
       //   this.uiPaused = true;
-        // this.htmlJSLinksView.collapseAll();
-        //this.headerControlView.pause();
-        // this.codeMirrorHTMLView.render();
-        // this.codeMirrorJSView.showSources();
+      // this.htmlJSLinksView.collapseAll();
+      //this.headerControlView.pause();
+      // this.codeMirrorHTMLView.render();
+      // this.codeMirrorJSView.showSources();
       // }, this);
 
     },

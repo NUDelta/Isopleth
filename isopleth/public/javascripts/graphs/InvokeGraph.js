@@ -24,7 +24,10 @@ define([
       this.asyncSerialEdgeMap = {};
       this.asyncSerialEdges = [];
 
-      this.addInvokes(JSON.parse(invokeSample));
+      var instanceId = window.location.pathname.split("/")[1];
+      if (!instanceId || instanceId.length < 1) {
+        this.addInvokes(JSON.parse(invokeSample));
+      }
     },
 
     toJSON: function () {

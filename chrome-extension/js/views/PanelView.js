@@ -163,14 +163,14 @@ define([
     createBin: function () {
       var jsBinCallback = _.bind(function (response) {
         var binUrl = response.url;
-        var tabUrl = "http://localhost:3005/" + binUrl + "/edit?html,js";
+        var tabUrl = "http://localhost:3007/" + binUrl + "/edit?html,js";
         console.log(tabUrl);
         window.open(tabUrl);
         this.ibexSocketRouter.setBinId(binUrl);
       }, this);
 
       $.ajax({
-        url: "http://localhost:3005/api/save",
+        url: "http://localhost:3007/api/save",
         data: {
           html: "",
           css: "",

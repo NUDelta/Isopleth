@@ -14,7 +14,9 @@ define([
 
       this.drawCard = _.bind(this.drawCard, this);
 
-      this.drawCard(this.invokeGraph.nativeRootInvokes[1].invocationId)
+      if (this.invokeGraph && this.invokeGraph.nativeRootInvokes && this.invokeGraph.nativeRootInvokes.length) {
+        this.drawCard(this.invokeGraph.nativeRootInvokes[1].invocationId)
+      }
     },
 
     drawCard: function (nodeId) {

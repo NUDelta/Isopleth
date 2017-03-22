@@ -10,7 +10,10 @@ define([
         throw new Error("Cannot instantiate more than one SocketRouter, use SocketRouter.getInstance()");
       }
 
-      this.binId = new Date().getTime();
+      this.binId = window.location.pathname.split("/")[1];
+      if(!this.binId || this.binId.length < 2){
+        this.binId = new Date().getTime();
+      }
 
       this.socket = io.connect('https://localhost:3003');
       this.socket.on('connect', function () {

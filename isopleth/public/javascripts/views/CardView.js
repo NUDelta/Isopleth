@@ -38,6 +38,8 @@ define([
         description: this.invoke.getLabel()
       }));
 
+      this.showActions();
+
       this.mainCodeMirrorView = new CodeMirrorView(this.invoke.node.source || "", "265px");
       this.$(".main-javascript").append(this.mainCodeMirrorView.$el);
     },
@@ -222,6 +224,28 @@ define([
 
       this.toggleView(".invoke-delegates span", ".invoke-delegates-view", null, "right");
     },
+
+    showActions: function () {
+      if (this.invoke.arguments && this.invoke.arguments.length) {
+        this.$(".invoke-inputs").show();
+      }
+
+      if (this.invoke.returnValue) {
+        this.$(".invoke-outputs").show();
+      }
+
+      if (this.invoke.parentAsyncLink) {
+        this.$(".invoke-declaration").show();
+      }
+
+      if (this.invoke.childCalls) {
+        this.$(".invoke-delegates").show();
+      }
+
+      if (this.invoke.parentAsyncSerialLinks) {
+        this.$(".invoke-binding").show();
+      }
+    }
 
   });
 });
