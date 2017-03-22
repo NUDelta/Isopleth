@@ -7,16 +7,15 @@ define([
   "views/CardView",
   "views/CallGraphView",
   "../routers/JSBinSocketRouter",
-  "text!../templates/FluidView.html",
-  "text!../templates/FluidView.css"
-], function ($, Backbone, _, Handlebars, DeckView, CardView, CallGraphView, JSBinSocketRouter, FluidViewTemplate, FluidViewCSS) {
+  "text!../templates/FluidView.html"
+], function ($, Backbone, _, Handlebars, DeckView, CardView, CallGraphView, JSBinSocketRouter, FluidViewTemplate) {
   return Backbone.View.extend({
     template: Handlebars.compile(FluidViewTemplate),
 
-    el: "#fluidView",
+    el: "#isoplethView",
 
     initialize: function (codeMirrors, sourceCollection, activeNodeCollection, invokeGraph, jsBinRouter) {
-      this.$el.html(this.template({css: FluidViewCSS}));
+      this.$el.html(this.template());
 
       this.invokeGraph = invokeGraph;
       this.codeMirrors = codeMirrors;

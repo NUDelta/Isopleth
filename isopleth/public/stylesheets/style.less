@@ -8,7 +8,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-#fluidView {
+#isoplethView {
   width: 100%;
   height: 100%;
   display: block;
@@ -35,7 +35,7 @@ body {
     #graphControl {
       width: 100%;
       float: left;
-      height: 14%;
+      height: 12%;
 
       ul {
         list-style: none;
@@ -51,7 +51,7 @@ body {
             margin: 3px;
             padding: 3px;
             font-size: 12px;
-            cursor:pointer;
+            cursor: pointer;
           }
         }
       }
@@ -59,7 +59,7 @@ body {
     }
     #invokeGraph {
       width: 100%;
-      height: 80%;
+      height: 88%;
     }
   }
 
@@ -81,6 +81,14 @@ body {
     .left-column {
       width: 0px;
       background-color: #e2e6f3;
+
+      .invoke-inputs-view {
+        .codeMirrorView {
+          width: 100%;
+          float: left;
+          margin-bottom: 1em;
+        }
+      }
     }
 
     .left-button-column {
@@ -126,7 +134,11 @@ body {
 
     .center-column {
       width: 500px;
-
+      h4 {
+        margin-top:5px;
+        margin-bottom:5px;
+        margin-left:5px;
+      }
     }
 
     .right-column {
@@ -179,6 +191,7 @@ body {
   }
 
 }
+
 
 
 

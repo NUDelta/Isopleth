@@ -12,7 +12,7 @@ textarea {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-#fluidView {
+#isoplethView {
   width: 100%;
   height: 100%;
   display: block;
@@ -20,7 +20,7 @@ textarea {
   z-index: 2;
   background-color: #F3F5F6;
 }
-#fluidView #deckView {
+#isoplethView #deckView {
   width: 100%;
   height: 50%;
   float: left;
@@ -28,26 +28,26 @@ textarea {
   overflow-y: hidden;
   white-space: nowrap;
 }
-#fluidView #graphView {
+#isoplethView #graphView {
   width: 100%;
   height: 50%;
   float: left;
   background-color: #2f2f2f;
 }
-#fluidView #graphView #graphControl {
+#isoplethView #graphView #graphControl {
   width: 100%;
   float: left;
-  height: 14%;
+  height: 12%;
 }
-#fluidView #graphView #graphControl ul {
+#isoplethView #graphView #graphControl ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-#fluidView #graphView #graphControl ul li {
+#isoplethView #graphView #graphControl ul li {
   float: left;
 }
-#fluidView #graphView #graphControl ul li div {
+#isoplethView #graphView #graphControl ul li div {
   color: white;
   background-color: #545454;
   border-radius: 2px;
@@ -56,79 +56,89 @@ textarea {
   font-size: 12px;
   cursor: pointer;
 }
-#fluidView #graphView #invokeGraph {
+#isoplethView #graphView #invokeGraph {
   width: 100%;
-  height: 80%;
+  height: 88%;
 }
-#fluidView .cardView {
+#isoplethView .cardView {
   display: inline-block;
   height: 300px;
   margin: 2em;
   border-radius: 6px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
-#fluidView .cardView .sec {
+#isoplethView .cardView .sec {
   display: inline-block;
   height: 100%;
   vertical-align: top;
   margin-right: -5px;
 }
-#fluidView .cardView .left-column {
+#isoplethView .cardView .left-column {
   width: 0px;
   background-color: #e2e6f3;
 }
-#fluidView .cardView .left-button-column {
+#isoplethView .cardView .left-column .invoke-inputs-view .codeMirrorView {
+  width: 100%;
+  float: left;
+  margin-bottom: 1em;
+}
+#isoplethView .cardView .left-button-column {
   width: 32px;
   background-color: #e2e6f3;
 }
-#fluidView .cardView .left-button-column .buttonPane {
+#isoplethView .cardView .left-button-column .buttonPane {
   margin-left: 27px;
 }
-#fluidView .cardView .left-button-column .buttonPane span {
+#isoplethView .cardView .left-button-column .buttonPane span {
   border-bottom-left-radius: 3px;
   border-bottom-right-radius: 3px;
 }
-#fluidView .cardView .buttonPane {
+#isoplethView .cardView .buttonPane {
   float: left;
   transform: rotate(90deg);
   transform-origin: 0 0 0;
   height: 30%;
 }
-#fluidView .cardView .buttonPane span {
+#isoplethView .cardView .buttonPane span {
   cursor: pointer;
   text-align: center;
   background-color: #387fbd;
   color: #fff;
   padding: 4px;
 }
-#fluidView .cardView .buttonPane span.active {
+#isoplethView .cardView .buttonPane span.active {
   background-color: #ffb533;
 }
-#fluidView .cardView .buttonPane span.active:hover {
+#isoplethView .cardView .buttonPane span.active:hover {
   background-color: #ffc97e;
 }
-#fluidView .cardView .buttonPane span:hover {
+#isoplethView .cardView .buttonPane span:hover {
   background-color: #3c90d2;
 }
-#fluidView .cardView .center-column {
+#isoplethView .cardView .center-column {
   width: 500px;
 }
-#fluidView .cardView .right-column {
+#isoplethView .cardView .center-column h4 {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-left: 5px;
+}
+#isoplethView .cardView .right-column {
   width: 0px;
   background-color: #e2e6f3;
 }
-#fluidView .cardView .right-button-column {
+#isoplethView .cardView .right-button-column {
   width: 32px;
   background-color: #e2e6f3;
 }
-#fluidView .cardView .right-button-column .buttonPane {
+#isoplethView .cardView .right-button-column .buttonPane {
   margin-left: 24px;
 }
-#fluidView .cardView .right-button-column .buttonPane span {
+#isoplethView .cardView .right-button-column .buttonPane span {
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
 }
-#fluidView button {
+#isoplethView button {
   padding: 4px 4px;
   color: #28aadc;
   background-color: #fff;
@@ -140,15 +150,15 @@ textarea {
   margin: 4px;
   transition: color .3s, border .3s;
 }
-#fluidView button:hover {
+#isoplethView button:hover {
   color: #166888;
   border: 1px solid #166888;
 }
-#fluidView #invokeGraph {
+#isoplethView #invokeGraph {
   height: 100%;
   width: 100%;
 }
-#fluidView #callGraphView {
+#isoplethView #callGraphView {
   height: 100%;
   width: 100%;
 }

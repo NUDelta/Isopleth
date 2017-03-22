@@ -9,7 +9,7 @@ define([
   "../views/CodeMirrorHTMLView",
   "../views/CodeMirrorCSSView",
   "../views/HTMLJSLinksView",
-  "../views/FluidView",
+  "../views/IsoplethView",
   "../graphs/InvokeGraph",
   "../collections/SourceCollection",
   "../collections/ActiveNodeCollection",
@@ -22,7 +22,7 @@ define([
              CodeMirrorHTMLView,
              CodeMirrorCSSView,
              HTMLJSLinksView,
-             FluidView,
+             IsoplethView,
              InvokeGraph,
              SourceCollection,
              ActiveNodeCollection,
@@ -49,8 +49,8 @@ define([
 
       // this.codeMirrorJSView = new CodeMirrorJSView(this.codeMirrors, this.sourceCollection, this.activeNodeCollection, this);
       this.invokeGraph = new InvokeGraph(this.codeMirrors, this.sourceCollection, this.activeNodeCollection, this);
-      this.fluidView = new FluidView(this.codeMirrors, this.sourceCollection, this.activeNodeCollection, this.invokeGraph, this);
-      this.fluidView.render();
+      this.isoplethView = new IsoplethView(this.codeMirrors, this.sourceCollection, this.activeNodeCollection, this.invokeGraph, this);
+      this.isoplethView.render();
       // this.codeMirrorHTMLView = new CodeMirrorHTMLView(this.codeMirrors, this.activeNodeCollection, this);
       // this.dropDownJSView = new DropDownJSView(this.sourceCollection, this.codeMirrorJSView);
       // this.headerControlView = new HeaderControlView(this.activeNodeCollection);
@@ -68,7 +68,7 @@ define([
 
       this.totalInvocations = 0;
 
-      this.fluidView.showCallGraph();
+      this.isoplethView.showCallGraph();
     },
 
     fetchData: function () {
@@ -205,13 +205,6 @@ define([
         // this.codeMirrorJSView.showSources();
       // }, this);
 
-      // this.headerControlView.on("aspect:tiles", function () {
-      //   this.fluidView.backtraceAsyncEvent();
-      // }, this);
-
-      // this.headerControlView.on("aspect:graph", function () {
-      //   this.fluidView.showCallGraph();
-      // }, this);
     },
 
     pauseUIUpdates: function () {
