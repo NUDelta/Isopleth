@@ -252,6 +252,21 @@ function traceFilter(src, options) {
         callback: function (node) {
           var id = makeId('callsite', options.path, node.loc);
           var nameLoc = (node.callee.type === 'MemberExpression') ? node.callee.property.loc : node.callee.loc;
+
+          var ns = node.callee.source();
+          var name = "";
+          if (ns && ns.indexOf && ns.indexOf("__tracer") > -1) {
+            ns = ns.split("nodeId: \"")[1].split("\"")[0];
+
+            if (ns.indexOf("-function-") > -1) {
+              name = "Function Declaration";
+            } else {
+              name = functionSources[ns].substring(0, 30);
+            }
+          } else {
+            name = ns.substring(0, 30);
+          }
+
           nodes.push({
             path: options.path,
             start: node.loc.start,
@@ -259,7 +274,7 @@ function traceFilter(src, options) {
             id: id,
             source: functionSources[id],
             type: 'callsite',
-            name: node.callee.source(),
+            name: name,
             nameStart: nameLoc.start,
             nameEnd: nameLoc.end,
           });

@@ -519,6 +519,11 @@ if (typeof {name} === 'undefined') {
 				}catch(ig){}
 
         try {
+					var currTarget = object.currentTarget ? object.currentTarget.outerHTML : null;
+					if (currTarget && currTarget.indexOf && currTarget.indexOf("__tracer") > -1) {
+            currTarget = currTarget.substring(0, 30);
+          }
+
           object = {
             eventName: object.toString ? object.toString() : null,
             altKey: object.altKey,
@@ -531,7 +536,7 @@ if (typeof {name} === 'undefined') {
             clientY: object.clientY,
             composed: object.composed,
             ctrlKey: object.ctrlKey,
-            currentTarget: object.currentTarget ? object.currentTarget.outerHTML : null,
+            currentTarget: currTarget,
             defaultPrevented: object.defaultPrevented,
             detail: object.detail,
             eventPhase: object.eventPhase,

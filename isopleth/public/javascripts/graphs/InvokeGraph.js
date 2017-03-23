@@ -154,7 +154,10 @@ define([
 
               if (isoStartIndex > -1 && isoEndIndex > -1) {
                 var serial = isoStr.substring(isoStartIndex, isoEndIndex + 4);
-                source = this.activeNodeCollection.serialToSource[serial];
+                var nodeModel = this.activeNodeCollection.serialToNode[serial];
+                if (nodeModel) {
+                  source = nodeModel.get("source");
+                }
               }
             } else {
               source = arg.value.json;
@@ -476,7 +479,7 @@ define([
       var label = invoke.aspectMap ? _(invoke.aspectMap).keys().join(", ") : "";
 
       if (!label) {
-        label = invoke.node.type;
+        label = invoke.node.name;
       }
 
       return label;

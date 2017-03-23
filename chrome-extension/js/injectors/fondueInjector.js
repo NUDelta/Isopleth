@@ -73,29 +73,19 @@ define([], function () {
         emitNodeList: function () {
           var nodeArr = this.getNodes();
 
-          var nodes = unravelAgent._(nodeArr).map(function (node) {
-            return {
-              id: node.id,
-              type: node.type,
-              name: node.name,
-              path: node.path,
-              params: node.params,
-              parentId: node.parentId,
-              startLine: node.start.line,
-              startColumn: node.start.column,
-              endLine: node.end.line,
-              endColumn: node.end.column,
-              childrenIds: node.childrenIds,
-              source: node.source,
-              hits: 0,
-              invokes: []
-            };
+          unravelAgent._(nodeArr).each(function (node) {
+            node.startLine = node.start.line;
+            node.startColumn = node.start.column;
+            node.endLine = node.end.line;
+            node.endColumn = node.end.column;
+            node.hits = 0;
+            node.invokes = [];
           });
 
           window.dispatchEvent(new CustomEvent("fondueDTO", {
             detail: {
               eventStr: "fondueDTO:newNodeList",
-              obj: {nodes: nodes}
+              obj: {nodes: nodeArr}
             }
           }));
         },

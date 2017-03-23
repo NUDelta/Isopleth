@@ -25,6 +25,8 @@ define([
 
     rawNodes: [],
 
+    serialToNode: {},
+
     initialize: function () {
       this.jsBinSocketRouter = JSBinSocketRouter.getInstance();
       this.jsBinSocketRouter.onSocketData("fondueDTO:nodeBacktrace", function (obj) {
@@ -77,8 +79,6 @@ define([
       // this.populateQueryNodeMap();
     },
 
-    serialToSource: {},
-
     mergeNodes: function (arrNodes) {
       this.hasFullNodeList = true;
 
@@ -87,19 +87,22 @@ define([
         this.rawNodes.push(JSON.parse(JSON.stringify(node)));
 
         var funStr = node.source;
+        var serial;
         if (funStr) {
           var isoStartIndex = funStr.indexOf("iso_");
           var isoEndIndex = funStr.indexOf("_iso");
 
           if (isoStartIndex > -1 && isoEndIndex > -1) {
-            var serial = funStr.substring(isoStartIndex, isoEndIndex + 4);
-            this.serialToSource[serial] = node.source;
+            serial = funStr.substring(isoStartIndex, isoEndIndex + 4);
           }
         }
 
         var activeNodeModel = this.get(node.id);
         if (!activeNodeModel) {
           activeNodeModel = new ActiveNodeModel(node);
+          if(serial){
+            this.serialToNode[serial] = activeNodeModel;
+          }
           this.add(activeNodeModel);
           nodesCreated++;
         }

@@ -234,11 +234,11 @@ define([
     },
 
     downloadInvokes: function () {
-      this.downloadStr(JSON.stringify(this.invokeGraph.rawInvokes, null, 2), "invokes.txt");
+      this.downloadStr(JSON.stringify(this.invokeGraph.rawInvokes, null, 2), "invokeSample.txt");
     },
 
     downloadNodes: function () {
-      this.downloadStr(JSON.stringify(this.activeNodeCollection.rawNodes, null, 2), "nodes.txt");
+      this.downloadStr(JSON.stringify(this.activeNodeCollection.rawNodes, null, 2), "nodeSample.txt");
     },
 
     downloadStr: function (str, fileName) {
