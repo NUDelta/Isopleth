@@ -4,7 +4,8 @@ define([
   "underscore",
   "../models/ActiveNodeModel",
   "../routers/JSBinSocketRouter",
-  "text!../util/nodeSample.txt",
+  // "text!../util/nodeSample.txt",
+  "text!../util/nodeSample-XKCD.txt",
   "raphael"
 ], function ($, Backbone, _, ActiveNodeModel, JSBinSocketRouter, nodeSample) {
   return Backbone.Collection.extend({
@@ -22,6 +23,8 @@ define([
 
     maxInvokeTime: 0,
 
+    rawNodes: [],
+
     initialize: function () {
       this.jsBinSocketRouter = JSBinSocketRouter.getInstance();
       this.jsBinSocketRouter.onSocketData("fondueDTO:nodeBacktrace", function (obj) {
@@ -33,7 +36,10 @@ define([
 
       this.empty = _.bind(this.empty, this);
 
-      this.mergeNodes(JSON.parse(nodeSample));
+      var instanceId = window.location.pathname.split("/")[1];
+      if (!instanceId || instanceId.length < 1) {
+        this.mergeNodes(JSON.parse(nodeSample));
+      }
     },
 
     getEarliestTimeStamp: function () {
@@ -71,11 +77,26 @@ define([
       // this.populateQueryNodeMap();
     },
 
+    serialToSource: {},
+
     mergeNodes: function (arrNodes) {
       this.hasFullNodeList = true;
 
       var nodesCreated = 0;
       _(arrNodes).each(function (node) {
+        this.rawNodes.push(JSON.parse(JSON.stringify(node)));
+
+        var funStr = node.source;
+        if (funStr) {
+          var isoStartIndex = funStr.indexOf("iso_");
+          var isoEndIndex = funStr.indexOf("_iso");
+
+          if (isoStartIndex > -1 && isoEndIndex > -1) {
+            var serial = funStr.substring(isoStartIndex, isoEndIndex + 4);
+            this.serialToSource[serial] = node.source;
+          }
+        }
+
         var activeNodeModel = this.get(node.id);
         if (!activeNodeModel) {
           activeNodeModel = new ActiveNodeModel(node);

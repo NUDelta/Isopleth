@@ -383,7 +383,20 @@ if (typeof {name} === 'undefined') {
 				o.value = val;
 			}
 		} else if (o.type === "function") {
-      o.json = val && val.toString ? val.toString() : null;
+		  var funStr = val && val.toString ? val.toString() : null;
+
+		  if(funStr && funStr.indexOf("__tracer") > -1){
+		    var isoStartIndex = funStr.indexOf("iso_");
+		    var isoEndIndex = funStr.indexOf("_iso");
+		    if(isoStartIndex > -1 && isoEndIndex > -1){
+		      o.json = funStr.substring(isoStartIndex, isoEndIndex + 4)
+        } else {
+		      o.json = null;
+        }
+      } else if (funStr) {
+        o.json = funStr;
+      }
+
       if (val && val.name) {
         if (val.name.length > 44) {
           o.name = val.name.substring(0, 45) + "...";

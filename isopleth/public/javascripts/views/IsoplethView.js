@@ -23,7 +23,7 @@ define([
       this.activeNodeCollection = activeNodeCollection;
       this.jsBinSocketRouter = JSBinSocketRouter.getInstance();
       this.jsBinRouter = jsBinRouter;
-      this.callGraphView = new CallGraphView(this.invokeGraph);
+      this.callGraphView = new CallGraphView(this.invokeGraph, activeNodeCollection);
       this.deckView = new DeckView(this.invokeGraph);
       this.callGraphView.on("nodeClick", this.deckView.drawCard);
     },

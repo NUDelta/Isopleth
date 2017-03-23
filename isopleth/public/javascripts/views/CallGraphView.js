@@ -18,6 +18,8 @@ define([
       "click #markClick": "markClick",
       "click #drawWithLib": "drawWithLib",
       "click #drawWithRepeats": "drawWithRepeats",
+      "click #downloadInvokes": "downloadInvokes",
+      "click #downloadNodes": "downloadNodes"
     },
 
     colors: {
@@ -32,8 +34,9 @@ define([
       clickHandler: "#5fddbd"
     },
 
-    initialize: function (invokeGraph) {
+    initialize: function (invokeGraph, activeNodeCollection) {
       this.invokeGraph = invokeGraph;
+      this.activeNodeCollection = activeNodeCollection;
       this.showLibs = false;
       this.showSequentialRepeats = false;
       this.setElement($("#graphView"));  // el should be in the dom at instantiation time
@@ -98,21 +101,21 @@ define([
     },
 
     markAjaxRequest: function () {
-      _(this.invokeGraph.ajaxRequests).each(function (invoke) {
+      _(this.invokeGraph.aspectCollectionMap.ajaxRequest).each(function (invoke) {
         this.cy.elements('node[id = "' + invoke.invocationId + '"]')
           .style({"background-color": this.colors.ajaxRequest});
       }, this);
     },
 
     markAjaxResponse: function () {
-      _(this.invokeGraph.ajaxResponses).each(function (invoke) {
+      _(this.invokeGraph.aspectCollectionMap.ajaxResponse).each(function (invoke) {
         this.cy.elements('node[id = "' + invoke.invocationId + '"]')
           .style({"background-color": this.colors.ajaxResponse});
       }, this);
     },
 
     markClick: function () {
-      _(this.invokeGraph.clickHandlers).each(function (invoke) {
+      _(this.invokeGraph.aspectCollectionMap.click).each(function (invoke) {
         this.cy.elements('node[id = "' + invoke.invocationId + '"]')
           .style({"background-color": this.colors.clickHandler});
       }, this);
@@ -228,6 +231,24 @@ define([
       // this.cy.on('click', 'edge', function (e) {
       //   callGraphView.handleEdgeClick(e);
       // });
+    },
+
+    downloadInvokes: function () {
+      this.downloadStr(JSON.stringify(this.invokeGraph.rawInvokes, null, 2), "invokes.txt");
+    },
+
+    downloadNodes: function () {
+      this.downloadStr(JSON.stringify(this.activeNodeCollection.rawNodes, null, 2), "nodes.txt");
+    },
+
+    downloadStr: function (str, fileName) {
+      var textFileAsBlob = new Blob([str], {type: 'text/plain'});
+
+      var downloadLink = document.createElement("a");
+      downloadLink.download = fileName;
+      downloadLink.innerHTML = "Download File";
+      downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+      downloadLink.click();
     }
   });
 });
