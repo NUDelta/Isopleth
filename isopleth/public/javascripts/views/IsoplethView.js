@@ -7,7 +7,7 @@ define([
   "views/CardView",
   "views/CallGraphView",
   "../routers/JSBinSocketRouter",
-  "text!../templates/FluidView.html"
+  "text!../templates/IsoplethView.html"
 ], function ($, Backbone, _, Handlebars, DeckView, CardView, CallGraphView, JSBinSocketRouter, FluidViewTemplate) {
   return Backbone.View.extend({
     template: Handlebars.compile(FluidViewTemplate),
@@ -25,7 +25,8 @@ define([
       this.jsBinRouter = jsBinRouter;
       this.callGraphView = new CallGraphView(this.invokeGraph, activeNodeCollection);
       this.deckView = new DeckView(this.invokeGraph);
-      this.callGraphView.on("nodeClick", this.deckView.drawCard);
+      this.callGraphView.on("nodeClick", this.deckView.showCard);
+      this.deckView.on("deckUpdate", this.callGraphView.filterByAspect);
     },
 
     render: function () {

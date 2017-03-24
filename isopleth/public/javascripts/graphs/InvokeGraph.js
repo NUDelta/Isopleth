@@ -113,6 +113,7 @@ define([
 
         if (invoke.topLevelInvocationId === invoke.invocationId) {
           this.rootInvokes.push(invoke);
+          invoke.rootInvoke = true;
         }
 
         var nodeModel = this.activeNodeCollection.get(invoke.nodeId);
@@ -133,6 +134,7 @@ define([
 
           if (!hasParentCaller) {
             nativeRootInvokes.push(invoke);
+            invoke.nativeRootInvoke = true;
           }
         }
 
@@ -240,12 +242,8 @@ define([
         }
 
         if (!childInvoke.isLib && parentInvoke.isLib) {
-          // Check if we already have this native root
-          var nativeRoot = _(this.nativeRootInvokes).find(function (nrInvoke) {
-            return nrInvoke.invocationId === childInvoke.invocationId
-          });
-
-          if (!nativeRoot) {
+          if (!childInvoke.nativeRootInvoke) {
+            childInvoke.nativeRootInvoke = true;
             nativeRootInvokes.push(childInvoke);
           }
         }
@@ -255,7 +253,7 @@ define([
       var rollingNodeIdInvokeMap = {};
       _(nativeRootInvokes).each(function (childInvoke) {
 
-        // Mark repeat recurring root nodes
+        // Mark repeat recurring/duplicate root nodes
         if (rollingNodeIdInvokeMap[childInvoke.nodeId]) {
           rollingNodeIdInvokeMap[childInvoke.nodeId].sequentialRepeats += 1;
 
@@ -306,8 +304,10 @@ define([
       // Add setup attribute to all first tree nodes
       if (this.nativeInvokes[0]) {
         this.nativeInvokes[0].aspectMap["page load"] = true;
+        var setupCollection = this.aspectCollectionMap.setup;
         this.descendTree(this.nativeInvokes[0], function (node) {
           node.aspectMap["setup"] = true;
+          setupCollection.push(node);
         });
       }
 
@@ -388,6 +388,27 @@ define([
       return null;
     },
 
+    mouseEvents: [
+      "mousemove",
+      "mousedown",
+      "mouseup",
+      "mouseout",
+      "mouseover",
+      "mouseenter",
+      "mouseleave"
+    ],
+
+    keyEvents: [
+      "keydown",
+      "keypress",
+      "keyup"
+    ],
+
+    ajaxEvents: [
+      "ajaxRequest",
+      "ajaxResponse"
+    ],
+
     aspectCollectionMap: {
       click: [],
       mousemove: [],
@@ -402,7 +423,8 @@ define([
       keyup: [],
       ajaxRequest: [],
       ajaxResponse: [],
-      jQueryCall: []
+      jQueryCall: [],
+      setup: []
     },
 
     argumentParsers: [
@@ -453,9 +475,12 @@ define([
     ],
 
     classifyInvoke: function (invoke) {
-      if (invoke.invocationId === "0.9954696916191159-7131") {
-        debugger;
+      if (invoke.node && invoke.node.name &&
+        (invoke.node.name === "('$' callback)" || invoke.node.name.indexOf(".js toplevel") > -1)) {
+        invoke.aspectMap["setup"] = true;
+        this.aspectCollectionMap.setup.push(invoke);
       }
+
       //Check return values for ajax requests
       _(this.returnValueParsers).each(function (parser) {
         var aspect = parser(invoke);
@@ -476,13 +501,12 @@ define([
     },
 
     getInvokeLabel: function (invoke) {
-      var label = invoke.aspectMap ? _(invoke.aspectMap).keys().join(", ") : "";
+      var aspects = invoke.aspectMap ? _(invoke.aspectMap).keys().join(", ") : "";
+      var name = invoke.node.name;
+      var root = invoke.rootInvoke ? "rootInvoke" : "";
+      var nativeRoot = invoke.nativeRootInvoke ? "nativeRootInvoke" : "";
 
-      if (!label) {
-        label = invoke.node.name;
-      }
-
-      return label;
+      return [aspects, name, root, nativeRoot].join(" ");
     },
 
     sort: function () {

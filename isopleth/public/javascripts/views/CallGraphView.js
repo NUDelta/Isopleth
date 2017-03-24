@@ -34,12 +34,16 @@ define([
       clickHandler: "#5fddbd"
     },
 
+    aspectFilters: [],
+
     initialize: function (invokeGraph, activeNodeCollection) {
       this.invokeGraph = invokeGraph;
       this.activeNodeCollection = activeNodeCollection;
       this.showLibs = false;
       this.showSequentialRepeats = false;
       this.setElement($("#graphView"));  // el should be in the dom at instantiation time
+
+      this.filterByAspect = _.bind(this.filterByAspect, this);
     },
 
     drawWithLib: function () {
@@ -121,6 +125,11 @@ define([
       }, this);
     },
 
+    filterByAspect: function (aspectArr) {
+      this.aspectFilters = aspectArr;
+      this.drawGraph();
+    },
+
     handleNodeClick: function (nodeId) {
       this.trigger("nodeClick", nodeId);
     },
@@ -145,7 +154,27 @@ define([
     drawGraph: function () {
       this.$("#invokeGraph").empty();
 
-      var nodes = _(this.invokeGraph.invokes).reduce(function (displayNodes, invoke) {
+      var nodes = [];
+      if (this.aspectFilters.length) {
+        var roots = this.invokeGraph.rootInvokes.concat(this.invokeGraph.nativeRootInvokes);
+        _(roots).each(function (invoke) {
+          var found = _(this.aspectFilters).find(function (aspect) {
+            return invoke.aspectMap && invoke.aspectMap[aspect]
+          });
+
+          if (!found) {
+            return;
+          }
+
+          this.invokeGraph.descendTree(invoke, function (childNode) {
+            nodes.push(childNode);
+          }, null);
+        }, this);
+      } else {
+        nodes = this.invokeGraph.invokes;
+      }
+
+      nodes = _(nodes).reduce(function (displayNodes, invoke) {
         if (!this.showLibs && invoke.isLib) {
           return displayNodes;
         }
@@ -227,6 +256,9 @@ define([
       this.cy.on('click', 'node', function (e) {
         callGraphView.handleNodeClick(this.id());
       });
+
+      this.drawJoshAsync();
+      this.markTopLevelNonLib();
       //
       // this.cy.on('click', 'edge', function (e) {
       //   callGraphView.handleEdgeClick(e);

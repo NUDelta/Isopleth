@@ -28,6 +28,58 @@ textarea {
   overflow-y: hidden;
   white-space: nowrap;
 }
+#isoplethView #deckView #deck {
+  float: left;
+}
+#isoplethView #deckView #deckHeader {
+  float: left;
+  height: 35px;
+  background-color: #fff;
+  border-bottom: 1px solid #d3d3d3;
+}
+#isoplethView #deckView #deckHeader .logo {
+  float: left;
+  height: 100%;
+  padding-left: 15px;
+  padding-right: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#isoplethView #deckView #deckHeader .logo img {
+  height: 70%;
+}
+#isoplethView #deckView #deckHeader ul {
+  float: left;
+  height: 100%;
+  margin: 0;
+  list-style: none;
+  display: block;
+  padding: 0;
+}
+#isoplethView #deckView #deckHeader ul li {
+  height: 100%;
+  float: left;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 1em;
+  padding-right: 1em;
+  border-right: 1px solid #d3d3d3;
+  cursor: pointer;
+}
+#isoplethView #deckView #deckHeader ul li:last-child {
+  border-right: none;
+}
+#isoplethView #deckView #deckHeader ul li:hover {
+  background-color: #eeeeee;
+}
+#isoplethView #deckView #deckHeader ul li:active {
+  background-color: #e5e5e5;
+}
+#isoplethView #deckView #deckHeader ul li.active {
+  background-color: #85ff97;
+}
 #isoplethView #graphView {
   width: 100%;
   height: 50%;
@@ -72,6 +124,9 @@ textarea {
   height: 100%;
   vertical-align: top;
   margin-right: -5px;
+}
+#isoplethView .cardView .empty-javascript p {
+  margin-left: 1em;
 }
 #isoplethView .cardView .left-column {
   width: 0px;

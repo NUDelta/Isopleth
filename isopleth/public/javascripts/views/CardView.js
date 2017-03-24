@@ -40,8 +40,13 @@ define([
 
       this.showActions();
 
-      this.mainCodeMirrorView = new CodeMirrorView(this.invoke.node.source || "", "265px");
+      var source = this.invoke.node.source || "";
+      this.mainCodeMirrorView = new CodeMirrorView(source, "265px");
       this.$(".main-javascript").append(this.mainCodeMirrorView.$el);
+      if(!source){
+        this.$(".main-javascript").hide();
+        this.$(".empty-javascript").show();
+      }
     },
 
     toggleView: function (btnPath, viewPath, renderFn, leftRight) {

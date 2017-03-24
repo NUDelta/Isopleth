@@ -23,7 +23,70 @@ body {
 
     overflow-x: scroll;
     overflow-y: hidden;
-    white-space: nowrap
+    white-space: nowrap;
+
+    #deck{
+      float:left;
+    }
+
+    #deckHeader {
+      float: left;
+      height: 35px;
+      background-color: #fff;
+      border-bottom: 1px solid #d3d3d3;
+
+      .logo {
+        float: left;
+        height: 100%;
+        padding-left: 15px;
+        padding-right: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        img {
+          height: 70%;
+
+        }
+      }
+
+      ul {
+        float: left;
+        height: 100%;
+        margin: 0;
+        list-style: none;
+        display: block;
+        padding: 0;
+        li {
+          height: 100%;
+          float: left;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding-left: 1em;
+          padding-right: 1em;
+          border-right: 1px solid #d3d3d3;
+          cursor: pointer;
+
+          &:last-child {
+            border-right: none;
+          }
+
+          &:hover {
+            background-color: #eeeeee;
+          }
+
+          &:active {
+            background-color: #e5e5e5;
+          }
+
+          &.active {
+            background-color: #85ff97;
+          }
+        }
+      }
+    }
+
   }
 
   #graphView {
@@ -76,6 +139,12 @@ body {
       height: 100%;
       vertical-align: top;
       margin-right: -5px;
+    }
+
+    .empty-javascript{
+      p{
+        margin-left:1em;
+      }
     }
 
     .left-column {
@@ -135,9 +204,9 @@ body {
     .center-column {
       width: 500px;
       h4 {
-        margin-top:5px;
-        margin-bottom:5px;
-        margin-left:5px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        margin-left: 5px;
       }
     }
 
