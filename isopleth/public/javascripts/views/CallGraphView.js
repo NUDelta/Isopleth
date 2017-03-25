@@ -18,6 +18,7 @@ define([
       "click #markClick": "markClick",
       "click #drawWithLib": "drawWithLib",
       "click #drawWithRepeats": "drawWithRepeats",
+      "click #drawHeatMap": "drawHeatMap",
       "click #downloadInvokes": "downloadInvokes",
       "click #downloadNodes": "downloadNodes"
     },
@@ -31,10 +32,17 @@ define([
       asyncSerialEdge: "#bc95ff",
       ajaxRequest: "#fff",
       ajaxResponse: "#dd7382",
-      clickHandler: "#5fddbd"
+      clickHandler: "#5fddbd",
+      selected: "#fff07b",
     },
 
     aspectFilters: [],
+
+    lastSelectedNode: null,
+
+    visibleInvokes: [],
+
+    maxVisibleHitCount: 0,
 
     initialize: function (invokeGraph, activeNodeCollection) {
       this.invokeGraph = invokeGraph;
@@ -56,19 +64,19 @@ define([
       this.drawGraph();
     },
 
+    drawHeatMap: function () {
+      _(this.visibleInvokes).each(function (invoke) {
+        var heatColor = this.calcHeatColor(invoke.node.invokes.length, this.maxVisibleHitCount);
+
+        this.cy.elements('node[id = "' + invoke.invocationId + '"]')
+          .style({"background-color": heatColor});
+      }, this);
+    },
+
     resetGraph: function () {
       this.showLibs = false;
       this.showSequentialRepeats = false;
       this.drawGraph();
-    },
-
-    markTopLevelNonLib: function () {
-      _(this.invokeGraph.nativeRootInvokes).each(function (invoke) {
-        this.cy.elements('node[id = "' + invoke.invocationId + '"]')
-          .style({
-            "background-color": this.colors.nativeRootInvoke
-          });
-      }, this);
     },
 
     drawJoshAsync: function () {
@@ -98,9 +106,18 @@ define([
     },
 
     markAllBlue: function () {
-      _(this.invokeGraph.invokes).each(function (invoke) {
+      _(this.visibleInvokes).each(function (invoke) {
         this.cy.elements('node[id = "' + invoke.invocationId + '"]')
           .style({"background-color": this.colors.nativeNode});
+      }, this);
+    },
+
+    markTopLevelNonLib: function () {
+      _(this.invokeGraph.nativeRootInvokes).each(function (invoke) {
+        this.cy.elements('node[id = "' + invoke.invocationId + '"]')
+          .style({
+            "background-color": this.colors.nativeRootInvoke
+          });
       }, this);
     },
 
@@ -133,6 +150,26 @@ define([
     },
 
     handleNodeClick: function (nodeId) {
+      if (this.lastSelectedNode) {
+        this.cy.elements('node[id = "' + this.lastSelectedNode.id + '"]')
+          .style({
+            "background-color": this.lastSelectedNode.color,
+            "border-color": "none",
+            "border-width": "0"
+          });
+      }
+
+      this.lastSelectedNode = {
+        id: nodeId,
+        color: this.cy.elements('node[id = "' + nodeId + '"]').style("background-color")
+      };
+
+      this.cy.elements('node[id = "' + nodeId + '"]')
+        .style({
+          "background-color": this.colors.selected,
+          "border-color": "white",
+          "border-width": "3px"
+        });
       this.trigger("nodeClick", nodeId);
     },
 
@@ -153,6 +190,15 @@ define([
       return this.colors.nativeNode;
     },
 
+    calcHeatColor: function (val, max) {
+      var heatNum = val / max;
+
+      var r = parseInt(heatNum * 255);
+      var b = 255 - r;
+
+      return "#" + ((1 << 24) + (r << 16) + (0 << 8) + b).toString(16).slice(1);
+    },
+
     drawGraph: function () {
       this.$("#invokeGraph").empty();
 
@@ -161,6 +207,7 @@ define([
 
       if (this.aspectFilters.length) {
         var roots = this.invokeGraph.rootInvokes.concat(this.invokeGraph.nativeRootInvokes);
+
         _(roots).each(function (invoke) {
           var found = _(this.aspectFilters).find(function (aspect) {
             return invoke.aspectMap && invoke.aspectMap[aspect]
@@ -192,6 +239,7 @@ define([
         nodes = this.invokeGraph.invokes;
       }
 
+      this.maxVisibleHitCount = 0;
       nodes = _(nodes).reduce(function (displayNodes, invoke) {
         if (!this.showLibs && invoke.isLib) {
           return displayNodes;
@@ -201,7 +249,7 @@ define([
           return displayNodes;
         }
 
-        if(negateIdMap[invoke.invocationId]){
+        if (negateIdMap[invoke.invocationId]) {
           return displayNodes;
         }
 
@@ -210,11 +258,14 @@ define([
           data: {
             id: invoke.invocationId,
             label: label,
-            shape: "rectangle",
-            width: label ? (label.length * 10) + "px" : "25px",
             color: this.getNodeColor(invoke)
           }
         };
+
+        this.visibleInvokes.push(invoke);
+        if (invoke.node.invokes.length > this.maxVisibleHitCount) {
+          this.maxVisibleHitCount = invoke.node.invokes.length;
+        }
 
         displayNodes.push(node);
 
@@ -237,18 +288,28 @@ define([
         autounselectify: true,
         layout: {
           name: 'dagre',
+          avoidOverlap: true,
           pan: 'fix',
-          padding: '10',
+          fit: true,
+          padding: 20,
           minLen: function (edge) {
-            return 1;
+            return 2;
           }
         },
         style: [
           {
             selector: 'node',
             style: {
-              'shape': 'data(shape)',
-              'width': 'data(width)',
+              'min-zoomed-font-size': 6,
+              'font-family': 'system, "helvetica neue"',
+              'font-size': 14,
+              'font-weight': 400,
+              'shape': 'roundrectangle',
+              'overlay-color': "white",
+              'overlay-padding': 1,
+              'width': 'label',
+              'height': 'label',
+              'padding': 8,
               'content': 'data(label)',
               'text-opacity': 1,
               'text-valign': 'center',

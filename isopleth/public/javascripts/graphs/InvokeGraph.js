@@ -2,8 +2,8 @@ define([
   "backbone",
   "underscore",
   "../util/util",
-  "text!../util/samples/invokeSample.txt",
-  // "text!../util/samples/xkcd/invokeSample.txt",
+  // "text!../util/samples/invokeSample.txt",
+  "text!../util/samples/xkcd/invokeSample.txt",
 ], function (Backbone, _, util, invokeSample) {
   return Backbone.View.extend({
     invokes: [],
@@ -121,6 +121,8 @@ define([
           console.warn("Don't have a nodemodel for", invoke.nodeId);
           invoke.node = {};
         } else {
+          var nodeInvokes = nodeModel.get('invokes');
+          nodeInvokes.push(invoke);
           invoke.node = nodeModel.toJSON();
         }
         invoke.isLib = util.isKnownLibrary(invoke.nodeId);
@@ -492,6 +494,10 @@ define([
     ],
 
     classifyInvoke: function (invoke) {
+      if (!this.maxHitCount || invoke.node.invokes.length > this.maxHitCount) {
+        this.maxHitCount = invoke.node.invokes.length;
+      }
+
       if (invoke.node && invoke.node.name &&
         (invoke.node.name === "('$' callback)" || invoke.node.name.indexOf(".js toplevel") > -1)) {
         invoke.aspectMap["setup"] = true;
@@ -523,11 +529,13 @@ define([
       // var root = invoke.rootInvoke ? "rootInvoke" : "";
       // var nativeRoot = invoke.nativeRootInvoke ? "nativeRootInvoke" : "";
 
-      if(aspects){
+      var hits = invoke.node.invokes.length;
+
+      if (aspects) {
         aspects = "[" + aspects + "]"
       }
 
-      return [aspects, name].join(" ");
+      return [aspects, name, "×", hits].join(" ");
     },
 
     sort: function () {

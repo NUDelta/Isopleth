@@ -78,7 +78,6 @@ define([], function () {
             node.startColumn = node.start.column;
             node.endLine = node.end.line;
             node.endColumn = node.end.column;
-            node.hits = 0;
             node.invokes = [];
           });
 
