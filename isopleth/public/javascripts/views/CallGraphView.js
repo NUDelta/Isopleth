@@ -24,7 +24,7 @@ define([
 
     colors: {
       nativeNode: "#bce9fd",
-      libNode: "#66d9ef",
+      libNode: "#bdbdbd",
       edge: "#fd9620",
       nativeRootInvoke: "#48ff60",
       asyncEdge: "#e6da74",
@@ -125,8 +125,10 @@ define([
       }, this);
     },
 
-    filterByAspect: function (aspectArr) {
+    filterByAspect: function (aspectArr, negateAspectArr) {
       this.aspectFilters = aspectArr;
+      this.negatedAspectFilters = negateAspectArr;
+
       this.drawGraph();
     },
 
@@ -155,12 +157,28 @@ define([
       this.$("#invokeGraph").empty();
 
       var nodes = [];
+      var negateIdMap = {};
+
       if (this.aspectFilters.length) {
         var roots = this.invokeGraph.rootInvokes.concat(this.invokeGraph.nativeRootInvokes);
         _(roots).each(function (invoke) {
           var found = _(this.aspectFilters).find(function (aspect) {
             return invoke.aspectMap && invoke.aspectMap[aspect]
           });
+
+          if (this.negatedAspectFilters) {
+            var negateFound = _(this.negatedAspectFilters).find(function (aspect) {
+              return invoke.aspectMap && invoke.aspectMap[aspect]
+            });
+
+            if (negateFound) {
+              this.invokeGraph.descendTree(invoke, function (childNode) {
+                nodes.push(childNode);
+                negateIdMap[childNode.invocationId] = true;
+              }, null);
+              return;
+            }
+          }
 
           if (!found) {
             return;
@@ -180,6 +198,10 @@ define([
         }
 
         if (!this.showSequentialRepeats && invoke.isSequentialRepeat) {
+          return displayNodes;
+        }
+
+        if(negateIdMap[invoke.invocationId]){
           return displayNodes;
         }
 

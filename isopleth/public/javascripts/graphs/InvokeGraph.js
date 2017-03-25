@@ -2,8 +2,8 @@ define([
   "backbone",
   "underscore",
   "../util/util",
-  // "text!../util/invokeSample.txt",
-  "text!../util/invokeSample-XKCD.txt",
+  "text!../util/samples/invokeSample.txt",
+  // "text!../util/samples/xkcd/invokeSample.txt",
 ], function (Backbone, _, util, invokeSample) {
   return Backbone.View.extend({
     invokes: [],
@@ -325,7 +325,7 @@ define([
 
       // Otherwise keep climbing
       _(node.parentCalls).find(function (parentNode) {
-        return this.climbTree(parentNode, decorator)
+        return this.climbTree(parentNode, decorator, stopCondition)
       }, this);
     },
 
@@ -337,20 +337,20 @@ define([
       }
 
       _(node.childCalls).each(function (node) {
-        this.descendTree(node, decorator)
+        this.descendTree(node, decorator, stopCondition)
       }, this);
     },
 
-    climbDescendUntilNonLib: function (node, decorator) {
+    climbDescendAndDecorate: function (node, decorator) {
       var stopCondition = function (node) {
-        return !!node.isLib;
+        return !node.isLib;
       };
 
-      this.climbTree(node, decorator, stopCondition);
+      this.climbTree(node, decorator, null);
       this.descendTree(node, decorator, stopCondition)
     },
 
-    decorateUntilNonLib: function (node, aspect, nodeAspectArr) {
+    decorateAspect: function (node, aspect, nodeAspectArr) {
       var decorator = function (invokeNode) {
         invokeNode.aspectMap[aspect] = true;
         nodeAspectArr.push(invokeNode);
@@ -360,7 +360,7 @@ define([
 
       if (node.isLib) {
         decorator = _.bind(decorator, this);
-        this.climbDescendUntilNonLib(node, decorator);
+        this.climbDescendAndDecorate(node, decorator);
       }
     },
 
@@ -389,6 +389,7 @@ define([
     },
 
     mouseEvents: [
+      "click",
       "mousemove",
       "mousedown",
       "mouseup",
@@ -409,6 +410,11 @@ define([
       "ajaxResponse"
     ],
 
+    domQueries: [
+      "domQuery",
+      "jqDom"
+    ],
+
     aspectCollectionMap: {
       click: [],
       mousemove: [],
@@ -423,7 +429,8 @@ define([
       keyup: [],
       ajaxRequest: [],
       ajaxResponse: [],
-      jQueryCall: [],
+      domQuery: [],
+      jqDom: [],
       setup: []
     },
 
@@ -466,7 +473,17 @@ define([
         try {
           if (invoke.returnValue.ownProperties.length &&
             invoke.returnValue.ownProperties.selector.value) {
-            return "jQueryCall";
+            return "jqDom";
+          }
+        } catch (ignored) {
+          return null;
+        }
+      },
+      function (invoke) {
+        try {
+          if (invoke.returnValue.ownProperties.elementType &&
+            invoke.returnValue.ownProperties.elementType.value.indexOf("HTML") > -1) {
+            return "domQuery";
           }
         } catch (ignored) {
           return null;
@@ -485,7 +502,7 @@ define([
       _(this.returnValueParsers).each(function (parser) {
         var aspect = parser(invoke);
         if (aspect) {
-          this.decorateUntilNonLib(invoke, aspect, this.aspectCollectionMap[aspect]);
+          this.decorateAspect(invoke, aspect, this.aspectCollectionMap[aspect]);
         }
       }, this);
 
@@ -494,7 +511,7 @@ define([
         _(this.argumentParsers).each(function (parser) {
           var aspect = parser(arg);
           if (aspect) {
-            this.decorateUntilNonLib(invoke, aspect, this.aspectCollectionMap[aspect]);
+            this.decorateAspect(invoke, aspect, this.aspectCollectionMap[aspect]);
           }
         }, this);
       }, this);
@@ -503,10 +520,14 @@ define([
     getInvokeLabel: function (invoke) {
       var aspects = invoke.aspectMap ? _(invoke.aspectMap).keys().join(", ") : "";
       var name = invoke.node.name;
-      var root = invoke.rootInvoke ? "rootInvoke" : "";
-      var nativeRoot = invoke.nativeRootInvoke ? "nativeRootInvoke" : "";
+      // var root = invoke.rootInvoke ? "rootInvoke" : "";
+      // var nativeRoot = invoke.nativeRootInvoke ? "nativeRootInvoke" : "";
 
-      return [aspects, name, root, nativeRoot].join(" ");
+      if(aspects){
+        aspects = "[" + aspects + "]"
+      }
+
+      return [aspects, name].join(" ");
     },
 
     sort: function () {

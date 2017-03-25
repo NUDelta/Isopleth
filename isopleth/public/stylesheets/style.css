@@ -67,6 +67,7 @@ textarea {
   padding-right: 1em;
   border-right: 1px solid #d3d3d3;
   cursor: pointer;
+  user-select: none;
 }
 #isoplethView #deckView #deckHeader ul li:last-child {
   border-right: none;
@@ -79,6 +80,9 @@ textarea {
 }
 #isoplethView #deckView #deckHeader ul li.active {
   background-color: #85ff97;
+}
+#isoplethView #deckView #deckHeader ul li.negate {
+  background-color: #dd7382;
 }
 #isoplethView #graphView {
   width: 100%;
@@ -174,6 +178,8 @@ textarea {
   width: 500px;
 }
 #isoplethView .cardView .center-column h4 {
+  overflow-x: hidden;
+  text-overflow: ellipsis;
   margin-top: 5px;
   margin-bottom: 5px;
   margin-left: 5px;

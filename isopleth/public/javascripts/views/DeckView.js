@@ -7,11 +7,8 @@ define([
 ], function ($, Backbone, _, Handlebars, CardView) {
   return Backbone.View.extend({
     events: {
-      "click #filterMouse": "filterMouse",
-      "click #filterKeyboard": "filterKeyboard",
-      "click #filterSetup": "filterSetup",
-      "click #filterAJAX": "filterAJAX",
-      "click #filterDom": "filterDom"
+      "click .nav": "filterNav",
+      "contextmenu .nav": "filterNavAlt",
     },
 
     visibleCards: [],
@@ -38,6 +35,7 @@ define([
       this.setElement($("#deckView"));
 
       this.showCard = _.bind(this.showCard, this);
+      this.drawDeck = _.bind(this.drawDeck, this);
 
       this.drawDeck();
     },
@@ -50,21 +48,34 @@ define([
       this.clearDeck();
 
       var filters = _(_(this.activeFilterMap).keys()).filter(function (key) {
-        return this.activeFilterMap[key]
+        return this.activeFilterMap[key] === true;
+      }, this);
+
+      var negateFilters = _(_(this.activeFilterMap).keys()).filter(function (key) {
+        return this.activeFilterMap[key] === "negate";
       }, this);
 
       var invokeArr = this.invokeGraph.nativeRootInvokes;
-      var _filters = _(filters);
 
       _(invokeArr).each(function (invoke) {
-        if(invoke.isSequentialRepeat){
+        if (invoke.isSequentialRepeat) {
           return;
         }
 
         if (filters.length) {
-          var found = _filters.find(function (aspect) {
+          var found = _(filters).find(function (aspect) {
             return invoke.aspectMap && invoke.aspectMap[aspect]
           });
+
+          if (negateFilters) {
+            var negateFound = _(negateFilters).find(function (aspect) {
+              return invoke.aspectMap && invoke.aspectMap[aspect]
+            });
+
+            if(negateFound){
+              return;
+            }
+          }
 
           if (!found) {
             return;
@@ -75,7 +86,7 @@ define([
         this.$("#deck").append(cardView.el);
       }, this);
 
-      this.trigger("deckUpdate", filters);
+      this.trigger("deckUpdate", filters, negateFilters);
     },
 
     showCard: function (invokeId) {
@@ -84,36 +95,61 @@ define([
       this.$("#deck").append(cardView.el);
     },
 
-    filterAction: function (buttonSelector, filterSet) {
-      var $filterMouse = this.$(buttonSelector);
-      $filterMouse.toggleClass("active");
+    filterNav: function (e) {
+      var nav = this.$(e.currentTarget).attr("id");
+      this[nav](e);
+    },
 
-      var isActive = !!$filterMouse.hasClass("active");
+    filterNavAlt: function (e) {
+      e.preventDefault();
+      var nav = this.$(e.currentTarget).attr("id");
+      this[nav](e, true);
+    },
+
+    filterAction: function (buttonSelector, filterSet, negate) {
+      var $filterMouse = this.$(buttonSelector);
+
+      if (negate) {
+        $filterMouse.removeClass("active");
+        $filterMouse.toggleClass("negate");
+      } else {
+        $filterMouse.removeClass("negate");
+        $filterMouse.toggleClass("active");
+      }
+
+      var filterStatus = false;
+      if ($filterMouse.hasClass("active")) {
+        filterStatus = true;
+      } else if ($filterMouse.hasClass("negate")) {
+        filterStatus = "negate";
+      }
+
       _(filterSet).each(function (filter) {
-        this.activeFilterMap[filter] = isActive;
+        this.activeFilterMap[filter] = filterStatus;
       }, this);
 
-      this.drawDeck();
+      // Give the UI a chance to paint the button
+      setTimeout(this.drawDeck, 10);
     },
 
-    filterMouse: function () {
-      this.filterAction("#filterMouse", this.invokeGraph.mouseEvents);
+    filterMouse: function (e, negate) {
+      this.filterAction("#filterMouse", this.invokeGraph.mouseEvents, negate);
     },
 
-    filterKeyboard: function () {
-      this.filterAction("#filterKeyboard", this.invokeGraph.keyEvents);
+    filterKeyboard: function (e, negate) {
+      this.filterAction("#filterKeyboard", this.invokeGraph.keyEvents, negate);
     },
 
-    filterSetup: function () {
-      this.filterAction("#filterSetup", ["setup"]);
+    filterSetup: function (e, negate) {
+      this.filterAction("#filterSetup", ["setup"], negate);
     },
 
-    filterAJAX: function () {
-      this.filterAction("#filterAJAX", this.invokeGraph.ajaxEvents);
+    filterAJAX: function (e, negate) {
+      this.filterAction("#filterAJAX", this.invokeGraph.ajaxEvents, negate);
     },
 
-    filterDom: function () {
-      this.filterAction("#filterDom", []);
+    filterDom: function (e, negate) {
+      this.filterAction("#filterDom", this.invokeGraph.domQueries, negate);
     },
 
   });
