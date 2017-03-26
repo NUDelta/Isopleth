@@ -122,6 +122,34 @@ define([
           invoke.node = {};
         } else {
           var nodeInvokes = nodeModel.get('invokes');
+          if (nodeInvokes.length > 0) {
+            var priorInvoke = null;
+            // Check if this invoke is a repeat call
+            if (invoke.parents && invoke.parents[0]) {
+              // Verify at least one prior invoke has the same parent node
+              priorInvoke = _(nodeInvokes).find(function (subInvoke) {
+                if (subInvoke.parents && subInvoke.parents[0]) {
+                  var a = this.invokeIdMap[invoke.parents[0].invocationId].nodeId;
+                  var b = this.invokeIdMap[subInvoke.parents[0].invocationId].nodeId;
+
+                  return a === b;
+                }
+              }, this);
+
+              if (priorInvoke) {
+                invoke.isSequentialRepeat = true;
+              }
+            } else {
+              // Verify at least one prior invoke has no parents
+              priorInvoke = _(nodeInvokes).find(function (subInvoke) {
+                return !subInvoke.parents || !subInvoke.parents[0];
+              }, this);
+
+              if (priorInvoke) {
+                invoke.isSequentialRepeat = true;
+              }
+            }
+          }
           nodeInvokes.push(invoke);
           invoke.node = nodeModel.toJSON();
         }
@@ -252,21 +280,7 @@ define([
       }, this);
 
       // Parse through invoke arguments to determine final missing async serial links
-      var rollingNodeIdInvokeMap = {};
       _(nativeRootInvokes).each(function (childInvoke) {
-
-        // Mark repeat recurring/duplicate root nodes
-        if (rollingNodeIdInvokeMap[childInvoke.nodeId]) {
-          rollingNodeIdInvokeMap[childInvoke.nodeId].sequentialRepeats += 1;
-
-          this.descendTree(childInvoke, function (oInvoke) {
-            oInvoke.isSequentialRepeat = true;
-          });
-        } else {
-          childInvoke.sequentialRepeats = 1;
-          rollingNodeIdInvokeMap[childInvoke.nodeId] = childInvoke;
-        }
-
         if (!childInvoke.node.source) {
           return;
         }
