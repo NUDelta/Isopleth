@@ -9,6 +9,7 @@ define([
     events: {
       "click .nav": "filterNav",
       "contextmenu .nav": "filterNavAlt",
+      "click .navCard": "navCard"
     },
 
     visibleCards: [],
@@ -36,6 +37,7 @@ define([
 
       this.showCard = _.bind(this.showCard, this);
       this.drawDeck = _.bind(this.drawDeck, this);
+      this.navCard = _.bind(this.navCard, this);
 
       this.drawDeck();
     },
@@ -87,6 +89,12 @@ define([
       }, this);
 
       this.trigger("deckUpdate", filters, negateFilters);
+    },
+
+    navCard: function(e){
+      var invokeId = this.$(e.currentTarget).attr("data-id");
+      this.showCard(invokeId);
+      this.trigger("navCard", invokeId, true);
     },
 
     showCard: function (invokeId) {

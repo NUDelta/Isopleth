@@ -152,16 +152,42 @@ body {
       }
     }
 
-    .left-column {
+    .left-column, .right-column {
       width: 0px;
       background-color: #e2e6f3;
+      overflow-y: scroll;
 
-      .invoke-inputs-view {
-        .codeMirrorView {
-          width: 100%;
-          float: left;
-          margin-bottom: 1em;
+      .navCard {
+        width:100%;
+        display:block;
+        float:left;
+        cursor: pointer;
+        font-size: 15px;
+        padding: 3px;
+        color: #5b59e6;
+        background-color: #f6f6f6;
+
+        &:hover{
+        color: #4d4bc3;
+          background-color: #eeeeee;
         }
+      }
+
+      .codeMirrorView {
+        width: 100%;
+        float: left;
+        margin-bottom: 1em;
+      }
+    }
+
+    .center-column {
+      width: 500px;
+      h4 {
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        margin-left: 5px;
       }
     }
 
@@ -183,7 +209,7 @@ body {
       float: left;
       transform: rotate(90deg);
       transform-origin: 0 0 0;
-      height: 30%;
+      height: 25%;
 
       span {
         cursor: pointer;
@@ -204,22 +230,6 @@ body {
           background-color: #3c90d2;
         }
       }
-    }
-
-    .center-column {
-      width: 500px;
-      h4 {
-        overflow-x: hidden;
-        text-overflow: ellipsis;
-        margin-top: 5px;
-        margin-bottom: 5px;
-        margin-left: 5px;
-      }
-    }
-
-    .right-column {
-      width: 0px;
-      background-color: #e2e6f3;
     }
 
     .right-button-column {

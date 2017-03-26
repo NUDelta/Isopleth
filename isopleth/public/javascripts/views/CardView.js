@@ -17,6 +17,7 @@ define([
       "click .invoke-inputs": "toggleInputs",
       "click .invoke-binding": "toggleBinding",
       "click .invoke-declaration": "toggleDeclaration",
+      "click .invoke-parent": "toggleParent",
       "click .invoke-outputs": "toggleOutputs",
       "click .invoke-delegates": "toggleDelegates"
     },
@@ -171,7 +172,9 @@ define([
           var codeMirrorView = new CodeMirrorView(invoke.node.source, "220px");
           this.bindingCodeMirrors.push(codeMirrorView);
 
-          this.$(".invoke-binding-view").append(codeMirrorView.$el);
+          var $view = this.$(".invoke-binding-view");
+          $view.append(this.getNavCardHTML(invoke));
+          $view.append(codeMirrorView.$el);
         }, this);
       }
 
@@ -187,10 +190,29 @@ define([
         var codeMirrorView = new CodeMirrorView(this.invoke.parentAsyncLink.node.source, "270px");
         this.declarationMirror = codeMirrorView;
 
-        this.$(".invoke-declaration-view").append(codeMirrorView.$el);
+        var $view = this.$(".invoke-declaration-view");
+        $view.append(this.getNavCardHTML(this.invoke.parentAsyncLink));
+        $view.append(codeMirrorView.$el);
       }
 
       this.toggleView(".invoke-declaration span", ".invoke-declaration-view", null, "left");
+    },
+
+    toggleParent: function () {
+      if (!this.invoke.parentCalls || !this.invoke.parentCalls[0]) {
+        return;
+      }
+
+      if (!this.parentCallMirror){
+        var codeMirrorView = new CodeMirrorView(this.invoke.parentCalls[0].node.source, "270px");
+        this.parentCallMirror = codeMirrorView;
+
+        var $view = this.$(".invoke-parent-view");
+        $view.append(this.getNavCardHTML(this.invoke.parentCalls[0]));
+        $view.append(codeMirrorView.$el);
+      }
+
+      this.toggleView(".invoke-parent span", ".invoke-parent-view", null, "left");
     },
 
     toggleOutputs: function () {
@@ -223,11 +245,17 @@ define([
           var codeMirrorView = new CodeMirrorView(invoke.node.source, "120px");
           this.invokeChildrenCodeMirrors.push(codeMirrorView);
 
-          this.$(".invoke-delegates-view").append(codeMirrorView.$el);
+          var $delegatesView = this.$(".invoke-delegates-view");
+          $delegatesView.append(this.getNavCardHTML(invoke));
+          $delegatesView.append(codeMirrorView.$el);
         }, this);
       }
 
       this.toggleView(".invoke-delegates span", ".invoke-delegates-view", null, "right");
+    },
+
+    getNavCardHTML:function(invoke){
+      return "<div class='navCard' data-id ='" + invoke.invocationId + "'>See Details: " + invoke.getLabel() + "</div>";
     },
 
     showActions: function () {
@@ -241,6 +269,10 @@ define([
 
       if (this.invoke.parentAsyncLink) {
         this.$(".invoke-declaration").show();
+      }
+
+      if (this.invoke.parentCalls && this.invoke.parentCalls[0] && !this.invoke.parentCalls[0].isLib) {
+        this.$(".invoke-parent").show();
       }
 
       if (this.invoke.childCalls) {

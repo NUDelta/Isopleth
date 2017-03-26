@@ -42,11 +42,18 @@ define([
     setCode: function (code) {
       this.codeMirror.getDoc().setValue(code);
 
-      this.codeMirror.eachLine(function(lineHandle){
-        if(lineHandle.text && lineHandle.text.indexOf("iso_") > -1){
-          lineHandle.text = "";
+      var linesToDelete = [];
+      this.codeMirror.eachLine(function (lineHandle) {
+        if (lineHandle.text && lineHandle.text.indexOf("iso_") > -1) {
+          linesToDelete.push(lineHandle.lineNo());
         }
       });
+
+      _(_(linesToDelete).reverse()).each(function (lineNum) {
+        this.codeMirror.setCursor(lineNum);
+        this.codeMirror.execCommand("deleteLine")
+      }, this);
+
 
       setTimeout(_.bind(function () {
         this.codeMirror.refresh();

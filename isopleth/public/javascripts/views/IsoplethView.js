@@ -27,6 +27,7 @@ define([
       this.deckView = new DeckView(this.invokeGraph);
       this.callGraphView.on("nodeClick", this.deckView.showCard);
       this.deckView.on("deckUpdate", this.callGraphView.filterByAspect);
+      this.deckView.on("navCard", this.callGraphView.handleNodeClick);
     },
 
     render: function () {

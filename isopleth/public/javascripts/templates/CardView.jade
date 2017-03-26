@@ -1,15 +1,18 @@
 .left-column.sec
   .invoke-inputs-view.colview(style="display:none;")
   .invoke-binding-view.colview(style="display:none;")
+  .invoke-parent-view.colview(style="display:none;")
   .invoke-declaration-view.colview(style="display:none;")
 
 .left-button-column.sec
   .buttonPane.invoke-inputs(style="display:none;")
     span Input
+  .buttonPane.invoke-parent(style="display:none;")
+    span Parent
   .buttonPane.invoke-binding(style="display:none;")
-    span Binding
+    span Bind
   .buttonPane.invoke-declaration(style="display:none;")
-    span Async Parent
+    span Scope
 
 .center-column.sec
   h4="{{description}}"

@@ -52,6 +52,7 @@ define([
       this.setElement($("#graphView"));  // el should be in the dom at instantiation time
 
       this.filterByAspect = _.bind(this.filterByAspect, this);
+      this.handleNodeClick = _.bind(this.handleNodeClick, this);
     },
 
     drawWithLib: function () {
@@ -149,7 +150,7 @@ define([
       this.drawGraph();
     },
 
-    handleNodeClick: function (nodeId) {
+    handleNodeClick: function (nodeId, silent) {
       if (this.lastSelectedNode) {
         this.cy.elements('node[id = "' + this.lastSelectedNode.id + '"]')
           .style({
@@ -170,7 +171,10 @@ define([
           "border-color": "white",
           "border-width": "3px"
         });
-      this.trigger("nodeClick", nodeId);
+
+      if (!silent) {
+        this.trigger("nodeClick", nodeId);
+      }
     },
 
     getNodeColor: function (node) {

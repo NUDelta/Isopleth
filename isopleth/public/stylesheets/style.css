@@ -132,14 +132,43 @@ textarea {
 #isoplethView .cardView .empty-javascript p {
   margin-left: 1em;
 }
-#isoplethView .cardView .left-column {
+#isoplethView .cardView .left-column,
+#isoplethView .cardView .right-column {
   width: 0px;
   background-color: #e2e6f3;
+  overflow-y: scroll;
 }
-#isoplethView .cardView .left-column .invoke-inputs-view .codeMirrorView {
+#isoplethView .cardView .left-column .navCard,
+#isoplethView .cardView .right-column .navCard {
+  width: 100%;
+  display: block;
+  float: left;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 3px;
+  color: #5b59e6;
+  background-color: #f6f6f6;
+}
+#isoplethView .cardView .left-column .navCard:hover,
+#isoplethView .cardView .right-column .navCard:hover {
+  color: #4d4bc3;
+  background-color: #eeeeee;
+}
+#isoplethView .cardView .left-column .codeMirrorView,
+#isoplethView .cardView .right-column .codeMirrorView {
   width: 100%;
   float: left;
   margin-bottom: 1em;
+}
+#isoplethView .cardView .center-column {
+  width: 500px;
+}
+#isoplethView .cardView .center-column h4 {
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-left: 5px;
 }
 #isoplethView .cardView .left-button-column {
   width: 32px;
@@ -156,7 +185,7 @@ textarea {
   float: left;
   transform: rotate(90deg);
   transform-origin: 0 0 0;
-  height: 30%;
+  height: 25%;
 }
 #isoplethView .cardView .buttonPane span {
   cursor: pointer;
@@ -173,20 +202,6 @@ textarea {
 }
 #isoplethView .cardView .buttonPane span:hover {
   background-color: #3c90d2;
-}
-#isoplethView .cardView .center-column {
-  width: 500px;
-}
-#isoplethView .cardView .center-column h4 {
-  overflow-x: hidden;
-  text-overflow: ellipsis;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  margin-left: 5px;
-}
-#isoplethView .cardView .right-column {
-  width: 0px;
-  background-color: #e2e6f3;
 }
 #isoplethView .cardView .right-button-column {
   width: 32px;
