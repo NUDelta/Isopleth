@@ -1,5 +1,6 @@
 var TaskCollection = require("../collections/TaskCollection");
 var taskCollection = new TaskCollection();
+var uuid = require("uuid");
 
 module.exports = function (app) {
   app.get("/api/posts", function (req, res) {
@@ -21,6 +22,10 @@ module.exports = function (app) {
     var postObject = req.body;
     var taskModel = taskCollection.add(postObject);
     res.send(taskModel.toJSON());
+  });
+
+  app.post("/api/save", function (req, res) {
+    res.send({url: uuid.v4()});
   });
 
   app.put("/api/posts", function (req, res) {

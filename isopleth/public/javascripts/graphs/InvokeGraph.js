@@ -2,29 +2,43 @@ define([
   "backbone",
   "underscore",
   "../util/util",
-  "text!../util/invokeSample.txt",
+  // "text!../util/samples/invokeSample.txt",
+  "text!../util/samples/xkcd/invokeSample.txt",
 ], function (Backbone, _, util, invokeSample) {
   return Backbone.View.extend({
+    invokes: [],
+    invokeIdMap: {},
+
+    nativeInvokes: [],
+    rootInvokes: [],
+    nativeRootInvokes: [],
+    argSourceToInvokes: {},
+
+    edges: [],
+
+    asyncEdgeMap: [],
+    asyncEdges: [],
+
+    asyncSerialEdgeMap: {},
+    asyncSerialEdges: [],
+
+    rawInvokes: [],
 
     initialize: function (codeMirrors, sourceCollection, activeNodeCollection, jsBinRouter) {
       this.activeNodeCollection = activeNodeCollection;
-      this.invokes = [];
-      this.invokeIdMap = {};
 
-      this.nativeInvokes = [];
-      this.rootInvokes = [];
-      this.nativeRootInvokes = [];
-      this.argSourceToInvokes = {};
+      _(this.returnValueParsers).each(function (fn, i) {
+        this.returnValueParsers[i] = _.bind(fn, this);
+      }, this);
 
-      this.edges = [];
+      _(this.argumentParsers).each(function (fn, i) {
+        this.argumentParsers[i] = _.bind(fn, this);
+      }, this);
 
-      this.asyncEdgeMap = [];
-      this.asyncEdges = [];
-
-      this.asyncSerialEdgeMap = {};
-      this.asyncSerialEdges = [];
-
-      this.addInvokes(JSON.parse(invokeSample));
+      var instanceId = window.location.pathname.split("/")[1];
+      if (!instanceId || instanceId.length < 1) {
+        this.addInvokes(JSON.parse(invokeSample));
+      }
     },
 
     toJSON: function () {
@@ -88,8 +102,10 @@ define([
       var nativeRootInvokes = [];
       // Parse through invokes and populate simple lists of native/lib/top-levels
       _(invokes).each(function (invoke) {
+        this.rawInvokes.push(JSON.parse(JSON.stringify(invoke)));
+
         invoke.aspectMap = {};
-        invoke.getLabel = _.bind(function(){
+        invoke.getLabel = _.bind(function () {
           return this.getInvokeLabel(invoke);
         }, this);
         this.invokes.push(invoke);
@@ -97,6 +113,7 @@ define([
 
         if (invoke.topLevelInvocationId === invoke.invocationId) {
           this.rootInvokes.push(invoke);
+          invoke.rootInvoke = true;
         }
 
         var nodeModel = this.activeNodeCollection.get(invoke.nodeId);
@@ -104,6 +121,8 @@ define([
           console.warn("Don't have a nodemodel for", invoke.nodeId);
           invoke.node = {};
         } else {
+          var nodeInvokes = nodeModel.get('invokes');
+          nodeInvokes.push(invoke);
           invoke.node = nodeModel.toJSON();
         }
         invoke.isLib = util.isKnownLibrary(invoke.nodeId);
@@ -117,6 +136,7 @@ define([
 
           if (!hasParentCaller) {
             nativeRootInvokes.push(invoke);
+            invoke.nativeRootInvoke = true;
           }
         }
 
@@ -129,23 +149,37 @@ define([
         }, this);
 
         _(invoke.arguments).each(function (arg) {
-          if (arg.value && arg.value.type === "function"
-            && arg.value.json.indexOf("iso_") > -1
-            && arg.value.json.indexOf("_iso") > -1
-          ) {
-            if (!this.argSourceToInvokes[arg.value.json]) {
-              this.argSourceToInvokes[arg.value.json] = [];
+          if (arg.value && arg.value.type === "function" && arg.value.json) {
+            var source;
+            if (arg.value.json.indexOf("function") === -1) {
+              var isoStr = arg.value.json;
+              var isoStartIndex = isoStr.indexOf("iso_");
+              var isoEndIndex = isoStr.indexOf("_iso");
+
+              if (isoStartIndex > -1 && isoEndIndex > -1) {
+                var serial = isoStr.substring(isoStartIndex, isoEndIndex + 4);
+                var nodeModel = this.activeNodeCollection.serialToNode[serial];
+                if (nodeModel) {
+                  source = nodeModel.get("source");
+                }
+              }
+            } else {
+              source = arg.value.json;
+            }
+
+            if (!this.argSourceToInvokes[source]) {
+              this.argSourceToInvokes[source] = [];
             }
 
             // Check if we already have this invoke
-            var foundInvoke = _(this.argSourceToInvokes[arg.value.json])
+            var foundInvoke = _(this.argSourceToInvokes[source])
               .find(function (nrInvoke) {
                 return nrInvoke.invocationId === invoke.invocationId
               });
 
             // Store the invoke arg source to be looked up later
             if (!foundInvoke) {
-              this.argSourceToInvokes[arg.value.json].push(invoke);
+              this.argSourceToInvokes[source].push(invoke);
             }
           }
         }, this);
@@ -210,12 +244,8 @@ define([
         }
 
         if (!childInvoke.isLib && parentInvoke.isLib) {
-          // Check if we already have this native root
-          var nativeRoot = _(this.nativeRootInvokes).find(function (nrInvoke) {
-            return nrInvoke.invocationId === childInvoke.invocationId
-          });
-
-          if (!nativeRoot) {
+          if (!childInvoke.nativeRootInvoke) {
+            childInvoke.nativeRootInvoke = true;
             nativeRootInvokes.push(childInvoke);
           }
         }
@@ -225,7 +255,7 @@ define([
       var rollingNodeIdInvokeMap = {};
       _(nativeRootInvokes).each(function (childInvoke) {
 
-        // Mark repeat recurring root nodes
+        // Mark repeat recurring/duplicate root nodes
         if (rollingNodeIdInvokeMap[childInvoke.nodeId]) {
           rollingNodeIdInvokeMap[childInvoke.nodeId].sequentialRepeats += 1;
 
@@ -276,8 +306,10 @@ define([
       // Add setup attribute to all first tree nodes
       if (this.nativeInvokes[0]) {
         this.nativeInvokes[0].aspectMap["page load"] = true;
+        var setupCollection = this.aspectCollectionMap.setup;
         this.descendTree(this.nativeInvokes[0], function (node) {
           node.aspectMap["setup"] = true;
+          setupCollection.push(node);
         });
       }
 
@@ -285,9 +317,6 @@ define([
       _(this.invokes).map(this.classifyInvoke, this);
     },
 
-    clickHandlers: [],
-    ajaxRequests: [],
-    ajaxResponses: [],
 
     climbTree: function (node, decorator, stopCondition) {
       decorator(node);
@@ -298,7 +327,7 @@ define([
 
       // Otherwise keep climbing
       _(node.parentCalls).find(function (parentNode) {
-        return this.climbTree(parentNode, decorator)
+        return this.climbTree(parentNode, decorator, stopCondition)
       }, this);
     },
 
@@ -310,20 +339,20 @@ define([
       }
 
       _(node.childCalls).each(function (node) {
-        this.descendTree(node, decorator)
+        this.descendTree(node, decorator, stopCondition)
       }, this);
     },
 
-    climbDescendUntilNonLib: function (node, decorator) {
+    climbDescendAndDecorate: function (node, decorator) {
       var stopCondition = function (node) {
-        return !!node.isLib;
+        return !node.isLib;
       };
 
-      this.climbTree(node, decorator, stopCondition);
+      this.climbTree(node, decorator, null);
       this.descendTree(node, decorator, stopCondition)
     },
 
-    decorateUntilNonLib: function (node, aspect, nodeAspectArr) {
+    decorateAspect: function (node, aspect, nodeAspectArr) {
       var decorator = function (invokeNode) {
         invokeNode.aspectMap[aspect] = true;
         nodeAspectArr.push(invokeNode);
@@ -333,57 +362,180 @@ define([
 
       if (node.isLib) {
         decorator = _.bind(decorator, this);
-        this.climbDescendUntilNonLib(node, decorator);
+        this.climbDescendAndDecorate(node, decorator);
       }
     },
 
-    classifyInvoke: function (invoke) {
-      //Check return values for ajax requests
-      var isAjaxReq = false;
-      try {
-        isAjaxReq = invoke.returnValue.ownProperties.type.value === "xmlhttprequest" ||
-          invoke.returnValue.ownProperties.status.value === 0;
-      } catch (ignored) {
-      }
-      if (isAjaxReq) {
-        this.decorateUntilNonLib(invoke, "ajaxRequest", this.ajaxRequests);
+    parseEventFromArg: function (arg) {
+      if (arg && arg.value && arg.value.ownProperties) {
+        // jQuery 2, zepto event bindings
+        if (arg.value.ownProperties.eventName) {
+          if (arg.value.ownProperties.eventName.value.indexOf("Event") > -1) {
+            if (arg.value.ownProperties.type) {
+              return arg.value.ownProperties.type.value;
+            }
+          }
+        } else if (arg.value.ownProperties.originalEvent) {
+          // jQuery 1 event bindings
+          if (arg.value.ownProperties.originalEvent.preview) {
+            if (arg.value.ownProperties.originalEvent.preview.indexOf("Event") > -1) {
+              if (arg.value.ownProperties.type) {
+                return arg.value.ownProperties.type.value;
+              }
+            }
+          }
+        }
       }
 
-      // Comb through arguments for click handlers and ajax responses
-      _(invoke.arguments).each(function (arg) {
-        var isClick = false;
-        try {
-          isClick = arg.value.ownProperties.eventName.value.toLowerCase().indexOf("event") > -1 &&
-            invoke.arguments[0].value.ownProperties.type.value === "click";
-        } catch (ignored) {
-        }
-        if (isClick) {
-          this.decorateUntilNonLib(invoke, "clickHandler", this.clickHandlers);
+      return null;
+    },
+
+    mouseEvents: [
+      "click",
+      "mousemove",
+      "mousedown",
+      "mouseup",
+      "mouseout",
+      "mouseover",
+      "mouseenter",
+      "mouseleave"
+    ],
+
+    keyEvents: [
+      "keydown",
+      "keypress",
+      "keyup"
+    ],
+
+    ajaxEvents: [
+      "ajaxRequest",
+      "ajaxResponse"
+    ],
+
+    domQueries: [
+      "domQuery",
+      "jqDom"
+    ],
+
+    aspectCollectionMap: {
+      click: [],
+      mousemove: [],
+      mousedown: [],
+      mouseup: [],
+      mouseout: [],
+      mouseover: [],
+      mouseenter: [],
+      mouseleave: [],
+      keydown: [],
+      keypress: [],
+      keyup: [],
+      ajaxRequest: [],
+      ajaxResponse: [],
+      domQuery: [],
+      jqDom: [],
+      setup: []
+    },
+
+    argumentParsers: [
+      function (arg) {
+        var ev = this.parseEventFromArg(arg);
+        if (ev && this.aspectCollectionMap[ev]) {
+          return ev;
         }
 
-        var isAjaxRes = false;
+        return null;
+      },
+      function (arg) {
         try {
-          isAjaxRes = (arg.value.ownProperties.type.value === "load" ||
+          if ((arg.value.ownProperties.type.value === "load" ||
             arg.value.ownProperties.type.value === "readystatechange" ||
             arg.value.ownProperties.type.value === "xmlhttprequest") &&
             arg.value.ownProperties.status.value !== 0 &&
-            arg.value.ownProperties.status.type === "number"
+            arg.value.ownProperties.status.type === "number") {
+            return "ajaxResponse";
+          }
         } catch (ignored) {
         }
-        if (isAjaxRes) {
-          this.decorateUntilNonLib(invoke, "ajaxResponse", this.ajaxResponses);
+        return null;
+      }
+    ],
+
+    returnValueParsers: [
+      function (invoke) {
+        try {
+          if (invoke.returnValue.ownProperties.type.value === "xmlhttprequest" ||
+            invoke.returnValue.ownProperties.status.value === 0) {
+            return "ajaxRequest";
+          }
+        } catch (ignored) {
+          return null;
         }
+      },
+      function (invoke) {
+        try {
+          if (invoke.returnValue.ownProperties.length &&
+            invoke.returnValue.ownProperties.selector.value) {
+            return "jqDom";
+          }
+        } catch (ignored) {
+          return null;
+        }
+      },
+      function (invoke) {
+        try {
+          if (invoke.returnValue.ownProperties.elementType &&
+            invoke.returnValue.ownProperties.elementType.value.indexOf("HTML") > -1) {
+            return "domQuery";
+          }
+        } catch (ignored) {
+          return null;
+        }
+      },
+    ],
+
+    classifyInvoke: function (invoke) {
+      if (!this.maxHitCount || invoke.node.invokes.length > this.maxHitCount) {
+        this.maxHitCount = invoke.node.invokes.length;
+      }
+
+      if (invoke.node && invoke.node.name &&
+        (invoke.node.name === "('$' callback)" || invoke.node.name.indexOf(".js toplevel") > -1)) {
+        invoke.aspectMap["setup"] = true;
+        this.aspectCollectionMap.setup.push(invoke);
+      }
+
+      //Check return values for ajax requests
+      _(this.returnValueParsers).each(function (parser) {
+        var aspect = parser(invoke);
+        if (aspect) {
+          this.decorateAspect(invoke, aspect, this.aspectCollectionMap[aspect]);
+        }
+      }, this);
+
+      // Comb through arguments for click handlers and ajax responses
+      _(invoke.arguments).each(function (arg) {
+        _(this.argumentParsers).each(function (parser) {
+          var aspect = parser(arg);
+          if (aspect) {
+            this.decorateAspect(invoke, aspect, this.aspectCollectionMap[aspect]);
+          }
+        }, this);
       }, this);
     },
 
     getInvokeLabel: function (invoke) {
-      var label = invoke.aspectMap ? _(invoke.aspectMap).keys().join(",") : "";
+      var aspects = invoke.aspectMap ? _(invoke.aspectMap).keys().join(", ") : "";
+      var name = invoke.node.name;
+      // var root = invoke.rootInvoke ? "rootInvoke" : "";
+      // var nativeRoot = invoke.nativeRootInvoke ? "nativeRootInvoke" : "";
 
-      if (!label) {
-        label = invoke.node.type;
+      var hits = invoke.node.invokes.length;
+
+      if (aspects) {
+        aspects = "[" + aspects + "]"
       }
 
-      return label;
+      return [aspects, name, "×", hits].join(" ");
     },
 
     sort: function () {

@@ -12,7 +12,7 @@ textarea {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-#fluidView {
+#isoplethView {
   width: 100%;
   height: 100%;
   display: block;
@@ -20,7 +20,7 @@ textarea {
   z-index: 2;
   background-color: #F3F5F6;
 }
-#fluidView #deckView {
+#isoplethView #deckView {
   width: 100%;
   height: 50%;
   float: left;
@@ -28,98 +28,193 @@ textarea {
   overflow-y: hidden;
   white-space: nowrap;
 }
-#fluidView #graphView {
+#isoplethView #deckView #deck {
+  float: left;
+}
+#isoplethView #deckView #deckHeader {
+  float: left;
+  height: 35px;
+  background-color: #fff;
+  border-bottom: 1px solid #d3d3d3;
+}
+#isoplethView #deckView #deckHeader .logo {
+  float: left;
+  height: 100%;
+  padding-left: 15px;
+  padding-right: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#isoplethView #deckView #deckHeader .logo img {
+  height: 70%;
+}
+#isoplethView #deckView #deckHeader ul {
+  float: left;
+  height: 100%;
+  margin: 0;
+  list-style: none;
+  display: block;
+  padding: 0;
+}
+#isoplethView #deckView #deckHeader ul li {
+  height: 100%;
+  float: left;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 1em;
+  padding-right: 1em;
+  border-right: 1px solid #d3d3d3;
+  cursor: pointer;
+  user-select: none;
+}
+#isoplethView #deckView #deckHeader ul li:last-child {
+  border-right: none;
+}
+#isoplethView #deckView #deckHeader ul li:hover {
+  background-color: #eeeeee;
+}
+#isoplethView #deckView #deckHeader ul li:active {
+  background-color: #e5e5e5;
+}
+#isoplethView #deckView #deckHeader ul li.active {
+  background-color: #85ff97;
+}
+#isoplethView #deckView #deckHeader ul li.negate {
+  background-color: #dd7382;
+}
+#isoplethView #graphView {
   width: 100%;
   height: 50%;
   float: left;
   background-color: #2f2f2f;
 }
-#fluidView #graphView #graphControl {
+#isoplethView #graphView #graphControl {
+  width: 100%;
   float: left;
-  width: 125px;
-  height: 100%;
-  background-color: #e7e7e7;
+  height: 12%;
 }
-#fluidView #graphView #graphControl ul {
+#isoplethView #graphView #graphControl ul {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
-#fluidView #graphView #invokeGraph {
+#isoplethView #graphView #graphControl ul li {
+  float: left;
+}
+#isoplethView #graphView #graphControl ul li div {
+  color: white;
+  background-color: #545454;
+  border-radius: 2px;
+  margin: 3px;
+  padding: 3px;
+  font-size: 12px;
+  cursor: pointer;
+}
+#isoplethView #graphView #invokeGraph {
   width: 100%;
-  height: 100%;
-  margin-left: 130px;
+  height: 88%;
 }
-#fluidView .cardView {
+#isoplethView .cardView {
   display: inline-block;
-  width: 564px;
   height: 300px;
   margin: 2em;
   border-radius: 6px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
-#fluidView .cardView .sec {
-  float: left;
-  display: block;
+#isoplethView .cardView .sec {
+  display: inline-block;
   height: 100%;
+  vertical-align: top;
+  margin-right: -5px;
 }
-#fluidView .cardView .left-column {
+#isoplethView .cardView .empty-javascript p {
+  margin-left: 1em;
+}
+#isoplethView .cardView .left-column,
+#isoplethView .cardView .right-column {
   width: 0px;
   background-color: #e2e6f3;
+  overflow-y: scroll;
 }
-#fluidView .cardView .left-button-column {
+#isoplethView .cardView .left-column .navCard,
+#isoplethView .cardView .right-column .navCard {
+  width: 100%;
+  display: block;
+  float: left;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 3px;
+  color: #5b59e6;
+  background-color: #f6f6f6;
+}
+#isoplethView .cardView .left-column .navCard:hover,
+#isoplethView .cardView .right-column .navCard:hover {
+  color: #4d4bc3;
+  background-color: #eeeeee;
+}
+#isoplethView .cardView .left-column .codeMirrorView,
+#isoplethView .cardView .right-column .codeMirrorView {
+  width: 100%;
+  float: left;
+  margin-bottom: 1em;
+}
+#isoplethView .cardView .center-column {
+  width: 500px;
+}
+#isoplethView .cardView .center-column h4 {
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-left: 5px;
+}
+#isoplethView .cardView .left-button-column {
   width: 32px;
   background-color: #e2e6f3;
 }
-#fluidView .cardView .left-button-column .buttonPane {
-  float: left;
-  transform: rotate(90deg);
-  transform-origin: 0 0 0;
-  height: 30%;
+#isoplethView .cardView .left-button-column .buttonPane {
   margin-left: 27px;
 }
-#fluidView .cardView .left-button-column .buttonPane span {
-  cursor: pointer;
-  text-align: center;
-  background-color: #387fbd;
-  color: #fff;
-  padding: 4px;
+#isoplethView .cardView .left-button-column .buttonPane span {
   border-bottom-left-radius: 3px;
   border-bottom-right-radius: 3px;
 }
-#fluidView .cardView .left-button-column .buttonPane span:hover {
-  background-color: #3c90d2;
-}
-#fluidView .cardView .center-column {
-  width: 500px;
-}
-#fluidView .cardView .right-column {
-  width: 0px;
-  background-color: #e2e6f3;
-}
-#fluidView .cardView .right-button-column {
-  width: 32px;
-  background-color: #e2e6f3;
-}
-#fluidView .cardView .right-button-column .buttonPane {
+#isoplethView .cardView .buttonPane {
   float: left;
   transform: rotate(90deg);
   transform-origin: 0 0 0;
-  height: 30%;
-  margin-left: 25px;
+  height: 25%;
 }
-#fluidView .cardView .right-button-column .buttonPane span {
+#isoplethView .cardView .buttonPane span {
   cursor: pointer;
   text-align: center;
   background-color: #387fbd;
   color: #fff;
   padding: 4px;
+}
+#isoplethView .cardView .buttonPane span.active {
+  background-color: #ffb533;
+}
+#isoplethView .cardView .buttonPane span.active:hover {
+  background-color: #ffc97e;
+}
+#isoplethView .cardView .buttonPane span:hover {
+  background-color: #3c90d2;
+}
+#isoplethView .cardView .right-button-column {
+  width: 32px;
+  background-color: #e2e6f3;
+}
+#isoplethView .cardView .right-button-column .buttonPane {
+  margin-left: 24px;
+}
+#isoplethView .cardView .right-button-column .buttonPane span {
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
 }
-#fluidView .cardView .right-button-column .buttonPane span:hover {
-  background-color: #3c90d2;
-}
-#fluidView button {
+#isoplethView button {
   padding: 4px 4px;
   color: #28aadc;
   background-color: #fff;
@@ -131,15 +226,15 @@ textarea {
   margin: 4px;
   transition: color .3s, border .3s;
 }
-#fluidView button:hover {
+#isoplethView button:hover {
   color: #166888;
   border: 1px solid #166888;
 }
-#fluidView #invokeGraph {
+#isoplethView #invokeGraph {
   height: 100%;
   width: 100%;
 }
-#fluidView #callGraphView {
+#isoplethView #callGraphView {
   height: 100%;
   width: 100%;
 }

@@ -1,25 +1,33 @@
 .left-column.sec
+  .invoke-inputs-view.colview(style="display:none;")
+  .invoke-binding-view.colview(style="display:none;")
+  .invoke-parent-view.colview(style="display:none;")
+  .invoke-declaration-view.colview(style="display:none;")
+
 .left-button-column.sec
-  .buttonPane.invoke-inputs
-    span Inputs
-  .buttonPane.invoke-binding
-    span Binding
-  .buttonPane.invoke-declaration
-    span Declaration
+  .buttonPane.invoke-inputs(style="display:none;")
+    span Input
+  .buttonPane.invoke-parent(style="display:none;")
+    span Parent
+  .buttonPane.invoke-binding(style="display:none;")
+    span Bind
+  .buttonPane.invoke-declaration(style="display:none;")
+    span Scope
 
 .center-column.sec
   h4="{{description}}"
 
   .main-javascript
-    textarea.cardMirror="{{code}}"
+  .empty-javascript(style="display:none;")
+    p Browser Load/Call
 
 .right-button-column.sec
-  .buttonPane.invoke-outputs
+  .buttonPane.invoke-outputs(style="display:none;")
     span Output
-  .buttonPane.invoke-delegates
+  .buttonPane.invoke-delegates(style="display:none;")
     span Calls
 
 .right-column.sec
-
-
+  .invoke-outputs-view.colview(style="display:none;")
+  .invoke-delegates-view.colview(style="display:none;")
 

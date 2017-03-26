@@ -383,7 +383,20 @@ if (typeof {name} === 'undefined') {
 				o.value = val;
 			}
 		} else if (o.type === "function") {
-      o.json = val && val.toString ? val.toString() : null;
+		  var funStr = val && val.toString ? val.toString() : null;
+
+		  if(funStr && funStr.indexOf("__tracer") > -1){
+		    var isoStartIndex = funStr.indexOf("iso_");
+		    var isoEndIndex = funStr.indexOf("_iso");
+		    if(isoStartIndex > -1 && isoEndIndex > -1){
+		      o.json = funStr.substring(isoStartIndex, isoEndIndex + 4)
+        } else {
+		      o.json = null;
+        }
+      } else if (funStr) {
+        o.json = funStr;
+      }
+
       if (val && val.name) {
         if (val.name.length > 44) {
           o.name = val.name.substring(0, 45) + "...";
@@ -497,9 +510,42 @@ if (typeof {name} === 'undefined') {
       return path;
     };
 
+    var elToObj = function (el) {
+      if(!el || !el.toString){
+        return {};
+      } else {
+        var elType = el.toString();
+
+        if (!(elType.indexOf("HTML") > -1) || !(elType.indexOf("Element") > -1)) {
+          return {};
+        }
+      }
+
+      var domPath = "";
+      try {
+        domPath = pathToSelector(el);
+      } catch (ig) {
+      }
+
+      // Dom element
+      var attrs = {
+        elementType: el.toString(),
+        domPath: domPath
+      };
+
+      if (el.attributes) {
+        for (var i = 0; i < el.attributes.length; i++) {
+          var key = el.attributes[i].name;
+          attrs[key] = el.attributes[i].value;
+        }
+      }
+
+      return attrs;
+    };
 
     if (object && object.toString) {
-      if (object.toString().toLowerCase().indexOf("mouseevent]") > -1) {
+      var objStr = object.toString().toLowerCase();
+      if (objStr.indexOf("event]") > -1) {
       	var path;
       	try{
       		path = pathToSelector(object.path && object.path.length ? object.path[0] : null);
@@ -507,23 +553,35 @@ if (typeof {name} === 'undefined') {
 
         try {
           object = {
-            eventName: object.toString ? object.toString() : null,
-            altKey: object.altKey,
+					  // Properties of Abstract Event Class
             bubbles: object.bubbles,
-            button: object.button,
-            buttons: object.buttons,
             cancelBubble: object.cancelBubble,
             cancelable: object.cancelable,
+            composed: object.composed,
+            currentTarget: elToObj(object.currentTarget),
+            deepPath: null,
+            defaultPrevented: object.defaultPrevented,
+            eventPhase: object.eventPhase,
+            explicitOriginalTarget: null,
+            originalTarget: null,
+            returnValue: object.returnValue,
+            scoped: null,
+            srcElement: null,
+            target: elToObj(object.target),
+            timeStamp: object.timeStamp,
+            type: object.type,
+            isTrusted: object.isTrusted,
+
+            // Properties of MouseEvent Class
+            eventName: object.toString ? object.toString() : null,
+            altKey: object.altKey,
+            button: object.button,
+            buttons: object.buttons,
             clientX: object.clientX,
             clientY: object.clientY,
-            composed: object.composed,
             ctrlKey: object.ctrlKey,
-            currentTarget: object.currentTarget ? object.currentTarget.outerHTML : null,
-            defaultPrevented: object.defaultPrevented,
             detail: object.detail,
-            eventPhase: object.eventPhase,
-            fromElement: object.fromElement ? object.fromElement.outerHTML : null,
-            isTrusted: object.isTrusted,
+            fromElement: elToObj(object.fromElement),
             layerX: object.layerX,
             layerY: object.layerY,
             metaKey: object.metaKey,
@@ -534,25 +592,28 @@ if (typeof {name} === 'undefined') {
             pageX: object.pageX,
             pageY: object.pageY,
             path: path,
-            relatedTarget: object.relatedTarget ? object.relatedTarget.outerHTML : null,
-            returnValue: object.returnValue,
+            relatedTarget: elToObj(object.relatedTarget),
             screenX: object.screenX,
             screenY: object.screenY,
             shiftKey: object.shiftKey,
             sourceCapabilities: object.sourceCapabilities ? object.sourceCapabilities.toString() : null,
-            target: object.target ? object.target.outerHTML : null,
-            timeStamp: object.timeStamp,
-            toElement: object.toElement ? object.toElement.outerHTML : null,
-            type: object.type,
+            toElement: elToObj(object.toElement),
             view: object.view ? object.view.toString() : null,
             which: object.which,
             x: object.x,
-            y: object.y
+            y: object.y,
+
+            // Properties of KeyboardEvent Class
+            code: object.code,
+            key:object.key,
+            isComposing: object.isComposing,
+            location:object.location,
+            repeat:object.repeat,
           };
 
           for (var k in object) {
             if (object.hasOwnProperty(k)) {
-              if (object[k] === undefined) {
+              if (object[k] === undefined || object[k] === null) {
                 delete object[k];
               }
             }
@@ -560,13 +621,9 @@ if (typeof {name} === 'undefined') {
         } catch (ig) {
 
         }
-      } else if (
-        object.toString().toLowerCase().indexOf(" xmlhttprequest]") > -1 ||
-        object.toString().toLowerCase().indexOf(" progressevent]") > -1
-      ){
-        if (object.toString().toLowerCase().indexOf(" progressevent]") > -1 &&
-            object.currentTarget &&
-          object.currentTarget.toString().toLowerCase().indexOf(" xmlhttprequest]") > -1){
+      } else if (objStr.indexOf(" xmlhttprequest]") > -1 || objStr.indexOf(" progressevent]") > -1) {
+        if (objStr.indexOf(" progressevent]") > -1 && object.currentTarget &&
+          object.currentTarget.toString().toLowerCase().indexOf(" xmlhttprequest]") > -1) {
           // sometimes request comes nested inside a progress event
           object = object.currentTarget;
         }
@@ -597,8 +654,9 @@ if (typeof {name} === 'undefined') {
 						}
           }
         }
+      } else if(objStr.indexOf("html") > -1 && objStr.indexOf("element") > -1){
+        object = elToObj(object);
       }
-
     }
 
 		// returns array: [approx size of copy, copy]
