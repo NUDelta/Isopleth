@@ -6,60 +6,159 @@ define([
   "views/CardView"
 ], function ($, Backbone, _, Handlebars, CardView) {
   return Backbone.View.extend({
-    events: {},
+    events: {
+      "click .nav": "filterNav",
+      "contextmenu .nav": "filterNavAlt",
+      "click .navCard": "navCard"
+    },
+
+    visibleCards: [],
+
+    activeFilterMap: {
+      click: false,
+      mousemove: false,
+      mousedown: false,
+      mouseup: false,
+      mouseout: false,
+      mouseover: false,
+      mouseenter: false,
+      mouseleave: false,
+      keydown: false,
+      keypress: false,
+      keyup: false,
+      ajaxRequest: false,
+      ajaxResponse: false,
+      jQueryCall: false
+    },
 
     initialize: function (invokeGraph) {
       this.invokeGraph = invokeGraph;
       this.setElement($("#deckView"));
 
-      this.drawCard = _.bind(this.drawCard, this);
+      this.showCard = _.bind(this.showCard, this);
+      this.drawDeck = _.bind(this.drawDeck, this);
+      this.navCard = _.bind(this.navCard, this);
 
-      this.drawCard(this.invokeGraph.nativeRootInvokes[1].invocationId)
+      this.drawDeck();
     },
 
-    drawCard: function (nodeId) {
-      var cardView = new CardView(nodeId, this.invokeGraph);
-      this.$el.html(cardView.el);
+    clearDeck: function () {
+      this.$("#deck").empty();
     },
 
-    backtraceAsyncEvent: function () {
-      this.$el.empty();
+    drawDeck: function () {
+      this.clearDeck();
 
-      var lastInvoke = _(this.topLevelInvokes).last();
-      if (!lastInvoke || !lastInvoke.asyncParentInvokeIds) {
-        return console.warn("No async parent... hmmm.. number of top level invokes:", this.topLevelInvokes.length);
+      var filters = _(_(this.activeFilterMap).keys()).filter(function (key) {
+        return this.activeFilterMap[key] === true;
+      }, this);
+
+      var negateFilters = _(_(this.activeFilterMap).keys()).filter(function (key) {
+        return this.activeFilterMap[key] === "negate";
+      }, this);
+
+      var invokeArr = this.invokeGraph.nativeRootInvokes;
+
+      _(invokeArr).each(function (invoke) {
+        if (invoke.isSequentialRepeat) {
+          return;
+        }
+
+        if (filters.length) {
+          var found = _(filters).find(function (aspect) {
+            return invoke.aspectMap && invoke.aspectMap[aspect]
+          });
+
+          if (negateFilters) {
+            var negateFound = _(negateFilters).find(function (aspect) {
+              return invoke.aspectMap && invoke.aspectMap[aspect]
+            });
+
+            if(negateFound){
+              return;
+            }
+          }
+
+          if (!found) {
+            return;
+          }
+        }
+
+        var cardView = new CardView(invoke.invocationId, this.invokeGraph);
+        this.$("#deck").append(cardView.el);
+      }, this);
+
+      this.trigger("deckUpdate", filters, negateFilters);
+    },
+
+    navCard: function(e){
+      var invokeId = this.$(e.currentTarget).attr("data-id");
+      this.showCard(invokeId);
+      this.trigger("navCard", invokeId, true);
+    },
+
+    showCard: function (invokeId) {
+      this.clearDeck();
+      var cardView = new CardView(invokeId, this.invokeGraph);
+      this.$("#deck").append(cardView.el);
+    },
+
+    filterNav: function (e) {
+      var nav = this.$(e.currentTarget).attr("id");
+      this[nav](e);
+    },
+
+    filterNavAlt: function (e) {
+      e.preventDefault();
+      var nav = this.$(e.currentTarget).attr("id");
+      this[nav](e, true);
+    },
+
+    filterAction: function (buttonSelector, filterSet, negate) {
+      var $filterMouse = this.$(buttonSelector);
+
+      if (negate) {
+        $filterMouse.removeClass("active");
+        $filterMouse.toggleClass("negate");
+      } else {
+        $filterMouse.removeClass("negate");
+        $filterMouse.toggleClass("active");
       }
 
-      var asyncParentInvoke = this.invokeIdMap[lastInvoke.asyncParentInvokeIds[0]];
-      if (!asyncParentInvoke) {
-        return console.warn("No async parent invoke ids found.")
+      var filterStatus = false;
+      if ($filterMouse.hasClass("active")) {
+        filterStatus = true;
+      } else if ($filterMouse.hasClass("negate")) {
+        filterStatus = "negate";
       }
 
-      var cardView = new CardView(
-        "Setup Function",
-        this.activeNodeCollection.get(asyncParentInvoke.callStack[0].nodeId).get("source"));
-      this.$el.append(cardView.el);
+      _(filterSet).each(function (filter) {
+        this.activeFilterMap[filter] = filterStatus;
+      }, this);
 
-      cardView = new CardView(
-        "Async Binding",
-        asyncParentInvoke.node.source);
-      this.$el.append(cardView.el);
+      // Give the UI a chance to paint the button
+      setTimeout(this.drawDeck, 10);
+    },
 
-      cardView = new CardView(
-        "DOM hook registered: " + lastInvoke.arguments[0].value.ownProperties.type.value,
-        lastInvoke.arguments[0].value.ownProperties.target.value);
-      this.$el.append(cardView.el);
+    filterMouse: function (e, negate) {
+      this.filterAction("#filterMouse", this.invokeGraph.mouseEvents, negate);
+    },
 
-      cardView = new CardView(
-        "The Interaction",
-        lastInvoke.node.name + ": " + lastInvoke.node.source
-      );
-      this.$el.append(cardView.el);
+    filterKeyboard: function (e, negate) {
+      this.filterAction("#filterKeyboard", this.invokeGraph.keyEvents, negate);
+    },
 
-      // console.log("The setup function for the interaction: ", activeNodeCollection.get(asyncParentInvoke.callStack[0].nodeId).get("source"));
-      // console.log("It was bound at: ", asyncParentInvoke.node.source);
-      // console.log("The callback was: ", lastInvoke.node.name, ":", lastInvoke.node.source);
-      // Which called....
-    }
+    filterSetup: function (e, negate) {
+      this.filterAction("#filterSetup", ["setup"], negate);
+    },
+
+    filterAJAX: function (e, negate) {
+      this.filterAction("#filterAJAX", this.invokeGraph.ajaxEvents, negate);
+    },
+
+    filterDom: function (e, negate) {
+      this.filterAction("#filterDom", this.invokeGraph.domQueries, negate);
+    },
+
   });
 });

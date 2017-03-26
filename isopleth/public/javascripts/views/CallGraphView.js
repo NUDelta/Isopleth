@@ -18,25 +18,41 @@ define([
       "click #markClick": "markClick",
       "click #drawWithLib": "drawWithLib",
       "click #drawWithRepeats": "drawWithRepeats",
+      "click #drawHeatMap": "drawHeatMap",
+      "click #downloadInvokes": "downloadInvokes",
+      "click #downloadNodes": "downloadNodes"
     },
 
     colors: {
       nativeNode: "#bce9fd",
-      libNode: "#66d9ef",
+      libNode: "#bdbdbd",
       edge: "#fd9620",
       nativeRootInvoke: "#48ff60",
       asyncEdge: "#e6da74",
       asyncSerialEdge: "#bc95ff",
       ajaxRequest: "#fff",
       ajaxResponse: "#dd7382",
-      clickHandler: "#5fddbd"
+      clickHandler: "#5fddbd",
+      selected: "#fff07b",
     },
 
-    initialize: function (invokeGraph) {
+    aspectFilters: [],
+
+    lastSelectedNode: null,
+
+    visibleInvokes: [],
+
+    maxVisibleHitCount: 0,
+
+    initialize: function (invokeGraph, activeNodeCollection) {
       this.invokeGraph = invokeGraph;
+      this.activeNodeCollection = activeNodeCollection;
       this.showLibs = false;
       this.showSequentialRepeats = false;
       this.setElement($("#graphView"));  // el should be in the dom at instantiation time
+
+      this.filterByAspect = _.bind(this.filterByAspect, this);
+      this.handleNodeClick = _.bind(this.handleNodeClick, this);
     },
 
     drawWithLib: function () {
@@ -49,22 +65,24 @@ define([
       this.drawGraph();
     },
 
-    resetGraph: function () {
-      this.showLibs = false;
-      this.drawGraph();
+    drawHeatMap: function () {
+      _(this.visibleInvokes).each(function (invoke) {
+        var heatColor = this.calcHeatColor(invoke.node.invokes.length, this.maxVisibleHitCount);
+
+        this.cy.elements('node[id = "' + invoke.invocationId + '"]')
+          .style({"background-color": heatColor});
+      }, this);
     },
 
-    markTopLevelNonLib: function () {
-      _(this.invokeGraph.nativeRootInvokes).each(function (invoke) {
-        this.cy.elements('node[id = "' + invoke.invocationId + '"]')
-          .style({
-            "background-color": this.colors.nativeRootInvoke
-          });
-      }, this);
+    resetGraph: function () {
+      this.showLibs = false;
+      this.showSequentialRepeats = false;
+      this.drawGraph();
     },
 
     drawJoshAsync: function () {
       _(this.invokeGraph.asyncSerialEdges).each(function (edge) {
+        this.cy.remove('edge[source = "' + edge.parentInvoke.invocationId + '"][target="' + edge.childInvoke.invocationId + '"]');
         this.cy.add({
           group: 'edges', data: {
             source: edge.parentInvoke.invocationId,
@@ -77,6 +95,7 @@ define([
 
     drawTomAsync: function () {
       _(this.invokeGraph.asyncEdges).each(function (edge) {
+        this.cy.remove('edge[source = "' + edge.parentInvoke.invocationId + '"][target="' + edge.childInvoke.invocationId + '"]');
         this.cy.add({
           group: 'edges', data: {
             source: edge.parentInvoke.invocationId,
@@ -88,35 +107,74 @@ define([
     },
 
     markAllBlue: function () {
-      _(this.invokeGraph.invokes).each(function (invoke) {
+      _(this.visibleInvokes).each(function (invoke) {
         this.cy.elements('node[id = "' + invoke.invocationId + '"]')
           .style({"background-color": this.colors.nativeNode});
       }, this);
     },
 
+    markTopLevelNonLib: function () {
+      _(this.invokeGraph.nativeRootInvokes).each(function (invoke) {
+        this.cy.elements('node[id = "' + invoke.invocationId + '"]')
+          .style({
+            "background-color": this.colors.nativeRootInvoke
+          });
+      }, this);
+    },
+
     markAjaxRequest: function () {
-      _(this.invokeGraph.ajaxRequests).each(function (invoke) {
+      _(this.invokeGraph.aspectCollectionMap.ajaxRequest).each(function (invoke) {
         this.cy.elements('node[id = "' + invoke.invocationId + '"]')
           .style({"background-color": this.colors.ajaxRequest});
       }, this);
     },
 
     markAjaxResponse: function () {
-      _(this.invokeGraph.ajaxResponses).each(function (invoke) {
+      _(this.invokeGraph.aspectCollectionMap.ajaxResponse).each(function (invoke) {
         this.cy.elements('node[id = "' + invoke.invocationId + '"]')
           .style({"background-color": this.colors.ajaxResponse});
       }, this);
     },
 
     markClick: function () {
-      _(this.invokeGraph.clickHandlers).each(function (invoke) {
+      _(this.invokeGraph.aspectCollectionMap.click).each(function (invoke) {
         this.cy.elements('node[id = "' + invoke.invocationId + '"]')
           .style({"background-color": this.colors.clickHandler});
       }, this);
     },
 
-    handleNodeClick: function (nodeId) {
-      this.trigger("nodeClick", nodeId);
+    filterByAspect: function (aspectArr, negateAspectArr) {
+      this.aspectFilters = aspectArr;
+      this.negatedAspectFilters = negateAspectArr;
+
+      this.drawGraph();
+    },
+
+    handleNodeClick: function (nodeId, silent) {
+      if (this.lastSelectedNode) {
+        this.cy.elements('node[id = "' + this.lastSelectedNode.id + '"]')
+          .style({
+            "background-color": this.lastSelectedNode.color,
+            "border-color": "none",
+            "border-width": "0"
+          });
+      }
+
+      this.lastSelectedNode = {
+        id: nodeId,
+        color: this.cy.elements('node[id = "' + nodeId + '"]').style("background-color")
+      };
+
+      this.cy.elements('node[id = "' + nodeId + '"]')
+        .style({
+          "background-color": this.colors.selected,
+          "border-color": "white",
+          "border-width": "3px"
+        });
+
+      if (!silent) {
+        this.trigger("nodeClick", nodeId);
+      }
     },
 
     getNodeColor: function (node) {
@@ -136,10 +194,57 @@ define([
       return this.colors.nativeNode;
     },
 
+    calcHeatColor: function (val, max) {
+      var heatNum = val / max;
+
+      var r = parseInt(heatNum * 255);
+      var b = 255 - r;
+
+      return "#" + ((1 << 24) + (r << 16) + (0 << 8) + b).toString(16).slice(1);
+    },
+
     drawGraph: function () {
       this.$("#invokeGraph").empty();
 
-      var nodes = _(this.invokeGraph.invokes).reduce(function (displayNodes, invoke) {
+      var nodes = [];
+      var negateIdMap = {};
+
+      if (this.aspectFilters.length) {
+        var roots = this.invokeGraph.rootInvokes.concat(this.invokeGraph.nativeRootInvokes);
+
+        _(roots).each(function (invoke) {
+          var found = _(this.aspectFilters).find(function (aspect) {
+            return invoke.aspectMap && invoke.aspectMap[aspect]
+          });
+
+          if (this.negatedAspectFilters) {
+            var negateFound = _(this.negatedAspectFilters).find(function (aspect) {
+              return invoke.aspectMap && invoke.aspectMap[aspect]
+            });
+
+            if (negateFound) {
+              this.invokeGraph.descendTree(invoke, function (childNode) {
+                nodes.push(childNode);
+                negateIdMap[childNode.invocationId] = true;
+              }, null);
+              return;
+            }
+          }
+
+          if (!found) {
+            return;
+          }
+
+          this.invokeGraph.descendTree(invoke, function (childNode) {
+            nodes.push(childNode);
+          }, null);
+        }, this);
+      } else {
+        nodes = this.invokeGraph.invokes;
+      }
+
+      this.maxVisibleHitCount = 0;
+      nodes = _(nodes).reduce(function (displayNodes, invoke) {
         if (!this.showLibs && invoke.isLib) {
           return displayNodes;
         }
@@ -148,16 +253,23 @@ define([
           return displayNodes;
         }
 
+        if (negateIdMap[invoke.invocationId]) {
+          return displayNodes;
+        }
+
         var label = invoke.getLabel();
         var node = {
           data: {
             id: invoke.invocationId,
             label: label,
-            shape: "rectangle",
-            width: label ? (label.length * 10) + "px" : "25px",
             color: this.getNodeColor(invoke)
           }
         };
+
+        this.visibleInvokes.push(invoke);
+        if (invoke.node.invokes.length > this.maxVisibleHitCount) {
+          this.maxVisibleHitCount = invoke.node.invokes.length;
+        }
 
         displayNodes.push(node);
 
@@ -180,18 +292,28 @@ define([
         autounselectify: true,
         layout: {
           name: 'dagre',
+          avoidOverlap: true,
           pan: 'fix',
-          padding: '10',
+          fit: true,
+          padding: 20,
           minLen: function (edge) {
-            return 1;
+            return 2;
           }
         },
         style: [
           {
             selector: 'node',
             style: {
-              'shape': 'data(shape)',
-              'width': 'data(width)',
+              'min-zoomed-font-size': 6,
+              'font-family': 'system, "helvetica neue"',
+              'font-size': 14,
+              'font-weight': 400,
+              'shape': 'roundrectangle',
+              'overlay-color': "white",
+              'overlay-padding': 1,
+              'width': 'label',
+              'height': 'label',
+              'padding': 8,
               'content': 'data(label)',
               'text-opacity': 1,
               'text-valign': 'center',
@@ -221,10 +343,31 @@ define([
       this.cy.on('click', 'node', function (e) {
         callGraphView.handleNodeClick(this.id());
       });
+
+      this.drawJoshAsync();
+      this.markTopLevelNonLib();
       //
       // this.cy.on('click', 'edge', function (e) {
       //   callGraphView.handleEdgeClick(e);
       // });
+    },
+
+    downloadInvokes: function () {
+      this.downloadStr(JSON.stringify(this.invokeGraph.rawInvokes, null, 2), "invokeSample.txt");
+    },
+
+    downloadNodes: function () {
+      this.downloadStr(JSON.stringify(this.activeNodeCollection.rawNodes, null, 2), "nodeSample.txt");
+    },
+
+    downloadStr: function (str, fileName) {
+      var textFileAsBlob = new Blob([str], {type: 'text/plain'});
+
+      var downloadLink = document.createElement("a");
+      downloadLink.download = fileName;
+      downloadLink.innerHTML = "Download File";
+      downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+      downloadLink.click();
     }
   });
 });
