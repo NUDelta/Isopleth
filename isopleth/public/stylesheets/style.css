@@ -248,7 +248,7 @@ textarea {
 }
 #newAspectModal #modalContent {
   border-radius: 3px;
-  height: 400px;
+  height: 434px;
   width: 380px;
   background-color: white;
   box-shadow: 10px 10px 35px 2px rgba(0, 0, 0, 0.32);
@@ -258,12 +258,24 @@ textarea {
   float: left;
   padding: 5px;
 }
+#newAspectModal #aspectColor input {
+  width: 80px;
+}
+#newAspectModal #aspectColor .label span {
+  background-color: #ffb533;
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-left: 29px;
+  margin-right: 7px;
+  line-height: 20px;
+}
 #newAspectModal .label {
   float: left;
   display: block;
   line-height: 24px;
 }
-#newAspectModal #newAspectTitle input {
+#newAspectModal input {
   background-color: #f5f5f5;
   float: left;
   display: block;
@@ -274,16 +286,17 @@ textarea {
   margin-left: 10px;
   font-size: 16px;
   text-decoration: none;
-  padding-left: 5px;
+  padding-left: 9px;
+  border-radius: 3px;
 }
-#newAspectModal #newAspectTitle input:focus {
+#newAspectModal input:focus {
   outline: none;
 }
 #newAspectModal .newFilterType,
 #newAspectModal #saveNewAspect,
 #newAspectModal #close {
   background-color: #f5f5f5;
-  line-height: 30px;
+  line-height: 27px;
   height: 100%;
   display: block;
   float: left;
@@ -321,11 +334,9 @@ textarea {
   border-bottom-right-radius: 3px;
 }
 #newAspectModal .filterTypes {
-  width: 100%;
   float: left;
-  height: 30px;
-  padding-left: 1em;
-  padding-top: 5px;
+  height: 27px;
+  padding-left: 31px;
 }
 #newAspectModal #newAspectFilter .mirrorHandle {
   width: 94%;

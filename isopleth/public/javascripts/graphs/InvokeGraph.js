@@ -481,16 +481,6 @@ define([
     returnValueParsers: [
       function (returnValue) {
         try {
-          if (returnValue.ownProperties.type.value === "xmlhttprequest" ||
-            returnValue.ownProperties.status.value === 0) {
-            return "ajaxRequest";
-          }
-        } catch (ignored) {
-          return null;
-        }
-      },
-      function (returnValue) {
-        try {
           if (returnValue.ownProperties.length &&
             returnValue.ownProperties.selector.value) {
             return "jqDom";
@@ -509,6 +499,16 @@ define([
           return null;
         }
       },
+      function (returnValue) {
+        try {
+          if (returnValue.ownProperties.type.value === "xmlhttprequest" ||
+            returnValue.ownProperties.status.value === 0) {
+            return "ajaxRequest";
+          }
+        } catch (ignored) {
+          return null;
+        }
+      }
     ],
 
     classifyInvoke: function (invoke) {

@@ -45,7 +45,7 @@ define([
       var source = this.invoke.node.source || "";
       this.mainCodeMirrorView = new CodeMirrorView(source, "265px");
       this.$(".main-javascript").append(this.mainCodeMirrorView.$el);
-      if(!source){
+      if (!source) {
         this.$(".main-javascript").hide();
         this.$(".empty-javascript").show();
       }
@@ -112,7 +112,7 @@ define([
         _(args).each(function (arg) {
           var val = util.unMarshshalVal(arg.value);
 
-          if(typeof val !== "string"){
+          if (typeof val !== "string") {
             val = JSON.stringify(val, null, 2);
           }
           var codeMirrorView = new CodeMirrorView(val, "120px");
@@ -171,7 +171,7 @@ define([
         return;
       }
 
-      if (!this.parentCallMirror){
+      if (!this.parentCallMirror) {
         var codeMirrorView = new CodeMirrorView(this.invoke.parentCalls[0].node.source, "270px");
         this.parentCallMirror = codeMirrorView;
 
@@ -226,8 +226,8 @@ define([
       this.toggleView(".invoke-delegates span", ".invoke-delegates-view", null, "right");
     },
 
-    getNavCardHTML:function(invoke){
-      return "<div class='navCard' data-id ='" + invoke.invocationId + "'>See Details: " + invoke.getLabel() + "</div>";
+    getNavCardHTML: function (invoke) {
+      return "<div class='navCard' targetId = '" + this.invoke.invocationId + "' sourceId ='" + invoke.invocationId + "'>Show Details: " + invoke.getLabel() + "</div>";
     },
 
     showActions: function () {

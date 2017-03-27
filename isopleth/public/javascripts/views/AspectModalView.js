@@ -17,13 +17,19 @@ define([
     events: {
       "click #saveNewAspect": "saveNewAspect",
       "click #close": "hide",
-      "click .newFilterType": "toggleFilterType"
+      "click .newFilterType": "toggleFilterType",
+      "keyup #aspectColor input": "updateColorPreview"
     },
 
     renderTemplate: true,
 
     initialize: function () {
       this.setElement($("#newAspectModal"));
+    },
+
+    updateColorPreview: function () {
+      var color = this.$("#aspectColor input").val();
+      this.$(".color-preview").css("background-color", color);
     },
 
     show: function () {
@@ -48,6 +54,7 @@ define([
       var o = {};
       o.title = this.$("#newAspectTitle input").val();
       o.type = this.$(".newFilterType.active").attr("data");
+      o.color = this.$("#aspectColor input").val() || "#ffb533";
 
       try {
         var jsFn = this.codeMirrorView.getCode();

@@ -26,8 +26,10 @@ define([
       this.callGraphView = new CallGraphView(this.invokeGraph, activeNodeCollection);
       this.deckView = new DeckView(this.invokeGraph);
       this.callGraphView.on("nodeClick", this.deckView.showCard);
+      this.callGraphView.on("edgeClick", this.deckView.showCards);
       this.deckView.on("deckUpdate", this.callGraphView.filterByAspect);
-      this.deckView.on("navCard", this.callGraphView.handleNodeClick);
+      this.deckView.on("navCard", this.callGraphView.handleEdgeClick);
+      this.deckView.on("newAspectColor", this.callGraphView.addCustomColor);
     },
 
     render: function () {

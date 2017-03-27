@@ -38,6 +38,7 @@ define([
       this.setElement($("#deckView"));
 
       this.showCard = _.bind(this.showCard, this);
+      this.showCards = _.bind(this.showCards, this);
       this.drawDeck = _.bind(this.drawDeck, this);
       this.navCard = _.bind(this.navCard, this);
       this.addAspect = _.bind(this.addAspect, this);
@@ -90,23 +91,34 @@ define([
           }
         }
 
-        var cardView = new CardView(invoke.invocationId, this.invokeGraph);
-        this.$("#deck").append(cardView.el);
+        this.addCard(invoke.invocationId);
       }, this);
 
       this.trigger("deckUpdate", filters, negateFilters);
     },
 
+    addCard:function(invokeId){
+      var cardView = new CardView(invokeId, this.invokeGraph);
+        this.$("#deck").append(cardView.el);
+    },
+
     navCard: function (e) {
-      var invokeId = this.$(e.currentTarget).attr("data-id");
-      this.showCard(invokeId);
-      this.trigger("navCard", invokeId, true);
+      var sourceId = this.$(e.currentTarget).attr("sourceId");
+      var targetId = this.$(e.currentTarget).attr("targetId");
+      this.showCards([sourceId, targetId]);
+      this.trigger("navCard", sourceId, targetId, true);
     },
 
     showCard: function (invokeId) {
       this.clearDeck();
-      var cardView = new CardView(invokeId, this.invokeGraph);
-      this.$("#deck").append(cardView.el);
+      this.addCard(invokeId);
+    },
+
+    showCards: function (arrInvokeIds) {
+      this.clearDeck();
+      _(arrInvokeIds).each(function(invokeId){
+        this.addCard(invokeId);
+      }, this);
     },
 
     filterNav: function (e) {
@@ -192,6 +204,7 @@ define([
       var id = "filter-iso-" + new Date().getTime();
       var type = aspectDTO.type;
       var testFunction = aspectDTO.testFn;
+      var color = aspectDTO.color;
 
       var argFn = type === "arg" ? testFunction : null;
       var returnFn = type === "returnVal" ? testFunction : null;
@@ -200,6 +213,7 @@ define([
       $("<li id='" + id + "' class='nav customFilter' aspect='" + aspect + "'>" + title + "</li>").insertBefore("#filterAdd");
 
       this.invokeGraph.classifyCustom(aspect, argFn, returnFn);
+      this.trigger("newAspectColor", aspect, color);
 
       setTimeout(this.drawDeck, 10);
     }

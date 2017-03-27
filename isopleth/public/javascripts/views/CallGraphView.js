@@ -23,24 +23,40 @@ define([
       "click #downloadNodes": "downloadNodes"
     },
 
+    customColors: {},
+
     colors: {
       nativeNode: "#bce9fd",
       libNode: "#bdbdbd",
-      edge: "#fd9620",
+      edge: "#e6da74",
       nativeRootInvoke: "#48ff60",
-      asyncEdge: "#e6da74",
+      asyncEdge: "#fd9620",
       asyncSerialEdge: "#bc95ff",
       ajaxRequest: "#fff",
       ajaxResponse: "#dd7382",
-      clickHandler: "#5fddbd",
+      domQuery: "#bc95ff",
+      jqDom: "#bc95ff",
+      mouseEvent: "#fd9620",
+      click: "#fd9620",
+      wheel: "#fd9620",
+      mousemove: "#fd9620",
+      mousedown: "#fd9620",
+      mouseup: "#fd9620",
+      mouseout: "#fd9620",
+      mouseleave: "#fd9620",
+      mouseenter: "#fd9620",
+      mouseover: "#fd9620",
       selected: "#fff07b",
+      edgeSelected: "#f7f7f7",
     },
 
     aspectFilters: [],
 
     negatedAspectFilters: [],
 
-    lastSelectedNode: null,
+    lastSelectedNodes: [],
+
+    lastSelectedEdge: null,
 
     visibleInvokes: [],
 
@@ -55,6 +71,12 @@ define([
 
       this.filterByAspect = _.bind(this.filterByAspect, this);
       this.handleNodeClick = _.bind(this.handleNodeClick, this);
+      this.handleEdgeClick = _.bind(this.handleEdgeClick, this);
+      this.addCustomColor = _.bind(this.addCustomColor, this);
+    },
+
+    addCustomColor: function (aspect, color) {
+      this.customColors[aspect] = color;
     },
 
     drawWithLib: function () {
@@ -108,11 +130,33 @@ define([
       }, this);
     },
 
-    markAllBlue: function () {
+    markAspectColor: function (aspectArr, color) {
+      if (!aspectArr || !color) {
+        console.warn("Tried to color invoke node without params.");
+        return;
+      }
+
+      var allNodes = (aspectArr === "*");
+
       _(this.visibleInvokes).each(function (invoke) {
-        this.cy.elements('node[id = "' + invoke.invocationId + '"]')
-          .style({"background-color": this.colors.nativeNode});
+        var markAspect;
+        if (allNodes) {
+          markAspect = true;
+        } else {
+          markAspect = _(aspectArr).find(function (aspect) {
+            return invoke.aspectMap[aspect];
+          });
+        }
+
+        if (markAspect) {
+          this.cy.elements('node[id = "' + invoke.invocationId + '"]')
+            .style({"background-color": color});
+        }
       }, this);
+    },
+
+    markAllBlue: function () {
+      this.markAspectColor("*", this.colors.nativeNode);
     },
 
     markTopLevelNonLib: function () {
@@ -125,24 +169,15 @@ define([
     },
 
     markAjaxRequest: function () {
-      _(this.invokeGraph.aspectCollectionMap.ajaxRequest).each(function (invoke) {
-        this.cy.elements('node[id = "' + invoke.invocationId + '"]')
-          .style({"background-color": this.colors.ajaxRequest});
-      }, this);
+      this.markAspectColor(["ajaxRequest"], this.colors.ajaxRequest);
     },
 
     markAjaxResponse: function () {
-      _(this.invokeGraph.aspectCollectionMap.ajaxResponse).each(function (invoke) {
-        this.cy.elements('node[id = "' + invoke.invocationId + '"]')
-          .style({"background-color": this.colors.ajaxResponse});
-      }, this);
+      this.markAspectColor(["ajaxResponse"], this.colors.ajaxResponse);
     },
 
     markClick: function () {
-      _(this.invokeGraph.aspectCollectionMap.click).each(function (invoke) {
-        this.cy.elements('node[id = "' + invoke.invocationId + '"]')
-          .style({"background-color": this.colors.clickHandler});
-      }, this);
+      this.markAspectColor(this.invokeGraph.mouseEvents, this.colors.mouseEvent);
     },
 
     filterByAspect: function (aspectArr, negateAspectArr) {
@@ -152,20 +187,42 @@ define([
       this.drawGraph();
     },
 
-    handleNodeClick: function (nodeId, silent) {
-      if (this.lastSelectedNode) {
-        this.cy.elements('node[id = "' + this.lastSelectedNode.id + '"]')
+    resetLastNodes: function () {
+      if (!this.lastSelectedNodes.length) {
+        return;
+      }
+
+      _(this.lastSelectedNodes).each(function (node) {
+        this.cy.elements('node[id = "' + node.id + '"]')
           .style({
-            "background-color": this.lastSelectedNode.color,
+            "background-color": node.color,
             "border-color": "none",
             "border-width": "0"
           });
-      }
+      }, this);
 
-      this.lastSelectedNode = {
+      this.lastSelectedNodes = [];
+
+      if (this.lastSelectedEdge) {
+        var edgeElement = this.cy.elements('edge[source = "' + this.lastSelectedEdge.sourceId + '"][target = "' + this.lastSelectedEdge.targetId + '"]');
+        if (!edgeElement.length) {
+          edgeElement = this.cy.elements('edge[target = "' + this.lastSelectedEdge.sourceId + '"][source = "' + this.lastSelectedEdge.targetId + '"]');
+        }
+
+        edgeElement.style({
+            "line-color": this.lastSelectedEdge.color
+          });
+        this.lastSelectedEdge = null;
+      }
+    },
+
+    handleNodeClick: function (nodeId, silent) {
+      this.resetLastNodes();
+
+      this.lastSelectedNodes = [{
         id: nodeId,
         color: this.cy.elements('node[id = "' + nodeId + '"]').style("background-color")
-      };
+      }];
 
       this.cy.elements('node[id = "' + nodeId + '"]')
         .style({
@@ -179,18 +236,68 @@ define([
       }
     },
 
+    handleEdgeClick: function (sourceId, targetId, silent) {
+      this.resetLastNodes();
+
+      _([sourceId, targetId]).each(function (nodeId) {
+        this.lastSelectedNodes.push({
+          id: nodeId,
+          color: this.cy.elements('node[id = "' + nodeId + '"]').style("background-color")
+        });
+
+        this.cy.elements('node[id = "' + nodeId + '"]')
+          .style({
+            "background-color": this.colors.selected,
+            "border-color": "white",
+            "border-width": "3px"
+          });
+      }, this);
+
+      var edgeElement = this.cy.elements('edge[source = "' + sourceId + '"][target = "' + targetId + '"]');
+      if (!edgeElement.length) {
+        edgeElement = this.cy.elements('edge[target = "' + sourceId + '"][source = "' + targetId + '"]');
+      }
+
+      this.lastSelectedEdge = {
+        sourceId: sourceId,
+        targetId: targetId,
+        color: edgeElement.style("line-color")
+      };
+      edgeElement
+        .style({
+          "line-color": this.colors.edgeSelected,
+        });
+
+      if (!silent) {
+        this.trigger("edgeClick", [sourceId, targetId]);
+      }
+    },
+
     getNodeColor: function (node) {
+      var customColors = _(this.customColors).keys();
+
+      if (customColors.length) {
+        var colorKey = _(customColors).find(function (aspect) {
+          return node.aspectMap[aspect];
+        });
+
+        if (colorKey) {
+          return this.customColors[colorKey];
+        }
+      }
+
       if (node.isLib) {
         return this.colors.libNode;
       }
 
-      if (node.aspectMap) {
-        var aspectArr = _(node.aspectMap).keys();
-        if (aspectArr.length) {
-          if (this.colors[aspectArr[0]]) {
-            return this.colors[aspectArr[0]];
-          }
-        }
+      if (node.nativeRootInvoke) {
+        return this.colors.nativeRootInvoke;
+      }
+
+      var aspectArr = _(node.aspectMap).keys();
+      var last = _(aspectArr).last();
+      if (this.colors[last]) {
+        return this.colors[last];
       }
 
       return this.colors.nativeNode;
@@ -354,16 +461,16 @@ define([
       });
 
       var callGraphView = this;
-      this.cy.on('click', 'node', function (e) {
+
+      this.cy.on('click', 'node', function () {
         callGraphView.handleNodeClick(this.id());
       });
 
+      this.cy.on('click', 'edge', function () {
+        callGraphView.handleEdgeClick(this.data("source"), this.data("target"));
+      });
+
       this.drawJoshAsync();
-      this.markTopLevelNonLib();
-      //
-      // this.cy.on('click', 'edge', function (e) {
-      //   callGraphView.handleEdgeClick(e);
-      // });
     },
 
     downloadInvokes: function () {
