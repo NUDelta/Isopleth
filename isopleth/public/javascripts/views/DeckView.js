@@ -3,13 +3,15 @@ define([
   "backbone",
   "underscore",
   "handlebars",
-  "views/CardView"
-], function ($, Backbone, _, Handlebars, CardView) {
+  "views/CardView",
+  "views/AspectModalView"
+], function ($, Backbone, _, Handlebars, CardView, AspectModalView) {
   return Backbone.View.extend({
     events: {
-      "click .nav": "filterNav",
+      "click .nav:not(#filterAdd)": "filterNav",
       "contextmenu .nav": "filterNavAlt",
-      "click .navCard": "navCard"
+      "click .navCard": "navCard",
+      "click #filterAdd": "filterAdd"
     },
 
     visibleCards: [],
@@ -36,8 +38,13 @@ define([
       this.setElement($("#deckView"));
 
       this.showCard = _.bind(this.showCard, this);
+      this.showCards = _.bind(this.showCards, this);
       this.drawDeck = _.bind(this.drawDeck, this);
       this.navCard = _.bind(this.navCard, this);
+      this.addAspect = _.bind(this.addAspect, this);
+
+      this.aspectModalView = new AspectModalView();
+      this.aspectModalView.on("newAspect", this.addAspect);
 
       this.drawDeck();
     },
@@ -66,52 +73,75 @@ define([
 
         if (filters.length) {
           var found = _(filters).find(function (aspect) {
-            return invoke.aspectMap && invoke.aspectMap[aspect]
+            return invoke.aspectMap[aspect]
           });
-
-          if (negateFilters) {
-            var negateFound = _(negateFilters).find(function (aspect) {
-              return invoke.aspectMap && invoke.aspectMap[aspect]
-            });
-
-            if(negateFound){
-              return;
-            }
-          }
 
           if (!found) {
             return;
           }
         }
 
-        var cardView = new CardView(invoke.invocationId, this.invokeGraph);
-        this.$("#deck").append(cardView.el);
+        if (negateFilters && negateFilters.length) {
+          var negateFound = _(negateFilters).find(function (aspect) {
+            return invoke.aspectMap[aspect]
+          });
+
+          if (negateFound) {
+            return;
+          }
+        }
+
+        this.addCard(invoke.invocationId);
       }, this);
 
       this.trigger("deckUpdate", filters, negateFilters);
     },
 
-    navCard: function(e){
-      var invokeId = this.$(e.currentTarget).attr("data-id");
-      this.showCard(invokeId);
-      this.trigger("navCard", invokeId, true);
+    addCard:function(invokeId){
+      var cardView = new CardView(invokeId, this.invokeGraph);
+        this.$("#deck").append(cardView.el);
+    },
+
+    navCard: function (e) {
+      var sourceId = this.$(e.currentTarget).attr("sourceId");
+      var targetId = this.$(e.currentTarget).attr("targetId");
+      this.showCards([sourceId, targetId]);
+      this.trigger("navCard", sourceId, targetId, true);
     },
 
     showCard: function (invokeId) {
       this.clearDeck();
-      var cardView = new CardView(invokeId, this.invokeGraph);
-      this.$("#deck").append(cardView.el);
+      this.addCard(invokeId);
+    },
+
+    showCards: function (arrInvokeIds) {
+      this.clearDeck();
+      _(arrInvokeIds).each(function(invokeId){
+        this.addCard(invokeId);
+      }, this);
     },
 
     filterNav: function (e) {
-      var nav = this.$(e.currentTarget).attr("id");
-      this[nav](e);
+      var $filterNav = this.$(e.currentTarget);
+      var nav = $filterNav.attr("id");
+
+      if ($filterNav.hasClass("customFilter")) {
+        this.filterNavCustom(e)
+      } else {
+        this[nav](e);
+      }
     },
 
     filterNavAlt: function (e) {
       e.preventDefault();
-      var nav = this.$(e.currentTarget).attr("id");
-      this[nav](e, true);
+      var $filterNav = this.$(e.currentTarget);
+      var nav = $filterNav.attr("id");
+
+      if ($filterNav.hasClass("customFilter")) {
+        this.filterNavCustom(e, true)
+      } else {
+        this[nav](e, true);
+      }
     },
 
     filterAction: function (buttonSelector, filterSet, negate) {
@@ -160,5 +190,32 @@ define([
       this.filterAction("#filterDom", this.invokeGraph.domQueries, negate);
     },
 
+    filterAdd: function () {
+      this.aspectModalView.show();
+    },
+
+    filterNavCustom: function (e, negate) {
+      var $filterEl = this.$(e.currentTarget);
+      this.filterAction("#" + $filterEl.attr("id"), [$filterEl.attr("aspect")], negate);
+    },
+
+    addAspect: function (aspectDTO) {
+      var title = aspectDTO.title;
+      var id = "filter-iso-" + new Date().getTime();
+      var type = aspectDTO.type;
+      var testFunction = aspectDTO.testFn;
+      var color = aspectDTO.color;
+
+      var argFn = type === "arg" ? testFunction : null;
+      var returnFn = type === "returnVal" ? testFunction : null;
+      var aspect = "*" + title;
+
+      $("<li id='" + id + "' class='nav customFilter' aspect='" + aspect + "'>" + title + "</li>").insertBefore("#filterAdd");
+
+      this.invokeGraph.classifyCustom(aspect, argFn, returnFn);
+      this.trigger("newAspectColor", aspect, color);
+
+      setTimeout(this.drawDeck, 10);
+    }
   });
 });

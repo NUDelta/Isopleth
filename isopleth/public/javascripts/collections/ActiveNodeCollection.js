@@ -99,6 +99,7 @@ define([
 
         var activeNodeModel = this.get(node.id);
         if (!activeNodeModel) {
+          node.name = node.name ? node.name + "" : "";
           activeNodeModel = new ActiveNodeModel(node);
           if(serial){
             this.serialToNode[serial] = activeNodeModel;

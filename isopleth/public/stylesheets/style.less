@@ -11,14 +11,16 @@ body {
 #isoplethView {
   width: 100%;
   height: 100%;
-  display: block;
+  //display: block;
   position: absolute;
   z-index: 2;
   background-color: #F3F5F6;
+  flex-direction: column;
+  display: flex;
 
   #deckView {
+    min-height: 407px;
     width: 100%;
-    height: 50%;
     float: left;
 
     overflow-x: scroll;
@@ -34,6 +36,7 @@ body {
       height: 35px;
       background-color: #fff;
       border-bottom: 1px solid #d3d3d3;
+      border-bottom-right-radius: 5px;
 
       .logo {
         float: left;
@@ -96,9 +99,9 @@ body {
 
   #graphView {
     width: 100%;
-    height: 50%;
     float: left;
     background-color: #2f2f2f;
+    flex-grow: 1;
 
     #graphControl {
       width: 100%;
@@ -127,7 +130,6 @@ body {
     }
     #invokeGraph {
       width: 100%;
-      height: 88%;
     }
   }
 
@@ -158,17 +160,17 @@ body {
       overflow-y: scroll;
 
       .navCard {
-        width:100%;
-        display:block;
-        float:left;
+        width: 100%;
+        display: block;
+        float: left;
         cursor: pointer;
         font-size: 15px;
         padding: 3px;
         color: #5b59e6;
         background-color: #f6f6f6;
 
-        &:hover{
-        color: #4d4bc3;
+        &:hover {
+          color: #4d4bc3;
           background-color: #eeeeee;
         }
       }
@@ -278,6 +280,139 @@ body {
 
 }
 
+#newAspectModal {
+  z-index: 2;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  #modalContent {
+    border-radius: 3px;
+    height: 434px;
+    width: 380px;
+    background-color: white;
+    box-shadow: 10px 10px 35px 2px rgba(0, 0, 0, 0.32);
+
+    .row {
+      width: 100%;
+      float: left;
+      padding: 5px;
+    }
+  }
+
+  #aspectColor {
+    input {
+      width: 80px;
+    }
+
+    .label {
+      span {
+        background-color: #ffb533;
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        margin-left: 29px;
+        margin-right: 7px;
+        line-height: 20px;
+      }
+    }
+  }
+
+  .label {
+    float: left;
+    display: block;
+    line-height: 24px;
+  }
+
+  input {
+    background-color: #f5f5f5;
+    float: left;
+    display: block;
+    box-shadow: none;
+    border: none;
+    height: 24px;
+    width: 250px;
+    margin-left: 10px;
+    font-size: 16px;
+    text-decoration: none;
+    padding-left: 9px;
+    border-radius: 3px;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .newFilterType, #saveNewAspect, #close {
+    background-color: #f5f5f5;
+    line-height: 27px;
+    height: 100%;
+    display: block;
+    float: left;
+    padding-left: 10px;
+    padding-right: 10px;
+    cursor: pointer;
+    user-select: none;
+
+    &:hover {
+      background-color: #d3d3d3;
+    }
+    &:active {
+      background-color: #bfbfbf;
+    }
+    &.active {
+      background-color: #abc9e5;
+    }
+
+    &:first-child {
+      border-bottom-left-radius: 3px;
+      border-top-left-radius: 3px;
+      border-right: 1px solid white;
+    }
+
+    &:last-child {
+      border-top-right-radius: 3px;
+      border-bottom-right-radius: 3px;
+    }
+  }
+
+  .filterTypes {
+    float: left;
+    height: 27px;
+    padding-left: 31px;
+
+  }
+
+  #newAspectFilter {
+    .mirrorHandle {
+      width: 94%;
+      float: left;
+      height: 220px;
+      overflow: scroll;
+
+      .CodeMirror {
+        height: 220px;
+      }
+    }
+  }
+
+  .saveAspect {
+    #saveNewAspect, #close {
+      float: right;
+      width: 50px;
+      text-align: center;
+      border-radius: 3px;
+    }
+    #saveNewAspect {
+      margin-right: 12px;
+    }
+    #close {
+      margin-right: 4px;
+    }
+  }
+
+}
 
 
 

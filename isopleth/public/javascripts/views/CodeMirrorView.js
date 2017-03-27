@@ -10,7 +10,7 @@ define([
 
     events: {},
 
-    initialize: function (code, maxHeight) {
+    initialize: function (code, maxHeight, writable) {
       code = code || "";
 
       this.cssId = "cm-" + new Date().getTime();
@@ -21,7 +21,7 @@ define([
 
       this.codeMirror = CodeMirror.fromTextArea(this.$("textarea")[0], {
         parserfile: [],
-        readOnly: true,
+        readOnly: !writable,
         dragDrop: false,
         mode: "javascript",
         lineWrapping: true,
@@ -58,6 +58,10 @@ define([
       setTimeout(_.bind(function () {
         this.codeMirror.refresh();
       }, this), 100);
+    },
+
+    getCode: function () {
+      return this.codeMirror.getValue();
     }
   });
 });

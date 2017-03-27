@@ -8,6 +8,7 @@
       <li id="filterSetup" class="nav">Setup</li>
       <li id="filterAJAX" class="nav">AJAX</li>
       <li id="filterDom" class="nav">DOM</li>
+      <li id="filterAdd" class="nav">+</li>
     </ul>
   </div>
   <div id="deck"></div>
@@ -47,6 +48,9 @@
         <div id="resetGraph">Reset Graph</div>
       </li>
       <li>
+        <div id="drawUnknownAspectNodes">Show Unknown Nodes</div>
+      </li>
+      <li>
         <div id="drawHeatMap">Heat Map</div>
       </li>
       <li>
@@ -56,5 +60,37 @@
         <div id="downloadNodes">Download Nodes</div>
       </li>
     </ul>
+  </div>
+</div>
+<div id="newAspectModal" style="display:none;">
+  <div class="content">
+    <!-- Fill modal here-->
+  </div>
+</div>
+<div id="modalTemplate" style="display:none;">
+  <div id="modalContent">
+    <div id="newAspectTitle" class="row">
+      <div class="label">Aspect Name</div>
+      <input type="text" value="CustomFilter"/>
+    </div>
+    <div id="newAspectType" class="row">
+      <div class="label">Filter Type</div>
+      <div class="filterTypes">
+        <div data="returnVal" class="newFilterType active">Return Value</div>
+        <div data="arg" class="newFilterType">Argument</div>
+      </div>
+    </div>
+    <div id="aspectColor" class="row">
+      <div class="label">Node Color<span style="background-color:#ffb533;" class="color-preview"></span></div>
+      <input type="text" value="#ffb533"/>
+    </div>
+    <div id="newAspectFilter" class="row">
+      <div class="label">Aspect Test Function</div>
+      <div class="mirrorHandle"></div>
+    </div>
+    <div class="saveAspect row">
+      <div id="saveNewAspect">Save</div>
+      <div id="close">Cancel</div>
+    </div>
   </div>
 </div>

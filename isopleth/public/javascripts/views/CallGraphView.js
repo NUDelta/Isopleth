@@ -20,29 +20,50 @@ define([
       "click #drawWithRepeats": "drawWithRepeats",
       "click #drawHeatMap": "drawHeatMap",
       "click #downloadInvokes": "downloadInvokes",
-      "click #downloadNodes": "downloadNodes"
+      "click #downloadNodes": "downloadNodes",
+      "click #drawUnknownAspectNodes": "drawUnknownAspectNodes"
     },
+
+    customColors: {},
 
     colors: {
       nativeNode: "#bce9fd",
       libNode: "#bdbdbd",
-      edge: "#fd9620",
+      edge: "#e6da74",
       nativeRootInvoke: "#48ff60",
-      asyncEdge: "#e6da74",
+      asyncEdge: "#fd9620",
       asyncSerialEdge: "#bc95ff",
       ajaxRequest: "#fff",
       ajaxResponse: "#dd7382",
-      clickHandler: "#5fddbd",
+      domQuery: "#bc95ff",
+      jqDom: "#bc95ff",
+      mouseEvent: "#fd9620",
+      click: "#fd9620",
+      wheel: "#fd9620",
+      mousemove: "#fd9620",
+      mousedown: "#fd9620",
+      mouseup: "#fd9620",
+      mouseout: "#fd9620",
+      mouseleave: "#fd9620",
+      mouseenter: "#fd9620",
+      mouseover: "#fd9620",
       selected: "#fff07b",
+      edgeSelected: "#f7f7f7",
     },
 
     aspectFilters: [],
 
-    lastSelectedNode: null,
+    negatedAspectFilters: [],
+
+    lastSelectedNodes: [],
+
+    lastSelectedEdge: null,
 
     visibleInvokes: [],
 
     maxVisibleHitCount: 0,
+
+    showUnknownAspects: false,
 
     initialize: function (invokeGraph, activeNodeCollection) {
       this.invokeGraph = invokeGraph;
@@ -51,8 +72,16 @@ define([
       this.showSequentialRepeats = false;
       this.setElement($("#graphView"));  // el should be in the dom at instantiation time
 
+      this.$("#invokeGraph").height(parseInt(this.$el.height()) - parseInt(this.$("#graphControl").height()));
+
       this.filterByAspect = _.bind(this.filterByAspect, this);
       this.handleNodeClick = _.bind(this.handleNodeClick, this);
+      this.handleEdgeClick = _.bind(this.handleEdgeClick, this);
+      this.addCustomColor = _.bind(this.addCustomColor, this);
+    },
+
+    addCustomColor: function (aspect, color) {
+      this.customColors[aspect] = color;
     },
 
     drawWithLib: function () {
@@ -74,9 +103,15 @@ define([
       }, this);
     },
 
+    drawUnknownAspectNodes: function () {
+      this.showUnknownAspects = true;
+      this.drawGraph();
+    },
+
     resetGraph: function () {
       this.showLibs = false;
       this.showSequentialRepeats = false;
+      this.showUnknownAspects = false;
       this.drawGraph();
     },
 
@@ -106,11 +141,33 @@ define([
       }, this);
     },
 
-    markAllBlue: function () {
+    markAspectColor: function (aspectArr, color) {
+      if (!aspectArr || !color) {
+        console.warn("Tried to color invoke node without params.");
+        return;
+      }
+
+      var allNodes = (aspectArr === "*");
+
       _(this.visibleInvokes).each(function (invoke) {
-        this.cy.elements('node[id = "' + invoke.invocationId + '"]')
-          .style({"background-color": this.colors.nativeNode});
+        var markAspect;
+        if (allNodes) {
+          markAspect = true;
+        } else {
+          markAspect = _(aspectArr).find(function (aspect) {
+            return invoke.aspectMap[aspect];
+          });
+        }
+
+        if (markAspect) {
+          this.cy.elements('node[id = "' + invoke.invocationId + '"]')
+            .style({"background-color": color});
+        }
       }, this);
+    },
+
+    markAllBlue: function () {
+      this.markAspectColor("*", this.colors.nativeNode);
     },
 
     markTopLevelNonLib: function () {
@@ -123,24 +180,15 @@ define([
     },
 
     markAjaxRequest: function () {
-      _(this.invokeGraph.aspectCollectionMap.ajaxRequest).each(function (invoke) {
-        this.cy.elements('node[id = "' + invoke.invocationId + '"]')
-          .style({"background-color": this.colors.ajaxRequest});
-      }, this);
+      this.markAspectColor(["ajaxRequest"], this.colors.ajaxRequest);
     },
 
     markAjaxResponse: function () {
-      _(this.invokeGraph.aspectCollectionMap.ajaxResponse).each(function (invoke) {
-        this.cy.elements('node[id = "' + invoke.invocationId + '"]')
-          .style({"background-color": this.colors.ajaxResponse});
-      }, this);
+      this.markAspectColor(["ajaxResponse"], this.colors.ajaxResponse);
     },
 
     markClick: function () {
-      _(this.invokeGraph.aspectCollectionMap.click).each(function (invoke) {
-        this.cy.elements('node[id = "' + invoke.invocationId + '"]')
-          .style({"background-color": this.colors.clickHandler});
-      }, this);
+      this.markAspectColor(this.invokeGraph.mouseEvents, this.colors.mouseEvent);
     },
 
     filterByAspect: function (aspectArr, negateAspectArr) {
@@ -150,20 +198,42 @@ define([
       this.drawGraph();
     },
 
-    handleNodeClick: function (nodeId, silent) {
-      if (this.lastSelectedNode) {
-        this.cy.elements('node[id = "' + this.lastSelectedNode.id + '"]')
+    resetLastNodes: function () {
+      if (!this.lastSelectedNodes.length) {
+        return;
+      }
+
+      _(this.lastSelectedNodes).each(function (node) {
+        this.cy.elements('node[id = "' + node.id + '"]')
           .style({
-            "background-color": this.lastSelectedNode.color,
+            "background-color": node.color,
             "border-color": "none",
             "border-width": "0"
           });
-      }
+      }, this);
 
-      this.lastSelectedNode = {
+      this.lastSelectedNodes = [];
+
+      if (this.lastSelectedEdge) {
+        var edgeElement = this.cy.elements('edge[source = "' + this.lastSelectedEdge.sourceId + '"][target = "' + this.lastSelectedEdge.targetId + '"]');
+        if (!edgeElement.length) {
+          edgeElement = this.cy.elements('edge[target = "' + this.lastSelectedEdge.sourceId + '"][source = "' + this.lastSelectedEdge.targetId + '"]');
+        }
+
+        edgeElement.style({
+          "line-color": this.lastSelectedEdge.color
+        });
+        this.lastSelectedEdge = null;
+      }
+    },
+
+    handleNodeClick: function (nodeId, silent) {
+      this.resetLastNodes();
+
+      this.lastSelectedNodes = [{
         id: nodeId,
         color: this.cy.elements('node[id = "' + nodeId + '"]').style("background-color")
-      };
+      }];
 
       this.cy.elements('node[id = "' + nodeId + '"]')
         .style({
@@ -177,18 +247,68 @@ define([
       }
     },
 
+    handleEdgeClick: function (sourceId, targetId, silent) {
+      this.resetLastNodes();
+
+      _([sourceId, targetId]).each(function (nodeId) {
+        this.lastSelectedNodes.push({
+          id: nodeId,
+          color: this.cy.elements('node[id = "' + nodeId + '"]').style("background-color")
+        });
+
+        this.cy.elements('node[id = "' + nodeId + '"]')
+          .style({
+            "background-color": this.colors.selected,
+            "border-color": "white",
+            "border-width": "3px"
+          });
+      }, this);
+
+      var edgeElement = this.cy.elements('edge[source = "' + sourceId + '"][target = "' + targetId + '"]');
+      if (!edgeElement.length) {
+        edgeElement = this.cy.elements('edge[target = "' + sourceId + '"][source = "' + targetId + '"]');
+      }
+
+      this.lastSelectedEdge = {
+        sourceId: sourceId,
+        targetId: targetId,
+        color: edgeElement.style("line-color")
+      };
+      edgeElement
+        .style({
+          "line-color": this.colors.edgeSelected,
+        });
+
+      if (!silent) {
+        this.trigger("edgeClick", [sourceId, targetId]);
+      }
+    },
+
     getNodeColor: function (node) {
+      var customColors = _(this.customColors).keys();
+
+      if (customColors.length) {
+        var colorKey = _(customColors).find(function (aspect) {
+          return node.aspectMap[aspect];
+        });
+
+        if (colorKey) {
+          return this.customColors[colorKey];
+        }
+      }
+
       if (node.isLib) {
         return this.colors.libNode;
       }
 
-      if (node.aspectMap) {
-        var aspectArr = _(node.aspectMap).keys();
-        if (aspectArr.length) {
-          if (this.colors[aspectArr[0]]) {
-            return this.colors[aspectArr[0]];
-          }
-        }
+      if (node.nativeRootInvoke) {
+        return this.colors.nativeRootInvoke;
+      }
+
+      var aspectArr = _(node.aspectMap).keys();
+      var last = _(aspectArr).last();
+      if (this.colors[last]) {
+        return this.colors[last];
       }
 
       return this.colors.nativeNode;
@@ -206,54 +326,64 @@ define([
     drawGraph: function () {
       this.$("#invokeGraph").empty();
 
-      var nodes = [];
-      var negateIdMap = {};
+      var hideInvokeIdMap = {};
 
-      if (this.aspectFilters.length) {
-        var roots = this.invokeGraph.rootInvokes.concat(this.invokeGraph.nativeRootInvokes);
+      if (this.aspectFilters.length || this.negatedAspectFilters.length) {
+        var roots;
+
+        if (this.showLibs) {
+          roots = this.invokeGraph.rootInvokes.concat(this.invokeGraph.nativeRootInvokes)
+        } else {
+          roots = this.invokeGraph.nativeRootInvokes
+        }
 
         _(roots).each(function (invoke) {
-          var found = _(this.aspectFilters).find(function (aspect) {
-            return invoke.aspectMap && invoke.aspectMap[aspect]
-          });
-
-          if (this.negatedAspectFilters) {
-            var negateFound = _(this.negatedAspectFilters).find(function (aspect) {
-              return invoke.aspectMap && invoke.aspectMap[aspect]
+          if (this.aspectFilters.length) {
+            var found = _(this.aspectFilters).find(function (aspect) {
+              return invoke.aspectMap[aspect]
             });
 
-            if (negateFound) {
+            if (!found) {
               this.invokeGraph.descendTree(invoke, function (childNode) {
-                nodes.push(childNode);
-                negateIdMap[childNode.invocationId] = true;
+                hideInvokeIdMap[childNode.invocationId] = true;
               }, null);
               return;
             }
           }
 
-          if (!found) {
-            return;
-          }
+          if (this.negatedAspectFilters.length) {
+            var negateFound = _(this.negatedAspectFilters).find(function (aspect) {
+              return invoke.aspectMap[aspect]
+            });
 
-          this.invokeGraph.descendTree(invoke, function (childNode) {
-            nodes.push(childNode);
-          }, null);
+            if (negateFound) {
+              this.invokeGraph.descendTree(invoke, function (childNode) {
+                hideInvokeIdMap[childNode.invocationId] = true;
+              }, null);
+              return;
+            }
+          }
         }, this);
-      } else {
-        nodes = this.invokeGraph.invokes;
       }
 
       this.maxVisibleHitCount = 0;
-      nodes = _(nodes).reduce(function (displayNodes, invoke) {
+      var nodes = _(this.invokeGraph.invokes).reduce(function (displayNodes, invoke) {
         if (!this.showLibs && invoke.isLib) {
+          hideInvokeIdMap[invoke.invocationId] = true;
+          return displayNodes;
+        }
+
+        if (!this.showUnknownAspects && _(invoke.aspectMap).keys().length < 1) {
+          hideInvokeIdMap[invoke.invocationId] = true;
           return displayNodes;
         }
 
         if (!this.showSequentialRepeats && invoke.isSequentialRepeat) {
+          hideInvokeIdMap[invoke.invocationId] = true;
           return displayNodes;
         }
 
-        if (negateIdMap[invoke.invocationId]) {
+        if (hideInvokeIdMap[invoke.invocationId]) {
           return displayNodes;
         }
 
@@ -276,15 +406,22 @@ define([
         return displayNodes;
       }, [], this);
 
-      var edges = _(this.invokeGraph.edges).map(function (edge) {
-        return {
+      var edges = _(this.invokeGraph.edges).reduce(function (displayEdges, edge) {
+        if (hideInvokeIdMap[edge.parentInvoke.invocationId] ||
+          hideInvokeIdMap[edge.childInvoke.invocationId]) {
+          return displayEdges;
+        }
+
+        displayEdges.push({
           data: {
             source: edge.parentInvoke.invocationId,
             target: edge.childInvoke.invocationId,
             color: this.colors.edge
           }
-        };
-      }, this);
+        });
+
+        return displayEdges;
+      }, [], this);
 
       this.cy = cytoscape({
         container: this.$("#invokeGraph")[0],
@@ -340,16 +477,16 @@ define([
       });
 
       var callGraphView = this;
-      this.cy.on('click', 'node', function (e) {
+
+      this.cy.on('click', 'node', function () {
         callGraphView.handleNodeClick(this.id());
       });
 
+      this.cy.on('click', 'edge', function () {
+        callGraphView.handleEdgeClick(this.data("source"), this.data("target"));
+      });
+
       this.drawJoshAsync();
-      this.markTopLevelNonLib();
-      //
-      // this.cy.on('click', 'edge', function (e) {
-      //   callGraphView.handleEdgeClick(e);
-      // });
     },
 
     downloadInvokes: function () {

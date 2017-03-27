@@ -119,9 +119,41 @@ define([
         var nodeModel = this.activeNodeCollection.get(invoke.nodeId);
         if (!nodeModel) {
           console.warn("Don't have a nodemodel for", invoke.nodeId);
-          invoke.node = {};
+          invoke.node = {
+            name: "",
+            source: "",
+            invokes: []
+          };
         } else {
           var nodeInvokes = nodeModel.get('invokes');
+          if (nodeInvokes.length > 0) {
+            var priorInvoke = null;
+            // Check if this invoke is a repeat call
+            if (invoke.parents && invoke.parents[0]) {
+              // Verify at least one prior invoke has the same parent node
+              priorInvoke = _(nodeInvokes).find(function (subInvoke) {
+                if (subInvoke.parents && subInvoke.parents[0]) {
+                  var a = this.invokeIdMap[invoke.parents[0].invocationId].nodeId;
+                  var b = this.invokeIdMap[subInvoke.parents[0].invocationId].nodeId;
+
+                  return a === b;
+                }
+              }, this);
+
+              if (priorInvoke) {
+                invoke.isSequentialRepeat = true;
+              }
+            } else {
+              // Verify at least one prior invoke has no parents
+              priorInvoke = _(nodeInvokes).find(function (subInvoke) {
+                return !subInvoke.parents || !subInvoke.parents[0];
+              }, this);
+
+              if (priorInvoke) {
+                invoke.isSequentialRepeat = true;
+              }
+            }
+          }
           nodeInvokes.push(invoke);
           invoke.node = nodeModel.toJSON();
         }
@@ -252,21 +284,7 @@ define([
       }, this);
 
       // Parse through invoke arguments to determine final missing async serial links
-      var rollingNodeIdInvokeMap = {};
       _(nativeRootInvokes).each(function (childInvoke) {
-
-        // Mark repeat recurring/duplicate root nodes
-        if (rollingNodeIdInvokeMap[childInvoke.nodeId]) {
-          rollingNodeIdInvokeMap[childInvoke.nodeId].sequentialRepeats += 1;
-
-          this.descendTree(childInvoke, function (oInvoke) {
-            oInvoke.isSequentialRepeat = true;
-          });
-        } else {
-          childInvoke.sequentialRepeats = 1;
-          rollingNodeIdInvokeMap[childInvoke.nodeId] = childInvoke;
-        }
-
         if (!childInvoke.node.source) {
           return;
         }
@@ -343,26 +361,25 @@ define([
       }, this);
     },
 
-    climbDescendAndDecorate: function (node, decorator) {
-      var stopCondition = function (node) {
-        return !node.isLib;
-      };
-
-      this.climbTree(node, decorator, null);
-      this.descendTree(node, decorator, stopCondition)
-    },
-
     decorateAspect: function (node, aspect, nodeAspectArr) {
       var decorator = function (invokeNode) {
         invokeNode.aspectMap[aspect] = true;
-        nodeAspectArr.push(invokeNode);
+
+        if (nodeAspectArr) {
+          nodeAspectArr.push(invokeNode);
+        }
       };
 
+      decorator = _.bind(decorator, this);
       decorator(node);
 
+      this.climbTree(node, decorator, null);
       if (node.isLib) {
-        decorator = _.bind(decorator, this);
-        this.climbDescendAndDecorate(node, decorator);
+        var stopCondition = function (node) {
+          return !node.isLib;
+        };
+
+        this.descendTree(node, decorator, stopCondition)
       }
     },
 
@@ -392,6 +409,7 @@ define([
 
     mouseEvents: [
       "click",
+      "wheel",
       "mousemove",
       "mousedown",
       "mouseup",
@@ -461,36 +479,36 @@ define([
     ],
 
     returnValueParsers: [
-      function (invoke) {
+      function (returnValue) {
         try {
-          if (invoke.returnValue.ownProperties.type.value === "xmlhttprequest" ||
-            invoke.returnValue.ownProperties.status.value === 0) {
-            return "ajaxRequest";
-          }
-        } catch (ignored) {
-          return null;
-        }
-      },
-      function (invoke) {
-        try {
-          if (invoke.returnValue.ownProperties.length &&
-            invoke.returnValue.ownProperties.selector.value) {
+          if (returnValue.ownProperties.length &&
+            returnValue.ownProperties.selector.value) {
             return "jqDom";
           }
         } catch (ignored) {
           return null;
         }
       },
-      function (invoke) {
+      function (returnValue) {
         try {
-          if (invoke.returnValue.ownProperties.elementType &&
-            invoke.returnValue.ownProperties.elementType.value.indexOf("HTML") > -1) {
+          if (returnValue.ownProperties.elementType &&
+            returnValue.ownProperties.elementType.value.indexOf("HTML") > -1) {
             return "domQuery";
           }
         } catch (ignored) {
           return null;
         }
       },
+      function (returnValue) {
+        try {
+          if (returnValue.ownProperties.type.value === "xmlhttprequest" ||
+            returnValue.ownProperties.status.value === 0) {
+            return "ajaxRequest";
+          }
+        } catch (ignored) {
+          return null;
+        }
+      }
     ],
 
     classifyInvoke: function (invoke) {
@@ -503,16 +521,15 @@ define([
         invoke.aspectMap["setup"] = true;
         this.aspectCollectionMap.setup.push(invoke);
       }
-
-      //Check return values for ajax requests
+      // Check return values
       _(this.returnValueParsers).each(function (parser) {
-        var aspect = parser(invoke);
+        var aspect = parser(invoke.returnValue);
         if (aspect) {
           this.decorateAspect(invoke, aspect, this.aspectCollectionMap[aspect]);
         }
       }, this);
 
-      // Comb through arguments for click handlers and ajax responses
+      // Comb through arguments
       _(invoke.arguments).each(function (arg) {
         _(this.argumentParsers).each(function (parser) {
           var aspect = parser(arg);
@@ -520,6 +537,39 @@ define([
             this.decorateAspect(invoke, aspect, this.aspectCollectionMap[aspect]);
           }
         }, this);
+      }, this);
+    },
+
+    classifyCustom: function (aspect, argTestFn, returnValTestFn) {
+      if (!aspect || !(argTestFn || returnValTestFn)) {
+        console.warn("Tried classify custom without required params.");
+        return;
+      }
+
+      var testFn;
+      if (argTestFn) {
+        testFn = function (invoke) {
+          return !!_(invoke.arguments).find(function (arg) {
+            return argTestFn(util.unMarshshalVal(arg.value))
+          })
+        }
+      } else if (returnValTestFn) {
+        testFn = function (invoke) {
+          return invoke.returnValue && !!returnValTestFn(util.unMarshshalVal(invoke.returnValue));
+        }
+      }
+
+      _(this.invokes).each(function (invoke) {
+        var hasAspect;
+
+        try {
+          hasAspect = testFn(invoke)
+        } catch (ignored) {
+        }
+
+        if (hasAspect) {
+          this.decorateAspect(invoke, aspect, null);
+        }
       }, this);
     },
 

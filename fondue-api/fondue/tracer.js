@@ -543,8 +543,15 @@ if (typeof {name} === 'undefined') {
       return attrs;
     };
 
+    var objStr = null;
     if (object && object.toString) {
-      var objStr = object.toString().toLowerCase();
+    	var s = object.toString();
+      if(s && s.toLowerCase){
+      	objStr = s.toLowerCase();
+			}
+		}
+
+    if (objStr) {
       if (objStr.indexOf("event]") > -1) {
       	var path;
       	try{
@@ -1352,6 +1359,7 @@ if (typeof {name} === 'undefined') {
 
 		var top = invocationStack[invocationStack.length - 1];
 		if (!top || !top.equalToInfo(info)) {
+			return;
 			throw new Error('exception thrown from a non-matching enter');
 		}
 		top.exception = exception;

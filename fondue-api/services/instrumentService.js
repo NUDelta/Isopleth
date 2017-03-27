@@ -35,6 +35,19 @@ var blockedDomains = [
   "assets/scripts/vendor/yahoo/rapid/rapidworker",
   "rapidworker-1.2.js",
   "rapid-3.36.1.js",
+  "plugins.js?v=0.1",
+  "modernizr.custom",
+  "cedexis",
+  "gstatic",
+  "strings/en_US.js",
+  "https://assets.tumblr.com/client/prod/app/header.build.js",
+  "https://assets.tumblr.com/assets/scripts/vendor/yahoo/rapid/rapid-3.42.1.js",
+  "https://assets.tumblr.com/assets/scripts/tumblr/utils/popover.js",
+  "https://assets.tumblr.com/assets/scripts/registration/registration.js",
+  "https://assets.tumblr.com/assets/scripts/dashboard.js",
+  "https://assets.tumblr.com/client/prod/app/vendor.build.js",
+  "https://assets.tumblr.com/client/prod/app/global.build.js",
+
 ];
 
 
@@ -111,7 +124,12 @@ module.exports = {
       _(domItems).each(function (domItem) {
         var $domItem = $(domItem);
 
+        if ($domItem.is("iframe")) {
+          $domItem.remove();
+        }
         if ($domItem.is("script")) {
+          $domItem.removeAttr("nonce");
+
           var elSrcLink = $domItem.attr("src");
           if (elSrcLink && elSrcLink.indexOf("chrome-extension") < 0) {
             if ($domItem.is("script")) {
@@ -137,6 +155,9 @@ module.exports = {
         $("html > head").prepend($("script")[0]);
 
         var html = $.html();
+        if (html.indexOf("nonce") > -1) {
+          throw new Error();
+        }
 
         callback(html);
       });
@@ -163,7 +184,7 @@ module.exports = {
             return true;
           }
         })) {
-        console.log("Blocking Ad source request and returning original for:", url);
+        console.log("Blocking ad source request and returning original for:", url);
 
         callback(body);
         return;

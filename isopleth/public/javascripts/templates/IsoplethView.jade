@@ -8,6 +8,7 @@
       li#filterSetup.nav Setup
       li#filterAJAX.nav AJAX
       li#filterDom.nav DOM
+      li#filterAdd.nav +
   #deck
 #graphView
   #invokeGraph
@@ -34,9 +35,40 @@
       li
         #resetGraph Reset Graph
       li
+        #drawUnknownAspectNodes Show Unknown Nodes
+      li
         #drawHeatMap Heat Map
       li
         #downloadInvokes Download Invokes
       li
         #downloadNodes Download Nodes
 
+#newAspectModal(style="display:none;")
+  .content
+    // Fill modal here
+
+#modalTemplate(style="display:none;")
+  #modalContent
+    #newAspectTitle.row
+      .label Aspect Name
+      input(type="text", value="CustomFilter")
+
+    #newAspectType.row
+      .label Filter Type
+      .filterTypes
+        .newFilterType.active(data='returnVal') Return Value
+        .newFilterType(data='arg') Argument
+
+    #aspectColor.row
+      .label Node Color
+        span.color-preview(style="background-color:#ffb533;")
+      input(type="text", value="#ffb533")
+
+    #newAspectFilter.row
+      .label Aspect Test Function
+
+      .mirrorHandle
+
+    .saveAspect.row
+      #saveNewAspect Save
+      #close Cancel

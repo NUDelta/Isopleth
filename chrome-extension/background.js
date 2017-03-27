@@ -71,42 +71,31 @@ chrome.tabs.onUpdated.addListener(function (updatedTabId, changeInfo) {
   }
 });
 
-// var augmentRule = function (policy, separator, policyAddition, secondAddition) {
-//   var sources = policy.split(separator)[1];
-//   secondAddition = secondAddition || "";
-//   sources = policyAddition + secondAddition + sources;
-//   return [policy.split(separator)[0], separator, sources].join("");
-// };
+let blockedHeaders = [
+  "content-security-policy",
+  "x-webkit-csp",
+  "Content-Security-Policy",
+  "Public-Key-Pins",
+  "X-XSS-Protection",
+  "X-Content-Type-Options",
+  "Strict-Transport-Security",
+];
 
+function modifyCspHeaders(details) {
+  for (var i = 0; i < details.responseHeaders.length; i++) {
+    if (blockedHeaders.includes(details.responseHeaders[i].name)) {
+      details.responseHeaders.splice(i--, 1);
+    }
+  }
 
-// Alter page security policy headers to allow localhost to communicate with the page externally
-//http://www.html5rocks.com/en/tutorials/security/content-security-policy/
-// chrome.webRequest.onHeadersReceived.addListener(function (details) {
-//   if (details.method == "GET") {
-//     details.responseHeaders.forEach(function (v, i, a) {
-//       if (v.name == "content-security-policy") {
-//
-//         if (v.value) {
-//           if (v.value.indexOf("script-src") > -1) {
-//             v.value = augmentRule(v.value, "script-src", " https://localhost:3001 ", "'unsafe-inline'");
-//           }
-//
-//           if (v.value.indexOf("connect-src") > -1) {
-//             v.value = augmentRule(v.value, "connect-src", " https://localhost:3001 ");
-//           }
-//
-//           var rules = v.value.split(" ");
-//           rules.forEach(function (val, i, arr) {
-//             if (val.indexOf("nonce") > -1) {
-//               arr[i] = "";
-//             }
-//           });
-//
-//           v.value = rules.join(" ");
-//         }
-//
-//       }
-//     });
-//     return {responseHeaders: details.responseHeaders};
-//   }
-// }, {urls: ["<all_urls>"]}, ["responseHeaders", "blocking"]);
+  return {responseHeaders: details.responseHeaders};
+}
+
+chrome.webRequest.onHeadersReceived.addListener(
+  modifyCspHeaders,
+  {
+    urls: ['http://*/*', 'https://*/*'],
+    types: ['main_frame']
+  },
+  ['blocking', 'responseHeaders']
+);

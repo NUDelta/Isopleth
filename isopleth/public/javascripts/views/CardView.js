@@ -4,8 +4,9 @@ define([
   "underscore",
   "handlebars",
   "views/CodeMirrorView",
+  "util/util",
   "text!../templates/CardView.html",
-], function ($, Backbone, _, Handlebars, CodeMirrorView, CardViewTemplate) {
+], function ($, Backbone, _, Handlebars, CodeMirrorView, util, CardViewTemplate) {
   return Backbone.View.extend({
     template: Handlebars.compile(CardViewTemplate),
 
@@ -19,7 +20,8 @@ define([
       "click .invoke-declaration": "toggleDeclaration",
       "click .invoke-parent": "toggleParent",
       "click .invoke-outputs": "toggleOutputs",
-      "click .invoke-delegates": "toggleDelegates"
+      "click .invoke-delegates": "toggleDelegates",
+      "click .invoke-effects": "toggleEffects"
     },
 
     initialize: function (nodeId, invokeGraph) {
@@ -44,7 +46,7 @@ define([
       var source = this.invoke.node.source || "";
       this.mainCodeMirrorView = new CodeMirrorView(source, "265px");
       this.$(".main-javascript").append(this.mainCodeMirrorView.$el);
-      if(!source){
+      if (!source) {
         this.$(".main-javascript").hide();
         this.$(".empty-javascript").show();
       }
@@ -102,43 +104,6 @@ define([
       this.resizePane(".right-column", "0px", callback);
     },
 
-    unMarshalFunctionVal: function (o) {
-      return o.json;
-    },
-
-    unMarshalObjectVal: function (o) {
-      var partialObj = o.ownProperties;
-      var actualObj = {};
-      _(_(partialObj).keys()).each(function (key) {
-        actualObj[key] = this.unMarshshalVal(partialObj[key])
-      }, this);
-
-      return JSON.stringify(actualObj, null, 2);
-    },
-
-    unMarshshalVal: function (o) {
-      if (o.type && o.type.indexOf("object") > -1) {
-        if (o.preview && o.preview.indexOf("Array") > -1) {
-          return this.unMarshalArrayVal(o);
-        } else {
-          return this.unMarshalObjectVal(o);
-        }
-      } else if (o.type && o.type.indexOf("function") > -1) {
-        return this.unMarshalFunctionVal(o)
-      } else {
-        return o.value;
-      }
-    },
-
-    unMarshalArrayVal: function (o) {
-      var arr = [];
-      _(_(o.ownProperties).keys()).each(function (key) {
-        arr.push(this.unMarshshalVal(o.ownProperties[key]))
-      }, this);
-
-      return JSON.stringify(arr, null, 2);
-    },
-
     toggleInputs: function () {
       var args = this.invoke.arguments || [];
 
@@ -146,7 +111,11 @@ define([
         this.inputCodeMirrors = [];
 
         _(args).each(function (arg) {
-          var val = this.unMarshshalVal(arg.value);
+          var val = util.unMarshshalVal(arg.value);
+
+          if (typeof val !== "string") {
+            val = JSON.stringify(val, null, 2);
+          }
           var codeMirrorView = new CodeMirrorView(val, "120px");
 
           this.inputCodeMirrors.push(codeMirrorView);
@@ -165,10 +134,6 @@ define([
         this.bindingCodeMirrors = [];
 
         _(binders).each(function (invoke) {
-          if (invoke.isLib || !invoke.node.source) {
-            return;
-          }
-
           var codeMirrorView = new CodeMirrorView(invoke.node.source, "220px");
           this.bindingCodeMirrors.push(codeMirrorView);
 
@@ -203,7 +168,7 @@ define([
         return;
       }
 
-      if (!this.parentCallMirror){
+      if (!this.parentCallMirror) {
         var codeMirrorView = new CodeMirrorView(this.invoke.parentCalls[0].node.source, "270px");
         this.parentCallMirror = codeMirrorView;
 
@@ -221,7 +186,11 @@ define([
       }
 
       if (!this.returnValMirror) {
-        var source = this.unMarshshalVal(this.invoke.returnValue);
+        var source = util.unMarshshalVal(this.invoke.returnValue);
+        if (typeof source !== "string") {
+          source = JSON.stringify(source, null, 2);
+        }
+
         var codeMirrorView = new CodeMirrorView(source, "270px");
         this.returnValMirror = codeMirrorView;
 
@@ -237,15 +206,11 @@ define([
       if (!this.invokeChildrenCodeMirrors) {
         this.invokeChildrenCodeMirrors = [];
 
+        var $delegatesView = this.$(".invoke-delegates-view");
         _(children).each(function (invoke) {
-          if (invoke.isLib || !invoke.node.source) {
-            return;
-          }
-
           var codeMirrorView = new CodeMirrorView(invoke.node.source, "120px");
           this.invokeChildrenCodeMirrors.push(codeMirrorView);
 
-          var $delegatesView = this.$(".invoke-delegates-view");
           $delegatesView.append(this.getNavCardHTML(invoke));
           $delegatesView.append(codeMirrorView.$el);
         }, this);
@@ -254,8 +219,28 @@ define([
       this.toggleView(".invoke-delegates span", ".invoke-delegates-view", null, "right");
     },
 
-    getNavCardHTML:function(invoke){
-      return "<div class='navCard' data-id ='" + invoke.invocationId + "'>See Details: " + invoke.getLabel() + "</div>";
+    toggleEffects: function () {
+      var children = this.invoke.childAsyncSerialLinks || [];
+
+      if (!this.invokeAsyncSerialChildrenCodeMirrors) {
+        this.invokeAsyncSerialChildrenCodeMirrors = [];
+
+        var $effectsView = this.$(".invoke-effects-view");
+
+        _(children).each(function (invoke) {
+          var codeMirrorView = new CodeMirrorView(invoke.node.source, "180px");
+          this.invokeAsyncSerialChildrenCodeMirrors.push(codeMirrorView);
+
+          $effectsView.append(this.getNavCardHTML(invoke));
+          $effectsView.append(codeMirrorView.$el);
+        }, this);
+      }
+
+      this.toggleView(".invoke-effects span", ".invoke-effects-view", null, "right");
+    },
+
+    getNavCardHTML: function (invoke) {
+      return "<div class='navCard' targetId = '" + this.invoke.invocationId + "' sourceId ='" + invoke.invocationId + "'>Show Details: " + invoke.getLabel() + "</div>";
     },
 
     showActions: function () {
@@ -271,7 +256,7 @@ define([
         this.$(".invoke-declaration").show();
       }
 
-      if (this.invoke.parentCalls && this.invoke.parentCalls[0] && !this.invoke.parentCalls[0].isLib) {
+      if (this.invoke.parentCalls && this.invoke.parentCalls[0]) {
         this.$(".invoke-parent").show();
       }
 
@@ -281,6 +266,10 @@ define([
 
       if (this.invoke.parentAsyncSerialLinks) {
         this.$(".invoke-binding").show();
+      }
+
+      if (this.invoke.childAsyncSerialLinks) {
+        this.$(".invoke-effects").show();
       }
     }
 
