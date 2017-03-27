@@ -38,6 +38,8 @@ define([
 
     aspectFilters: [],
 
+    negatedAspectFilters: [],
+
     lastSelectedNode: null,
 
     visibleInvokes: [],
@@ -206,54 +208,59 @@ define([
     drawGraph: function () {
       this.$("#invokeGraph").empty();
 
-      var nodes = [];
-      var negateIdMap = {};
+      var hideInvokeIdMap = {};
 
-      if (this.aspectFilters.length) {
-        var roots = this.invokeGraph.rootInvokes.concat(this.invokeGraph.nativeRootInvokes);
+      if (this.aspectFilters.length || this.negatedAspectFilters.length) {
+        var roots;
+
+        if (this.showLibs) {
+          roots = this.invokeGraph.rootInvokes.concat(this.invokeGraph.nativeRootInvokes)
+        } else {
+          roots = this.invokeGraph.nativeRootInvokes
+        }
 
         _(roots).each(function (invoke) {
-          var found = _(this.aspectFilters).find(function (aspect) {
-            return invoke.aspectMap && invoke.aspectMap[aspect]
-          });
-
-          if (this.negatedAspectFilters) {
-            var negateFound = _(this.negatedAspectFilters).find(function (aspect) {
-              return invoke.aspectMap && invoke.aspectMap[aspect]
+          if (this.aspectFilters.length) {
+            var found = _(this.aspectFilters).find(function (aspect) {
+              return invoke.aspectMap[aspect]
             });
 
-            if (negateFound) {
+            if (!found) {
               this.invokeGraph.descendTree(invoke, function (childNode) {
-                nodes.push(childNode);
-                negateIdMap[childNode.invocationId] = true;
+                hideInvokeIdMap[childNode.invocationId] = true;
               }, null);
               return;
             }
           }
 
-          if (!found) {
-            return;
-          }
+          if (this.negatedAspectFilters.length) {
+            var negateFound = _(this.negatedAspectFilters).find(function (aspect) {
+              return invoke.aspectMap[aspect]
+            });
 
-          this.invokeGraph.descendTree(invoke, function (childNode) {
-            nodes.push(childNode);
-          }, null);
+            if (negateFound) {
+              this.invokeGraph.descendTree(invoke, function (childNode) {
+                hideInvokeIdMap[childNode.invocationId] = true;
+              }, null);
+              return;
+            }
+          }
         }, this);
-      } else {
-        nodes = this.invokeGraph.invokes;
       }
 
       this.maxVisibleHitCount = 0;
-      nodes = _(nodes).reduce(function (displayNodes, invoke) {
+      var nodes = _(this.invokeGraph.invokes).reduce(function (displayNodes, invoke) {
         if (!this.showLibs && invoke.isLib) {
+          hideInvokeIdMap[invoke.invocationId] = true;
           return displayNodes;
         }
 
         if (!this.showSequentialRepeats && invoke.isSequentialRepeat) {
+          hideInvokeIdMap[invoke.invocationId] = true;
           return displayNodes;
         }
 
-        if (negateIdMap[invoke.invocationId]) {
+        if (hideInvokeIdMap[invoke.invocationId]) {
           return displayNodes;
         }
 
@@ -276,15 +283,22 @@ define([
         return displayNodes;
       }, [], this);
 
-      var edges = _(this.invokeGraph.edges).map(function (edge) {
-        return {
+      var edges = _(this.invokeGraph.edges).reduce(function (displayEdges, edge) {
+        if (hideInvokeIdMap[edge.parentInvoke.invocationId] ||
+          hideInvokeIdMap[edge.childInvoke.invocationId]) {
+          return displayEdges;
+        }
+
+        displayEdges.push({
           data: {
             source: edge.parentInvoke.invocationId,
             target: edge.childInvoke.invocationId,
             color: this.colors.edge
           }
-        };
-      }, this);
+        });
+
+        return displayEdges;
+      }, [], this);
 
       this.cy = cytoscape({
         container: this.$("#invokeGraph")[0],

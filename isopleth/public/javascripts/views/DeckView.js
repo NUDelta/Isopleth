@@ -72,20 +72,20 @@ define([
 
         if (filters.length) {
           var found = _(filters).find(function (aspect) {
-            return invoke.aspectMap && invoke.aspectMap[aspect]
+            return invoke.aspectMap[aspect]
           });
 
-          if (negateFilters) {
-            var negateFound = _(negateFilters).find(function (aspect) {
-              return invoke.aspectMap && invoke.aspectMap[aspect]
-            });
-
-            if (negateFound) {
-              return;
-            }
-          }
-
           if (!found) {
+            return;
+          }
+        }
+
+        if (negateFilters && negateFilters.length) {
+          var negateFound = _(negateFilters).find(function (aspect) {
+            return invoke.aspectMap[aspect]
+          });
+
+          if (negateFound) {
             return;
           }
         }
