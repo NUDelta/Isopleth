@@ -4,9 +4,9 @@ define([
   "underscore"
 ], function ($, Backbone, _) {
 
-  return {
+  var util = {
     isKnownLibrary: function (testStr) {
-      return  !!_([
+      return !!_([
         "a3c5de",
         "b66ed7",
         "1b9456",
@@ -28,6 +28,43 @@ define([
           return true;
         }
       });
+    },
+
+    unMarshalFunctionVal: function (o) {
+      return o.json;
+    },
+
+    unMarshalObjectVal: function (o) {
+      var partialObj = o.ownProperties;
+      var actualObj = {};
+      _(_(partialObj).keys()).each(function (key) {
+        actualObj[key] = util.unMarshshalVal(partialObj[key])
+      });
+
+      return actualObj;
+    },
+
+    unMarshshalVal: function (o) {
+      if (o.type && o.type.indexOf("object") > -1) {
+        if (o.preview && o.preview.indexOf("Array") > -1) {
+          return util.unMarshalArrayVal(o);
+        } else {
+          return util.unMarshalObjectVal(o);
+        }
+      } else if (o.type && o.type.indexOf("function") > -1) {
+        return util.unMarshalFunctionVal(o)
+      } else {
+        return o.value;
+      }
+    },
+
+    unMarshalArrayVal: function (o) {
+      var arr = [];
+      _(_(o.ownProperties).keys()).each(function (key) {
+        arr.push(util.unMarshshalVal(o.ownProperties[key]))
+      });
+
+      return arr;
     },
 
     stringifyObjToHTML: function (obj) {
@@ -74,4 +111,6 @@ define([
       return _(partialKeys).unique();
     }
   };
+
+  return util;
 });

@@ -36,6 +36,7 @@ textarea {
   height: 35px;
   background-color: #fff;
   border-bottom: 1px solid #d3d3d3;
+  border-bottom-right-radius: 5px;
 }
 #isoplethView #deckView #deckHeader .logo {
   float: left;
@@ -237,4 +238,114 @@ textarea {
 #isoplethView #callGraphView {
   height: 100%;
   width: 100%;
+}
+#newAspectModal {
+  z-index: 2;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+#newAspectModal #modalContent {
+  border-radius: 3px;
+  height: 400px;
+  width: 380px;
+  background-color: white;
+  box-shadow: 10px 10px 35px 2px rgba(0, 0, 0, 0.32);
+}
+#newAspectModal #modalContent .row {
+  width: 100%;
+  float: left;
+  padding: 5px;
+}
+#newAspectModal .label {
+  float: left;
+  display: block;
+  line-height: 24px;
+}
+#newAspectModal #newAspectTitle input {
+  background-color: #f5f5f5;
+  float: left;
+  display: block;
+  box-shadow: none;
+  border: none;
+  height: 24px;
+  width: 250px;
+  margin-left: 10px;
+  font-size: 16px;
+  text-decoration: none;
+  padding-left: 5px;
+}
+#newAspectModal #newAspectTitle input:focus {
+  outline: none;
+}
+#newAspectModal .newFilterType,
+#newAspectModal #saveNewAspect,
+#newAspectModal #close {
+  background-color: #f5f5f5;
+  line-height: 30px;
+  height: 100%;
+  display: block;
+  float: left;
+  padding-left: 10px;
+  padding-right: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+#newAspectModal .newFilterType:hover,
+#newAspectModal #saveNewAspect:hover,
+#newAspectModal #close:hover {
+  background-color: #d3d3d3;
+}
+#newAspectModal .newFilterType:active,
+#newAspectModal #saveNewAspect:active,
+#newAspectModal #close:active {
+  background-color: #bfbfbf;
+}
+#newAspectModal .newFilterType.active,
+#newAspectModal #saveNewAspect.active,
+#newAspectModal #close.active {
+  background-color: #abc9e5;
+}
+#newAspectModal .newFilterType:first-child,
+#newAspectModal #saveNewAspect:first-child,
+#newAspectModal #close:first-child {
+  border-bottom-left-radius: 3px;
+  border-top-left-radius: 3px;
+  border-right: 1px solid white;
+}
+#newAspectModal .newFilterType:last-child,
+#newAspectModal #saveNewAspect:last-child,
+#newAspectModal #close:last-child {
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+#newAspectModal .filterTypes {
+  width: 100%;
+  float: left;
+  height: 30px;
+  padding-left: 1em;
+  padding-top: 5px;
+}
+#newAspectModal #newAspectFilter .mirrorHandle {
+  width: 94%;
+  float: left;
+  height: 220px;
+  overflow: scroll;
+}
+#newAspectModal #newAspectFilter .mirrorHandle .CodeMirror {
+  height: 220px;
+}
+#newAspectModal .saveAspect #saveNewAspect,
+#newAspectModal .saveAspect #close {
+  float: right;
+  width: 50px;
+  text-align: center;
+  border-radius: 3px;
+}
+#newAspectModal .saveAspect #saveNewAspect {
+  margin-right: 12px;
+}
+#newAspectModal .saveAspect #close {
+  margin-right: 4px;
 }

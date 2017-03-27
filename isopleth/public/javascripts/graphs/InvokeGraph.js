@@ -357,26 +357,25 @@ define([
       }, this);
     },
 
-    climbDescendAndDecorate: function (node, decorator) {
-      var stopCondition = function (node) {
-        return !node.isLib;
-      };
-
-      this.climbTree(node, decorator, null);
-      this.descendTree(node, decorator, stopCondition)
-    },
-
     decorateAspect: function (node, aspect, nodeAspectArr) {
       var decorator = function (invokeNode) {
         invokeNode.aspectMap[aspect] = true;
-        nodeAspectArr.push(invokeNode);
+
+        if (nodeAspectArr) {
+          nodeAspectArr.push(invokeNode);
+        }
       };
 
+      decorator = _.bind(decorator, this);
       decorator(node);
 
+      this.climbTree(node, decorator, null);
       if (node.isLib) {
-        decorator = _.bind(decorator, this);
-        this.climbDescendAndDecorate(node, decorator);
+        var stopCondition = function (node) {
+          return !node.isLib;
+        };
+
+        this.descendTree(node, decorator, stopCondition)
       }
     },
 
@@ -475,30 +474,30 @@ define([
     ],
 
     returnValueParsers: [
-      function (invoke) {
+      function (returnValue) {
         try {
-          if (invoke.returnValue.ownProperties.type.value === "xmlhttprequest" ||
-            invoke.returnValue.ownProperties.status.value === 0) {
+          if (returnValue.ownProperties.type.value === "xmlhttprequest" ||
+            returnValue.ownProperties.status.value === 0) {
             return "ajaxRequest";
           }
         } catch (ignored) {
           return null;
         }
       },
-      function (invoke) {
+      function (returnValue) {
         try {
-          if (invoke.returnValue.ownProperties.length &&
-            invoke.returnValue.ownProperties.selector.value) {
+          if (returnValue.ownProperties.length &&
+            returnValue.ownProperties.selector.value) {
             return "jqDom";
           }
         } catch (ignored) {
           return null;
         }
       },
-      function (invoke) {
+      function (returnValue) {
         try {
-          if (invoke.returnValue.ownProperties.elementType &&
-            invoke.returnValue.ownProperties.elementType.value.indexOf("HTML") > -1) {
+          if (returnValue.ownProperties.elementType &&
+            returnValue.ownProperties.elementType.value.indexOf("HTML") > -1) {
             return "domQuery";
           }
         } catch (ignored) {
@@ -518,15 +517,15 @@ define([
         this.aspectCollectionMap.setup.push(invoke);
       }
 
-      //Check return values for ajax requests
+      // Check return values
       _(this.returnValueParsers).each(function (parser) {
-        var aspect = parser(invoke);
+        var aspect = parser(invoke.returnValue);
         if (aspect) {
           this.decorateAspect(invoke, aspect, this.aspectCollectionMap[aspect]);
         }
       }, this);
 
-      // Comb through arguments for click handlers and ajax responses
+      // Comb through arguments
       _(invoke.arguments).each(function (arg) {
         _(this.argumentParsers).each(function (parser) {
           var aspect = parser(arg);
@@ -534,6 +533,39 @@ define([
             this.decorateAspect(invoke, aspect, this.aspectCollectionMap[aspect]);
           }
         }, this);
+      }, this);
+    },
+
+    classifyCustom: function (aspect, argTestFn, returnValTestFn) {
+      if (!aspect || !(argTestFn || returnValTestFn)) {
+        console.warn("Tried classify custom without required params.");
+        return;
+      }
+
+      var testFn;
+      if (argTestFn) {
+        testFn = function (invoke) {
+          return !!_(invoke.arguments).find(function (arg) {
+            return argTestFn(util.unMarshshalVal(arg.value))
+          })
+        }
+      } else if (returnValTestFn) {
+        testFn = function (invoke) {
+          return invoke.returnValue && !!returnValTestFn(util.unMarshshalVal(invoke.returnValue));
+        }
+      }
+
+      _(this.invokes).each(function (invoke) {
+        var hasAspect;
+
+        try {
+          hasAspect = testFn(invoke)
+        } catch (ignored) {
+        }
+
+        if (hasAspect) {
+          this.decorateAspect(invoke, aspect, null);
+        }
       }, this);
     },
 

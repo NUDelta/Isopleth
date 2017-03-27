@@ -4,8 +4,9 @@ define([
   "underscore",
   "handlebars",
   "views/CodeMirrorView",
+  "util/util",
   "text!../templates/CardView.html",
-], function ($, Backbone, _, Handlebars, CodeMirrorView, CardViewTemplate) {
+], function ($, Backbone, _, Handlebars, CodeMirrorView, util, CardViewTemplate) {
   return Backbone.View.extend({
     template: Handlebars.compile(CardViewTemplate),
 
@@ -102,43 +103,6 @@ define([
       this.resizePane(".right-column", "0px", callback);
     },
 
-    unMarshalFunctionVal: function (o) {
-      return o.json;
-    },
-
-    unMarshalObjectVal: function (o) {
-      var partialObj = o.ownProperties;
-      var actualObj = {};
-      _(_(partialObj).keys()).each(function (key) {
-        actualObj[key] = this.unMarshshalVal(partialObj[key])
-      }, this);
-
-      return JSON.stringify(actualObj, null, 2);
-    },
-
-    unMarshshalVal: function (o) {
-      if (o.type && o.type.indexOf("object") > -1) {
-        if (o.preview && o.preview.indexOf("Array") > -1) {
-          return this.unMarshalArrayVal(o);
-        } else {
-          return this.unMarshalObjectVal(o);
-        }
-      } else if (o.type && o.type.indexOf("function") > -1) {
-        return this.unMarshalFunctionVal(o)
-      } else {
-        return o.value;
-      }
-    },
-
-    unMarshalArrayVal: function (o) {
-      var arr = [];
-      _(_(o.ownProperties).keys()).each(function (key) {
-        arr.push(this.unMarshshalVal(o.ownProperties[key]))
-      }, this);
-
-      return JSON.stringify(arr, null, 2);
-    },
-
     toggleInputs: function () {
       var args = this.invoke.arguments || [];
 
@@ -146,7 +110,11 @@ define([
         this.inputCodeMirrors = [];
 
         _(args).each(function (arg) {
-          var val = this.unMarshshalVal(arg.value);
+          var val = util.unMarshshalVal(arg.value);
+
+          if(typeof val !== "string"){
+            val = JSON.stringify(val, null, 2);
+          }
           var codeMirrorView = new CodeMirrorView(val, "120px");
 
           this.inputCodeMirrors.push(codeMirrorView);
@@ -221,7 +189,11 @@ define([
       }
 
       if (!this.returnValMirror) {
-        var source = this.unMarshshalVal(this.invoke.returnValue);
+        var source = util.unMarshshalVal(this.invoke.returnValue);
+        if (typeof source !== "string") {
+          source = JSON.stringify(source, null, 2);
+        }
+
         var codeMirrorView = new CodeMirrorView(source, "270px");
         this.returnValMirror = codeMirrorView;
 

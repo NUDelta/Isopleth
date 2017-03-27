@@ -8,6 +8,7 @@
       li#filterSetup.nav Setup
       li#filterAJAX.nav AJAX
       li#filterDom.nav DOM
+      li#filterAdd.nav +
   #deck
 #graphView
   #invokeGraph
@@ -40,3 +41,27 @@
       li
         #downloadNodes Download Nodes
 
+#newAspectModal(style="display:none;")
+  .content
+    // Fill modal here
+
+#modalTemplate(style="display:none;")
+  #modalContent
+    #newAspectTitle.row
+      .label Aspect Name
+      input(type="text", value="CustomFilter")
+
+    #newAspectType.row
+      .label Filter Type
+      .filterTypes
+        .newFilterType.active(data='returnVal') Return Value
+        .newFilterType(data='arg') Argument
+
+    #newAspectFilter.row
+      .label Aspect Test Function
+
+      .mirrorHandle
+
+    .saveAspect.row
+      #saveNewAspect Save
+      #close Cancel
