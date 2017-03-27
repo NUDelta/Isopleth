@@ -119,7 +119,11 @@ define([
         var nodeModel = this.activeNodeCollection.get(invoke.nodeId);
         if (!nodeModel) {
           console.warn("Don't have a nodemodel for", invoke.nodeId);
-          invoke.node = {};
+          invoke.node = {
+            name: "",
+            source: "",
+            invokes: []
+          };
         } else {
           var nodeInvokes = nodeModel.get('invokes');
           if (nodeInvokes.length > 0) {
@@ -405,6 +409,7 @@ define([
 
     mouseEvents: [
       "click",
+      "wheel",
       "mousemove",
       "mousedown",
       "mouseup",
@@ -516,7 +521,6 @@ define([
         invoke.aspectMap["setup"] = true;
         this.aspectCollectionMap.setup.push(invoke);
       }
-
       // Check return values
       _(this.returnValueParsers).each(function (parser) {
         var aspect = parser(invoke.returnValue);

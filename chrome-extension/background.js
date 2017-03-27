@@ -110,3 +110,81 @@ chrome.tabs.onUpdated.addListener(function (updatedTabId, changeInfo) {
 //     return {responseHeaders: details.responseHeaders};
 //   }
 // }, {urls: ["<all_urls>"]}, ["responseHeaders", "blocking"]);
+
+
+// @see https://developer.mozilla.org/en-US/docs/Web/Security/CSP
+let cspHeaders = [
+  'content-security-policy',
+  'x-webkit-csp'
+];
+
+// @see https://developer.mozilla.org/en-US/docs/Web/Security/CSP/CSP_policy_directives
+let cspSources = [
+  'connect-src',
+  'default-src',
+  'font-src',
+  'frame-src',
+  'img-src',
+  'media-src',
+  'object-src',
+  'script-src',
+  'style-src'
+];
+
+let blockedHeaders = [
+  // "X-Frame-Options",
+  "Content-Security-Policy",
+  "Public-Key-Pins",
+  "X-XSS-Protection",
+  "X-Content-Type-Options",
+  "Strict-Transport-Security",
+  // "X-UA-Compatible",
+];
+
+function isCspHeader(headerName) {
+  return cspHeaders.includes(headerName.toLowerCase());
+}
+
+function modifyCspHeaders(details) {
+  // details.responseHeaders.forEach((responseHeader) => {
+    // if (responseHeader.name === "Age") {
+    //   responseHeader.name = "script-src";
+    //   responseHeader.value = "unsafe-eval";
+    // }
+    //
+    // if (!isCspHeader(responseHeader.name)) {
+    //   return;
+    // }
+    //
+    // let csp = responseHeader.value;
+    //
+    // // Add example.com to the sources list.
+    // // @see https://work.planbox.com/blog/development/coding/bypassing-githubs-content-security-policy-chrome-extension.html
+    // cspSources.forEach((cspSource) => {
+    //   csp = csp.replace(cspSource, cspSource + ' https://localhost http://localhost https://localhost:3001 http://localhost:3001');
+    // });
+    //
+    // responseHeader.value = csp;
+    //
+    // if (blockedHeaders.includes(responseHeader.name)) {
+
+    // }
+  // });
+
+  for (var i = 0; i < details.responseHeaders.length; i++) {
+    if (blockedHeaders.includes(details.responseHeaders[i].name)) {
+      details.responseHeaders.splice(i--, 1);
+    }
+  }
+
+  return {responseHeaders: details.responseHeaders};
+}
+
+chrome.webRequest.onHeadersReceived.addListener(
+  modifyCspHeaders,
+  {
+    urls: ['http://*/*', 'https://*/*'],
+    types: ['main_frame']
+  },
+  ['blocking', 'responseHeaders']
+);

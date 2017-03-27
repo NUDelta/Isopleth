@@ -22,7 +22,8 @@ define([
         "react",
         "handlebars",
         "html5shiv",
-        "underscore"
+        "underscore",
+        "plugins.js",
       ]).find(function (lib) {
         if (testStr.toLowerCase().indexOf(lib) > -1) {
           return true;

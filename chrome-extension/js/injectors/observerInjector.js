@@ -2,15 +2,16 @@ define([],
   function () {
     return function () {
       window.unravelAgent.startObserving = function (cssPath) {
+        return;
 
         MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 
         window.unravelAgent.stopObserving();
 
         var emitThrottled = unravelAgent._.throttle(function () {
-          window.unravelAgent.stopObserving();
-          window.unravelAgent.emitHTMLSelect();
-          window.unravelAgent.startObserving();
+          // window.unravelAgent.stopObserving();
+          // window.unravelAgent.emitHTMLSelect();
+          // window.unravelAgent.startObserving();
         }, 3000);
 
         window.unravelAgent.observer = new MutationObserver(function (mutations, observer) {
@@ -50,6 +51,7 @@ define([],
       };
 
       window.unravelAgent.stopObserving = function () {
+        return;
         if (window.unravelAgent.observer && window.unravelAgent.observer.disconnect) {
           window.unravelAgent.observer.disconnect();
         }
