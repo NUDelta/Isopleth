@@ -17,6 +17,7 @@ define([
     initialize: function (codeMirrors, sourceCollection, activeNodeCollection, invokeGraph, jsBinRouter) {
       this.$el.html(this.template());
 
+      this.showCallGraph = _.bind(this.showCallGraph, this);
       this.invokeGraph = invokeGraph;
       this.codeMirrors = codeMirrors;
       this.sourceCollection = sourceCollection;

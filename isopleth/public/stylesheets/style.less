@@ -11,14 +11,16 @@ body {
 #isoplethView {
   width: 100%;
   height: 100%;
-  display: block;
+  //display: block;
   position: absolute;
   z-index: 2;
   background-color: #F3F5F6;
+  flex-direction: column;
+  display: flex;
 
   #deckView {
+    min-height: 407px;
     width: 100%;
-    height: 50%;
     float: left;
 
     overflow-x: scroll;
@@ -97,9 +99,9 @@ body {
 
   #graphView {
     width: 100%;
-    height: 50%;
     float: left;
     background-color: #2f2f2f;
+    flex-grow: 1;
 
     #graphControl {
       width: 100%;
@@ -128,7 +130,6 @@ body {
     }
     #invokeGraph {
       width: 100%;
-      height: 88%;
     }
   }
 
@@ -301,7 +302,7 @@ body {
   }
 
   #aspectColor {
-    input{
+    input {
       width: 80px;
     }
 

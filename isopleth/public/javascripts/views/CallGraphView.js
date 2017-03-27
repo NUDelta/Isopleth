@@ -20,7 +20,8 @@ define([
       "click #drawWithRepeats": "drawWithRepeats",
       "click #drawHeatMap": "drawHeatMap",
       "click #downloadInvokes": "downloadInvokes",
-      "click #downloadNodes": "downloadNodes"
+      "click #downloadNodes": "downloadNodes",
+      "click #drawUnknownAspectNodes": "drawUnknownAspectNodes"
     },
 
     customColors: {},
@@ -62,12 +63,16 @@ define([
 
     maxVisibleHitCount: 0,
 
+    showUnknownAspects: false,
+
     initialize: function (invokeGraph, activeNodeCollection) {
       this.invokeGraph = invokeGraph;
       this.activeNodeCollection = activeNodeCollection;
       this.showLibs = false;
       this.showSequentialRepeats = false;
       this.setElement($("#graphView"));  // el should be in the dom at instantiation time
+
+      this.$("#invokeGraph").height(parseInt(this.$el.height()) - parseInt(this.$("#graphControl").height()));
 
       this.filterByAspect = _.bind(this.filterByAspect, this);
       this.handleNodeClick = _.bind(this.handleNodeClick, this);
@@ -98,9 +103,15 @@ define([
       }, this);
     },
 
+    drawUnknownAspectNodes: function () {
+      this.showUnknownAspects = true;
+      this.drawGraph();
+    },
+
     resetGraph: function () {
       this.showLibs = false;
       this.showSequentialRepeats = false;
+      this.showUnknownAspects = false;
       this.drawGraph();
     },
 
@@ -210,8 +221,8 @@ define([
         }
 
         edgeElement.style({
-            "line-color": this.lastSelectedEdge.color
-          });
+          "line-color": this.lastSelectedEdge.color
+        });
         this.lastSelectedEdge = null;
       }
     },
@@ -358,6 +369,11 @@ define([
       this.maxVisibleHitCount = 0;
       var nodes = _(this.invokeGraph.invokes).reduce(function (displayNodes, invoke) {
         if (!this.showLibs && invoke.isLib) {
+          hideInvokeIdMap[invoke.invocationId] = true;
+          return displayNodes;
+        }
+
+        if (!this.showUnknownAspects && _(invoke.aspectMap).keys().length < 1) {
           hideInvokeIdMap[invoke.invocationId] = true;
           return displayNodes;
         }

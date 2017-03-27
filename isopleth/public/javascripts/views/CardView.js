@@ -20,7 +20,8 @@ define([
       "click .invoke-declaration": "toggleDeclaration",
       "click .invoke-parent": "toggleParent",
       "click .invoke-outputs": "toggleOutputs",
-      "click .invoke-delegates": "toggleDelegates"
+      "click .invoke-delegates": "toggleDelegates",
+      "click .invoke-effects": "toggleEffects"
     },
 
     initialize: function (nodeId, invokeGraph) {
@@ -133,10 +134,6 @@ define([
         this.bindingCodeMirrors = [];
 
         _(binders).each(function (invoke) {
-          if (invoke.isLib || !invoke.node.source) {
-            return;
-          }
-
           var codeMirrorView = new CodeMirrorView(invoke.node.source, "220px");
           this.bindingCodeMirrors.push(codeMirrorView);
 
@@ -209,21 +206,37 @@ define([
       if (!this.invokeChildrenCodeMirrors) {
         this.invokeChildrenCodeMirrors = [];
 
+        var $delegatesView = this.$(".invoke-delegates-view");
         _(children).each(function (invoke) {
-          if (invoke.isLib || !invoke.node.source) {
-            return;
-          }
-
           var codeMirrorView = new CodeMirrorView(invoke.node.source, "120px");
           this.invokeChildrenCodeMirrors.push(codeMirrorView);
 
-          var $delegatesView = this.$(".invoke-delegates-view");
           $delegatesView.append(this.getNavCardHTML(invoke));
           $delegatesView.append(codeMirrorView.$el);
         }, this);
       }
 
       this.toggleView(".invoke-delegates span", ".invoke-delegates-view", null, "right");
+    },
+
+    toggleEffects: function () {
+      var children = this.invoke.childAsyncSerialLinks || [];
+
+      if (!this.invokeAsyncSerialChildrenCodeMirrors) {
+        this.invokeAsyncSerialChildrenCodeMirrors = [];
+
+        var $effectsView = this.$(".invoke-effects-view");
+
+        _(children).each(function (invoke) {
+          var codeMirrorView = new CodeMirrorView(invoke.node.source, "180px");
+          this.invokeAsyncSerialChildrenCodeMirrors.push(codeMirrorView);
+
+          $effectsView.append(this.getNavCardHTML(invoke));
+          $effectsView.append(codeMirrorView.$el);
+        }, this);
+      }
+
+      this.toggleView(".invoke-effects span", ".invoke-effects-view", null, "right");
     },
 
     getNavCardHTML: function (invoke) {
@@ -243,7 +256,7 @@ define([
         this.$(".invoke-declaration").show();
       }
 
-      if (this.invoke.parentCalls && this.invoke.parentCalls[0] && !this.invoke.parentCalls[0].isLib) {
+      if (this.invoke.parentCalls && this.invoke.parentCalls[0]) {
         this.$(".invoke-parent").show();
       }
 
@@ -253,6 +266,10 @@ define([
 
       if (this.invoke.parentAsyncSerialLinks) {
         this.$(".invoke-binding").show();
+      }
+
+      if (this.invoke.childAsyncSerialLinks) {
+        this.$(".invoke-effects").show();
       }
     }
 
