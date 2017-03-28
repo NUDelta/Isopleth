@@ -243,6 +243,16 @@ define([
       return "<div class='navCard' targetId = '" + this.invoke.invocationId + "' sourceId ='" + invoke.invocationId + "'>Show Details: " + invoke.getLabel() + "</div>";
     },
 
+    containsNonLibInvoke: function (arr) {
+      if (!arr || arr.length < 1) {
+        return false;
+      }
+
+      return !!_(arr).find(function (invoke) {
+        return !invoke.isLib
+      }, this);
+    },
+
     showActions: function () {
       if (this.invoke.arguments && this.invoke.arguments.length) {
         this.$(".invoke-inputs").show();
@@ -252,23 +262,23 @@ define([
         this.$(".invoke-outputs").show();
       }
 
-      if (this.invoke.parentAsyncLink) {
+      if (this.invoke.parentAsyncLink && !this.invoke.parentAsyncLink.isLib) {
         this.$(".invoke-declaration").show();
       }
 
-      if (this.invoke.parentCalls && this.invoke.parentCalls[0]) {
+      if (this.containsNonLibInvoke(this.invoke.parentCalls)) {
         this.$(".invoke-parent").show();
       }
 
-      if (this.invoke.childCalls) {
+      if (this.containsNonLibInvoke(this.invoke.childCalls)) {
         this.$(".invoke-delegates").show();
       }
 
-      if (this.invoke.parentAsyncSerialLinks) {
+      if (this.containsNonLibInvoke(this.invoke.parentAsyncSerialLinks)) {
         this.$(".invoke-binding").show();
       }
 
-      if (this.invoke.childAsyncSerialLinks) {
+      if (this.containsNonLibInvoke(this.invoke.childAsyncSerialLinks)) {
         this.$(".invoke-effects").show();
       }
     }
