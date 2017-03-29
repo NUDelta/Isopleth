@@ -21,11 +21,14 @@ define([
       "click .invoke-parent": "toggleParent",
       "click .invoke-outputs": "toggleOutputs",
       "click .invoke-delegates": "toggleDelegates",
-      "click .invoke-effects": "toggleEffects"
+      "click .invoke-effects": "toggleEffects",
+      "keyup .invoke-label": "setCustomLabel",
+      "blur .invoke-label": "checkEmptyLabel"
     },
 
-    initialize: function (nodeId, invokeGraph) {
+    initialize: function (nodeId, invokeGraph, callGraphView) {
       this.invokeGraph = invokeGraph;
+      this.callGraphView = callGraphView;
       this.invoke = this.invokeGraph.invokeIdMap[nodeId];
 
       if (!this.invoke) {
@@ -88,6 +91,18 @@ define([
       }).bind(this));
     },
 
+    setCustomLabel: function () {
+      this.invoke.customLabel = this.$(".invoke-label").val();
+      this.callGraphView.updateLabel(this.invoke.invocationId);
+    },
+
+    checkEmptyLabel: function () {
+      this.invoke.customLabel = this.$(".invoke-label").val();
+      if (!this.invoke.customLabel) {
+        this.$(".invoke-label").val(this.invoke.getLabel());
+      }
+    },
+
     showLeft: function (callback) {
       this.resizePane(".left-column", "500px", callback);
     },
@@ -134,6 +149,10 @@ define([
         this.bindingCodeMirrors = [];
 
         _(binders).each(function (invoke) {
+          if (!this.isVisibleInvoke(invoke.invocationId)) {
+            return;
+          }
+
           var codeMirrorView = new CodeMirrorView(invoke.node.source, "220px");
           this.bindingCodeMirrors.push(codeMirrorView);
 
@@ -208,6 +227,10 @@ define([
 
         var $delegatesView = this.$(".invoke-delegates-view");
         _(children).each(function (invoke) {
+          if (!this.isVisibleInvoke(invoke.invocationId)) {
+            return;
+          }
+
           var codeMirrorView = new CodeMirrorView(invoke.node.source, "120px");
           this.invokeChildrenCodeMirrors.push(codeMirrorView);
 
@@ -228,6 +251,10 @@ define([
         var $effectsView = this.$(".invoke-effects-view");
 
         _(children).each(function (invoke) {
+          if (!this.isVisibleInvoke(invoke.invocationId)) {
+            return;
+          }
+
           var codeMirrorView = new CodeMirrorView(invoke.node.source, "180px");
           this.invokeAsyncSerialChildrenCodeMirrors.push(codeMirrorView);
 
@@ -243,14 +270,18 @@ define([
       return "<div class='navCard' targetId = '" + this.invoke.invocationId + "' sourceId ='" + invoke.invocationId + "'>Show Details: " + invoke.getLabel() + "</div>";
     },
 
-    containsNonLibInvoke: function (arr) {
+    containsVisibleInvoke: function (arr) {
       if (!arr || arr.length < 1) {
         return false;
       }
 
       return !!_(arr).find(function (invoke) {
-        return !invoke.isLib
+        return !this.isVisibleInvoke(invoke.invocationId);
       }, this);
+    },
+
+    isVisibleInvoke: function (invokeId) {
+      return !this.callGraphView.hideInvokeIdMap[invokeId];
     },
 
     showActions: function () {
@@ -266,19 +297,19 @@ define([
         this.$(".invoke-declaration").show();
       }
 
-      if (this.containsNonLibInvoke(this.invoke.parentCalls)) {
+      if (this.containsVisibleInvoke(this.invoke.parentCalls)) {
         this.$(".invoke-parent").show();
       }
 
-      if (this.containsNonLibInvoke(this.invoke.childCalls)) {
+      if (this.containsVisibleInvoke(this.invoke.childCalls)) {
         this.$(".invoke-delegates").show();
       }
 
-      if (this.containsNonLibInvoke(this.invoke.parentAsyncSerialLinks)) {
+      if (this.containsVisibleInvoke(this.invoke.parentAsyncSerialLinks)) {
         this.$(".invoke-binding").show();
       }
 
-      if (this.containsNonLibInvoke(this.invoke.childAsyncSerialLinks)) {
+      if (this.containsVisibleInvoke(this.invoke.childAsyncSerialLinks)) {
         this.$(".invoke-effects").show();
       }
     }

@@ -65,6 +65,8 @@ define([
 
     showUnknownAspects: false,
 
+    hideInvokeIdMap: {},
+
     initialize: function (invokeGraph, activeNodeCollection) {
       this.invokeGraph = invokeGraph;
       this.activeNodeCollection = activeNodeCollection;
@@ -323,10 +325,15 @@ define([
       return "#" + ((1 << 24) + (r << 16) + (0 << 8) + b).toString(16).slice(1);
     },
 
+    updateLabel: function (invokeId) {
+      this.cy.elements('node[id = "' + invokeId + '"]')
+        .data("label", this.invokeGraph.invokeIdMap[invokeId].getLabel());
+    },
+
     drawGraph: function () {
       this.$("#invokeGraph").empty();
 
-      var hideInvokeIdMap = {};
+      this.hideInvokeIdMap = {};
 
       if (this.aspectFilters.length || this.negatedAspectFilters.length) {
         var roots;
@@ -343,9 +350,10 @@ define([
               return invoke.aspectMap[aspect]
             });
 
+            var hideMap = this.hideInvokeIdMap
             if (!found) {
               this.invokeGraph.descendTree(invoke, function (childNode) {
-                hideInvokeIdMap[childNode.invocationId] = true;
+                hideMap[childNode.invocationId] = true;
               }, null);
               return;
             }
@@ -357,8 +365,9 @@ define([
             });
 
             if (negateFound) {
+              var hideMap = this.hideInvokeIdMap
               this.invokeGraph.descendTree(invoke, function (childNode) {
-                hideInvokeIdMap[childNode.invocationId] = true;
+                hideMap[childNode.invocationId] = true;
               }, null);
               return;
             }
@@ -369,21 +378,21 @@ define([
       this.maxVisibleHitCount = 0;
       var nodes = _(this.invokeGraph.invokes).reduce(function (displayNodes, invoke) {
         if (!this.showLibs && invoke.isLib) {
-          hideInvokeIdMap[invoke.invocationId] = true;
+          this.hideInvokeIdMap[invoke.invocationId] = true;
           return displayNodes;
         }
 
         if (!this.showUnknownAspects && _(invoke.aspectMap).keys().length < 1) {
-          hideInvokeIdMap[invoke.invocationId] = true;
+          this.hideInvokeIdMap[invoke.invocationId] = true;
           return displayNodes;
         }
 
         if (!this.showSequentialRepeats && invoke.isSequentialRepeat) {
-          hideInvokeIdMap[invoke.invocationId] = true;
+          this.hideInvokeIdMap[invoke.invocationId] = true;
           return displayNodes;
         }
 
-        if (hideInvokeIdMap[invoke.invocationId]) {
+        if (this.hideInvokeIdMap[invoke.invocationId]) {
           return displayNodes;
         }
 
@@ -407,8 +416,8 @@ define([
       }, [], this);
 
       var edges = _(this.invokeGraph.edges).reduce(function (displayEdges, edge) {
-        if (hideInvokeIdMap[edge.parentInvoke.invocationId] ||
-          hideInvokeIdMap[edge.childInvoke.invocationId]) {
+        if (this.hideInvokeIdMap[edge.parentInvoke.invocationId] ||
+          this.hideInvokeIdMap[edge.childInvoke.invocationId]) {
           return displayEdges;
         }
 

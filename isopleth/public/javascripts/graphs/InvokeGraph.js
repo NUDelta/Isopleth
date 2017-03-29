@@ -574,6 +574,10 @@ define([
     },
 
     getInvokeLabel: function (invoke) {
+      if (invoke.customLabel) {
+        return invoke.customLabel;
+      }
+
       var aspects = invoke.aspectMap ? _(invoke.aspectMap).keys().join(", ") : "";
       var name = invoke.node.name;
       // var root = invoke.rootInvoke ? "rootInvoke" : "";

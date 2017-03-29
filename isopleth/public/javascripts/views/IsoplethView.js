@@ -25,7 +25,7 @@ define([
       this.jsBinSocketRouter = JSBinSocketRouter.getInstance();
       this.jsBinRouter = jsBinRouter;
       this.callGraphView = new CallGraphView(this.invokeGraph, activeNodeCollection);
-      this.deckView = new DeckView(this.invokeGraph);
+      this.deckView = new DeckView(this.invokeGraph, this.callGraphView);
       this.callGraphView.on("nodeClick", this.deckView.showCard);
       this.callGraphView.on("edgeClick", this.deckView.showCards);
       this.deckView.on("deckUpdate", this.callGraphView.filterByAspect);

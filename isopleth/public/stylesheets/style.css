@@ -130,6 +130,10 @@ textarea {
   vertical-align: top;
   margin-right: -5px;
 }
+#isoplethView .cardView .empty-javascript {
+  width: 100%;
+  float: left;
+}
 #isoplethView .cardView .empty-javascript p {
   margin-left: 1em;
 }
@@ -164,12 +168,32 @@ textarea {
 #isoplethView .cardView .center-column {
   width: 500px;
 }
-#isoplethView .cardView .center-column h4 {
+#isoplethView .cardView .center-column .main-javascript {
+  float: left;
+  width: 99%;
+}
+#isoplethView .cardView .center-column input {
+  background-color: #f7f9fa;
+  float: left;
+  display: block;
+  margin-top: 0;
+  box-shadow: none;
+  border: none;
+  height: 24px;
+  line-height: 24px;
+  width: 96%;
+  font-size: 16px;
+  text-decoration: none;
+  padding-left: 9px;
+  border-radius: 5px;
   overflow-x: hidden;
   text-overflow: ellipsis;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  margin-bottom: 3px;
   margin-left: 5px;
+}
+#isoplethView .cardView .center-column input:focus {
+  outline: none;
+  background-color: white;
 }
 #isoplethView .cardView .left-button-column {
   width: 32px;
