@@ -3,7 +3,8 @@ define([
   "underscore",
   "../util/util",
   // "text!../util/samples/invokeSample.txt",
-  "text!../util/samples/xkcd/invokeSample.txt",
+  // "text!../util/samples/xkcd/invokeSample.txt",
+  "text!../util/samples/tumblr/invokeSample.txt",
 ], function (Backbone, _, util, invokeSample) {
   return Backbone.View.extend({
     invokes: [],
@@ -125,38 +126,10 @@ define([
             invokes: []
           };
         } else {
-          var nodeInvokes = nodeModel.get('invokes');
-          if (nodeInvokes.length > 0) {
-            var priorInvoke = null;
-            // Check if this invoke is a repeat call
-            if (invoke.parents && invoke.parents[0]) {
-              // Verify at least one prior invoke has the same parent node
-              priorInvoke = _(nodeInvokes).find(function (subInvoke) {
-                if (subInvoke.parents && subInvoke.parents[0]) {
-                  var a = this.invokeIdMap[invoke.parents[0].invocationId].nodeId;
-                  var b = this.invokeIdMap[subInvoke.parents[0].invocationId].nodeId;
-
-                  return a === b;
-                }
-              }, this);
-
-              if (priorInvoke) {
-                invoke.isSequentialRepeat = true;
-              }
-            } else {
-              // Verify at least one prior invoke has no parents
-              priorInvoke = _(nodeInvokes).find(function (subInvoke) {
-                return !subInvoke.parents || !subInvoke.parents[0];
-              }, this);
-
-              if (priorInvoke) {
-                invoke.isSequentialRepeat = true;
-              }
-            }
-          }
-          nodeInvokes.push(invoke);
+          invoke.nodeModel = nodeModel;
           invoke.node = nodeModel.toJSON();
         }
+
         invoke.isLib = util.isKnownLibrary(invoke.nodeId);
 
         if (!invoke.isLib) {
@@ -437,6 +410,7 @@ define([
 
     aspectCollectionMap: {
       click: [],
+      wheel: [],
       mousemove: [],
       mousedown: [],
       mouseup: [],
@@ -456,12 +430,7 @@ define([
 
     argumentParsers: [
       function (arg) {
-        var ev = this.parseEventFromArg(arg);
-        if (ev && this.aspectCollectionMap[ev]) {
-          return ev;
-        }
-
-        return null;
+        return this.parseEventFromArg(arg);
       },
       function (arg) {
         try {
@@ -511,7 +480,41 @@ define([
       }
     ],
 
+    deDupInvoke: function (invoke) {
+      if (invoke.nodeModel) {
+        var nodeInvokes = invoke.nodeModel.get('invokes');
+        if (nodeInvokes.length > 0) {
+          var hasPriorInvoke = false;
+
+          var nodeMatch = function (invokeA, invokeB) {
+            var a = _(invokeA.parentCalls || []).pluck("nodeId").join("");
+            a += _(invokeA.childCalls || []).pluck("nodeId").join("");
+
+            var b = _(invokeB.parentCalls || []).pluck("nodeId").join("");
+            b += _(invokeB.childCalls || []).pluck("nodeId").join("");
+
+            return a === b;
+          };
+
+          _(nodeInvokes).each(function (subInvoke) {
+            if (nodeMatch(invoke, subInvoke)) {
+              hasPriorInvoke = true;
+              subInvoke.isSequentialRepeat = true;
+            }
+          }, this);
+
+          if (hasPriorInvoke) {
+            // Set latest invoke as the non-repeat
+            invoke.isSequentialRepeat = false;
+          }
+        }
+        nodeInvokes.push(invoke);
+      }
+    },
+
     classifyInvoke: function (invoke) {
+      this.deDupInvoke(invoke);
+
       if (!this.maxHitCount || invoke.node.invokes.length > this.maxHitCount) {
         this.maxHitCount = invoke.node.invokes.length;
       }

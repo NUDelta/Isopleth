@@ -5,7 +5,8 @@ define([
   "../models/ActiveNodeModel",
   "../routers/JSBinSocketRouter",
   // "text!../util/samples/nodeSample.txt",
-  "text!../util/samples/xkcd/nodeSample.txt",
+  // "text!../util/samples/xkcd/nodeSample.txt",
+  "text!../util/samples/tumblr/nodeSample.txt",
   "raphael"
 ], function ($, Backbone, _, ActiveNodeModel, JSBinSocketRouter, nodeSample) {
   return Backbone.Collection.extend({
