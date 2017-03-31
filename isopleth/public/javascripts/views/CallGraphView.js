@@ -6,6 +6,7 @@ define([
 ], function ($, Backbone, _, Handlebars) {
   return Backbone.View.extend({
     events: {
+      "click #draw": "draw",
       "click #markNonLib": "markNonLib",
       "click #markTopLevelNonLib": "markTopLevelNonLib",
       "click #drawTomAsync": "drawTomAsync",
@@ -16,12 +17,12 @@ define([
       "click #markAjaxRequest": "markAjaxRequest",
       "click #markAjaxResponse": "markAjaxResponse",
       "click #markClick": "markClick",
-      "click #drawWithLib": "drawWithLib",
-      "click #drawWithRepeats": "drawWithRepeats",
+      "click #hideRepeats": "hideRepeats",
+      "click #hideLibs": "hideLibs",
       "click #drawHeatMap": "drawHeatMap",
       "click #downloadInvokes": "downloadInvokes",
       "click #downloadNodes": "downloadNodes",
-      "click #drawUnknownAspectNodes": "drawUnknownAspectNodes"
+      "click #hideUnknownAspectNodes": "hideUnknownAspectNodes"
     },
 
     customColors: {},
@@ -63,9 +64,18 @@ define([
 
     maxVisibleHitCount: 0,
 
-    showUnknownAspects: false,
+    showLibs: true,
+
+    showUnknownAspects: true,
+
+    showSequentialRepeats: true,
 
     hideInvokeIdMap: {},
+
+    draw: function () {
+      this.invokeGraph.calculate();
+      this.resetGraph();
+    },
 
     initialize: function (invokeGraph, activeNodeCollection) {
       this.invokeGraph = invokeGraph;
@@ -86,13 +96,18 @@ define([
       this.customColors[aspect] = color;
     },
 
-    drawWithLib: function () {
+    hideLibs: function () {
       this.showLibs = true;
       this.drawGraph();
     },
 
-    drawWithRepeats: function () {
+    hideRepeats: function () {
       this.showSequentialRepeats = true;
+      this.drawGraph();
+    },
+
+    hideUnknownAspectNodes: function () {
+      this.showUnknownAspects = false;
       this.drawGraph();
     },
 
@@ -105,15 +120,10 @@ define([
       }, this);
     },
 
-    drawUnknownAspectNodes: function () {
-      this.showUnknownAspects = true;
-      this.drawGraph();
-    },
-
     resetGraph: function () {
-      this.showLibs = false;
-      this.showSequentialRepeats = false;
-      this.showUnknownAspects = false;
+      this.showLibs = true;
+      this.showSequentialRepeats = true;
+      this.showUnknownAspects = true;
       this.drawGraph();
     },
 
@@ -232,6 +242,8 @@ define([
     handleNodeClick: function (nodeId, silent) {
       this.resetLastNodes();
 
+      console.log("Clicked invoke id:", nodeId);
+
       this.lastSelectedNodes = [{
         id: nodeId,
         color: this.cy.elements('node[id = "' + nodeId + '"]').style("background-color")
@@ -335,46 +347,6 @@ define([
 
       this.hideInvokeIdMap = {};
 
-      if (this.aspectFilters.length || this.negatedAspectFilters.length) {
-        var roots;
-
-        if (this.showLibs) {
-          roots = this.invokeGraph.rootInvokes.concat(this.invokeGraph.nativeRootInvokes)
-        } else {
-          roots = this.invokeGraph.nativeRootInvokes
-        }
-
-        _(roots).each(function (invoke) {
-          if (this.aspectFilters.length) {
-            var found = _(this.aspectFilters).find(function (aspect) {
-              return invoke.aspectMap[aspect]
-            });
-
-            var hideMap = this.hideInvokeIdMap
-            if (!found) {
-              this.invokeGraph.descendTree(invoke, function (childNode) {
-                hideMap[childNode.invocationId] = true;
-              }, null);
-              return;
-            }
-          }
-
-          if (this.negatedAspectFilters.length) {
-            var negateFound = _(this.negatedAspectFilters).find(function (aspect) {
-              return invoke.aspectMap[aspect]
-            });
-
-            if (negateFound) {
-              var hideMap = this.hideInvokeIdMap
-              this.invokeGraph.descendTree(invoke, function (childNode) {
-                hideMap[childNode.invocationId] = true;
-              }, null);
-              return;
-            }
-          }
-        }, this);
-      }
-
       this.maxVisibleHitCount = 0;
       var nodes = _(this.invokeGraph.invokes).reduce(function (displayNodes, invoke) {
         if (!this.showLibs && invoke.isLib) {
@@ -390,6 +362,28 @@ define([
         if (!this.showSequentialRepeats && invoke.isSequentialRepeat) {
           this.hideInvokeIdMap[invoke.invocationId] = true;
           return displayNodes;
+        }
+
+        if (this.aspectFilters.length) {
+          var found = _(this.aspectFilters).find(function (aspect) {
+            return invoke.aspectMap[aspect]
+          });
+
+          if (!found) {
+            this.hideInvokeIdMap[invoke.invocationId] = true;
+            return displayNodes;
+          }
+        }
+
+        if (this.negatedAspectFilters.length) {
+          var negateFound = _(this.negatedAspectFilters).find(function (aspect) {
+            return invoke.aspectMap[aspect]
+          });
+
+          if (negateFound) {
+            this.hideInvokeIdMap[invoke.invocationId] = true;
+            return displayNodes;
+          }
         }
 
         if (this.hideInvokeIdMap[invoke.invocationId]) {

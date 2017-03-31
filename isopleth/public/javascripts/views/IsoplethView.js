@@ -18,6 +18,7 @@ define([
       this.$el.html(this.template());
 
       this.showCallGraph = _.bind(this.showCallGraph, this);
+      this.showCallGraph = _.throttle(this.showCallGraph, 5000);
       this.invokeGraph = invokeGraph;
       this.codeMirrors = codeMirrors;
       this.sourceCollection = sourceCollection;

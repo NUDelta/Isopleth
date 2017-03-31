@@ -67,8 +67,6 @@ define([
       // this.fetchData();
 
       this.totalInvocations = 0;
-
-      this.isoplethView.showCallGraph();
     },
 
     fetchData: function () {
@@ -89,7 +87,7 @@ define([
         console.log("Total Invocations Stored:", this.totalInvocations);
 
         this.invokeGraph.addInvokes(obj.invocations);
-        this.isoplethView.showCallGraph();
+        // this.isoplethView.showCallGraph();
 
         // this.activeNodeCollection.mergeInvocations(obj.invocations);
 

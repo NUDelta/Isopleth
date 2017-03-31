@@ -2,9 +2,7 @@ define([
   "backbone",
   "underscore",
   "../util/util",
-  // "text!../util/samples/invokeSample.txt",
-  // "text!../util/samples/xkcd/invokeSample.txt",
-  "text!../util/samples/tumblr/invokeSample.txt",
+  "text!../util/samples/tesla/invokeSample.txt",
 ], function (Backbone, _, util, invokeSample) {
   return Backbone.View.extend({
     invokes: [],
@@ -89,8 +87,6 @@ define([
 
           functionSerials: isos,
 
-          repeatCallCount: invoke.repeatCallCount,
-
           aspectMap: invoke.aspectMap
         };
       }, this);
@@ -98,18 +94,54 @@ define([
       return JSON.stringify(serializableInvokes, null, 2);
     },
 
+    newInvokes: [],
+
     addInvokes: function (invokes) {
+      console.log("Adding invokes:", invokes.length);
+
+      _(invokes).each(function (invoke) {
+        this.newInvokes.push(invoke);
+        this.rawInvokes.push(JSON.parse(JSON.stringify(invoke)));
+      }, this);
+    },
+
+    calculate: function () {
+      var startTime = new Date().getTime();
+
+      console.log("Processing invokes:", this.invokes.length);
+
+      _(this.activeNodeCollection.models).each(function (nodeModel) {
+        nodeModel.set("invokes", []);
+      });
+
       var pendingEdges = [];
       var nativeRootInvokes = [];
-      // Parse through invokes and populate simple lists of native/lib/top-levels
-      _(invokes).each(function (invoke) {
-        this.rawInvokes.push(JSON.parse(JSON.stringify(invoke)));
+      this.rootInvokes = [];
+      this.nativeInvokes = [];
+      this.argSourceToInvokes = [];
+      this.invokeIdMap = {};
+      this.nativeRootInvokes = [];
+      this.edges = [];
+      this.asyncEdgeMap = [];
+      this.asyncEdges = [];
+      this.asyncSerialEdgeMap = {};
+      this.asyncSerialEdges = [];
 
+      this.invokes.push.apply(this.invokes, this.newInvokes);
+
+      // Parse through invokes and populate simple lists of native/lib/top-levels
+      _(this.invokes).each(function (invoke) {
+        invoke.nativeRootInvoke = null;
+        invoke.parentCalls = null;
+        invoke.childCalls = null;
         invoke.aspectMap = {};
+        invoke.parentAsyncSerialLinks = null;
+        invoke.parentAsyncLink = null;
+        invoke.childAsyncSerialLinks = null;
         invoke.getLabel = _.bind(function () {
           return this.getInvokeLabel(invoke);
         }, this);
-        this.invokes.push(invoke);
+
         this.invokeIdMap[invoke.invocationId] = invoke;
 
         if (invoke.topLevelInvocationId === invoke.invocationId) {
@@ -119,16 +151,18 @@ define([
 
         var nodeModel = this.activeNodeCollection.get(invoke.nodeId);
         if (!nodeModel) {
-          console.warn("Don't have a nodemodel for", invoke.nodeId);
-          invoke.node = {
+          this.activeNodeCollection.mergeNodes([{
             name: "",
+            id: invoke.nodeId,
             source: "",
             invokes: []
-          };
-        } else {
-          invoke.nodeModel = nodeModel;
-          invoke.node = nodeModel.toJSON();
+          }]);
+          nodeModel = this.activeNodeCollection.get(invoke.nodeId)
+          console.warn("Creating shell nodemodel for", invoke.nodeId);
         }
+
+        invoke.nodeModel = nodeModel;
+        invoke.node = nodeModel.toJSON();
 
         invoke.isLib = util.isKnownLibrary(invoke.nodeId);
 
@@ -306,8 +340,11 @@ define([
 
       // Place invokes into queryable buckets
       _(this.invokes).map(this.classifyInvoke, this);
-    },
 
+      this.newInvokes = [];
+      var stopTime = new Date().getTime();
+      console.log("Done processing invokes", parseInt((stopTime - startTime) / 1000), "seconds");
+    },
 
     climbTree: function (node, decorator, stopCondition) {
       decorator(node);
@@ -347,13 +384,13 @@ define([
       decorator(node);
 
       this.climbTree(node, decorator, null);
-      if (node.isLib) {
-        var stopCondition = function (node) {
-          return !node.isLib;
-        };
+      // if (node.isLib) {
+      //   var stopCondition = function (node) {
+      //     return !node.isLib;
+      //   };
 
-        this.descendTree(node, decorator, stopCondition)
-      }
+      this.descendTree(node, decorator, null)
+      // }
     },
 
     parseEventFromArg: function (arg) {
@@ -383,6 +420,7 @@ define([
     mouseEvents: [
       "click",
       "wheel",
+      "scroll",
       "mousemove",
       "mousedown",
       "mouseup",
@@ -411,6 +449,7 @@ define([
     aspectCollectionMap: {
       click: [],
       wheel: [],
+      scroll: [],
       mousemove: [],
       mousedown: [],
       mouseup: [],
