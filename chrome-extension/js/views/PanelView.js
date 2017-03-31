@@ -16,7 +16,8 @@ define([
     template: Handlebars.compile(viewTemplate),
 
     events: {
-      "click #reload": "reloadInjecting"
+      "click #reload": "reloadInjecting",
+      "click #throttleInvokes": "throttleInvokes"
     },
 
     initialize: function () {
@@ -182,6 +183,12 @@ define([
         datatype: "json",
         method: "post"
       }).done(jsBinCallback);
+    },
+
+    throttleInvokes: function () {
+      UnravelAgent.runInPage(function () {
+        __tracer.setThrottleInvokeMillis(500);
+      }, null);
     },
 
     getScriptMetaData: function (callback) {

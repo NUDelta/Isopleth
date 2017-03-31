@@ -2,25 +2,9 @@ define([
   "backbone",
   "underscore",
   "../util/util",
-  "text!../util/samples/tesla/invokeSample.txt",
+  "text!../util/samples/xkcd/invokeSample.txt",
 ], function (Backbone, _, util, invokeSample) {
   return Backbone.View.extend({
-    invokes: [],
-    invokeIdMap: {},
-
-    nativeInvokes: [],
-    rootInvokes: [],
-    nativeRootInvokes: [],
-    argSourceToInvokes: {},
-
-    edges: [],
-
-    asyncEdgeMap: [],
-    asyncEdges: [],
-
-    asyncSerialEdgeMap: {},
-    asyncSerialEdges: [],
-
     rawInvokes: [],
 
     initialize: function (codeMirrors, sourceCollection, activeNodeCollection, jsBinRouter) {
@@ -87,6 +71,8 @@ define([
 
           functionSerials: isos,
 
+          repeatCallCount: invoke.repeatCallCount,
+
           aspectMap: invoke.aspectMap
         };
       }, this);
@@ -94,54 +80,67 @@ define([
       return JSON.stringify(serializableInvokes, null, 2);
     },
 
-    newInvokes: [],
-
     addInvokes: function (invokes) {
       console.log("Adding invokes:", invokes.length);
 
       _(invokes).each(function (invoke) {
-        this.newInvokes.push(invoke);
-        this.rawInvokes.push(JSON.parse(JSON.stringify(invoke)));
+        this.rawInvokes.push(invoke);
       }, this);
     },
 
     calculate: function () {
       var startTime = new Date().getTime();
+      console.log("Processing invokes:", this.rawInvokes.length);
 
-      console.log("Processing invokes:", this.invokes.length);
+      var pendingEdges = [];
+      this.invokes = [];
+      this.rootInvokes = [];
+      this.nativeInvokes = [];
+      this.nativeRootInvokes = [];
+      this.argSourceToInvokes = [];
+      this.invokeIdMap = {};
+      this.edges = [];
+      this.asyncEdgeMap = {};
+      this.asyncEdges = [];
+      this.asyncSerialEdgeMap = {};
+      this.asyncSerialEdges = [];
+      this.maxHitCount = 0;
+      this.aspectCollectionMap = {
+        click: [],
+        wheel: [],
+        scroll: [],
+        mousemove: [],
+        mousedown: [],
+        mouseup: [],
+        mouseout: [],
+        mouseover: [],
+        mouseenter: [],
+        mouseleave: [],
+        keydown: [],
+        keypress: [],
+        keyup: [],
+        ajaxRequest: [],
+        ajaxResponse: [],
+        domQuery: [],
+        jqDom: [],
+        setup: []
+      };
 
       _(this.activeNodeCollection.models).each(function (nodeModel) {
         nodeModel.set("invokes", []);
       });
 
-      var pendingEdges = [];
-      var nativeRootInvokes = [];
-      this.rootInvokes = [];
-      this.nativeInvokes = [];
-      this.argSourceToInvokes = [];
-      this.invokeIdMap = {};
-      this.nativeRootInvokes = [];
-      this.edges = [];
-      this.asyncEdgeMap = [];
-      this.asyncEdges = [];
-      this.asyncSerialEdgeMap = {};
-      this.asyncSerialEdges = [];
-
-      this.invokes.push.apply(this.invokes, this.newInvokes);
-
       // Parse through invokes and populate simple lists of native/lib/top-levels
-      _(this.invokes).each(function (invoke) {
-        invoke.nativeRootInvoke = null;
-        invoke.parentCalls = null;
-        invoke.childCalls = null;
+      _(this.rawInvokes).each(function (rawInvoke) {
+        // Make a copy to leave the original
+        var invoke = JSON.parse(JSON.stringify(rawInvoke));
+        this.invokes.push(invoke);
+
         invoke.aspectMap = {};
-        invoke.parentAsyncSerialLinks = null;
-        invoke.parentAsyncLink = null;
-        invoke.childAsyncSerialLinks = null;
         invoke.getLabel = _.bind(function () {
           return this.getInvokeLabel(invoke);
         }, this);
-
+        this.invokes.push(invoke);
         this.invokeIdMap[invoke.invocationId] = invoke;
 
         if (invoke.topLevelInvocationId === invoke.invocationId) {
@@ -157,7 +156,7 @@ define([
             source: "",
             invokes: []
           }]);
-          nodeModel = this.activeNodeCollection.get(invoke.nodeId)
+          nodeModel = this.activeNodeCollection.get(invoke.nodeId);
           console.warn("Creating shell nodemodel for", invoke.nodeId);
         }
 
@@ -174,7 +173,7 @@ define([
           });
 
           if (!hasParentCaller) {
-            nativeRootInvokes.push(invoke);
+            this.nativeRootInvokes.push(invoke);
             invoke.nativeRootInvoke = true;
           }
         }
@@ -285,13 +284,13 @@ define([
         if (!childInvoke.isLib && parentInvoke.isLib) {
           if (!childInvoke.nativeRootInvoke) {
             childInvoke.nativeRootInvoke = true;
-            nativeRootInvokes.push(childInvoke);
+            this.nativeRootInvokes.push(childInvoke);
           }
         }
       }, this);
 
       // Parse through invoke arguments to determine final missing async serial links
-      _(nativeRootInvokes).each(function (childInvoke) {
+      _(this.nativeRootInvokes).each(function (childInvoke) {
         if (!childInvoke.node.source) {
           return;
         }
@@ -325,9 +324,6 @@ define([
         }
       }, this);
 
-      // Save our new nativeRootInvokes
-      this.nativeRootInvokes = this.nativeRootInvokes.concat(nativeRootInvokes);
-
       // Add setup attribute to all first tree nodes
       if (this.nativeInvokes[0]) {
         this.nativeInvokes[0].aspectMap["page load"] = true;
@@ -341,10 +337,10 @@ define([
       // Place invokes into queryable buckets
       _(this.invokes).map(this.classifyInvoke, this);
 
-      this.newInvokes = [];
       var stopTime = new Date().getTime();
-      console.log("Done processing invokes", parseInt((stopTime - startTime) / 1000), "seconds");
+      console.log("Done processing invokeGraph", parseInt((stopTime - startTime) / 1000), "seconds");
     },
+
 
     climbTree: function (node, decorator, stopCondition) {
       decorator(node);
@@ -445,27 +441,6 @@ define([
       "domQuery",
       "jqDom"
     ],
-
-    aspectCollectionMap: {
-      click: [],
-      wheel: [],
-      scroll: [],
-      mousemove: [],
-      mousedown: [],
-      mouseup: [],
-      mouseout: [],
-      mouseover: [],
-      mouseenter: [],
-      mouseleave: [],
-      keydown: [],
-      keypress: [],
-      keyup: [],
-      ajaxRequest: [],
-      ajaxResponse: [],
-      domQuery: [],
-      jqDom: [],
-      setup: []
-    },
 
     argumentParsers: [
       function (arg) {

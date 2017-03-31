@@ -149,10 +149,6 @@ define([
         this.bindingCodeMirrors = [];
 
         _(binders).each(function (invoke) {
-          if (!this.isVisibleInvoke(invoke.invocationId)) {
-            return;
-          }
-
           var codeMirrorView = new CodeMirrorView(invoke.node.source, "220px");
           this.bindingCodeMirrors.push(codeMirrorView);
 
@@ -227,10 +223,6 @@ define([
 
         var $delegatesView = this.$(".invoke-delegates-view");
         _(children).each(function (invoke) {
-          if (!this.isVisibleInvoke(invoke.invocationId)) {
-            return;
-          }
-
           var codeMirrorView = new CodeMirrorView(invoke.node.source, "120px");
           this.invokeChildrenCodeMirrors.push(codeMirrorView);
 
@@ -251,10 +243,6 @@ define([
         var $effectsView = this.$(".invoke-effects-view");
 
         _(children).each(function (invoke) {
-          if (!this.isVisibleInvoke(invoke.invocationId)) {
-            return;
-          }
-
           var codeMirrorView = new CodeMirrorView(invoke.node.source, "180px");
           this.invokeAsyncSerialChildrenCodeMirrors.push(codeMirrorView);
 
@@ -267,17 +255,17 @@ define([
     },
 
     getNavCardHTML: function (invoke) {
-      return "<div class='navCard' targetId = '" + this.invoke.invocationId + "' sourceId ='" + invoke.invocationId + "'>Show Details: " + invoke.getLabel() + "</div>";
+      var invisibleNote = this.isVisibleInvoke(invoke.invocationId) ? "(Hidden in Graph) " : "";
+
+      return "<div class='navCard' targetId = '" + this.invoke.invocationId + "' sourceId ='" + invoke.invocationId + "'>Show Details: " + invisibleNote +  invoke.getLabel() + "</div>";
     },
 
-    containsVisibleInvoke: function (arr) {
+    containsInvoke: function (arr) {
       if (!arr || arr.length < 1) {
         return false;
       }
 
-      return !!_(arr).find(function (invoke) {
-        return !this.isVisibleInvoke(invoke.invocationId);
-      }, this);
+      return true;
     },
 
     isVisibleInvoke: function (invokeId) {
@@ -287,30 +275,44 @@ define([
     showActions: function () {
       if (this.invoke.arguments && this.invoke.arguments.length) {
         this.$(".invoke-inputs").show();
+      } else {
+        this.$(".invoke-inputs").hide();
       }
 
       if (this.invoke.returnValue) {
         this.$(".invoke-outputs").show();
+      } else {
+        this.$(".invoke-outputs").hide();
       }
 
-      if (this.invoke.parentAsyncLink && !this.invoke.parentAsyncLink.isLib) {
+      if (this.invoke.parentAsyncLink) {
         this.$(".invoke-declaration").show();
+      } else {
+        this.$(".invoke-declaration").hide();
       }
 
-      if (this.containsVisibleInvoke(this.invoke.parentCalls)) {
+      if (this.containsInvoke(this.invoke.parentCalls)) {
         this.$(".invoke-parent").show();
+      } else {
+        this.$(".invoke-parent").hide();
       }
 
-      if (this.containsVisibleInvoke(this.invoke.childCalls)) {
+      if (this.containsInvoke(this.invoke.childCalls)) {
         this.$(".invoke-delegates").show();
+      } else {
+        this.$(".invoke-delegates").hide();
       }
 
-      if (this.containsVisibleInvoke(this.invoke.parentAsyncSerialLinks)) {
+      if (this.containsInvoke(this.invoke.parentAsyncSerialLinks)) {
         this.$(".invoke-binding").show();
+      } else {
+        this.$(".invoke-binding").hide();
       }
 
-      if (this.containsVisibleInvoke(this.invoke.childAsyncSerialLinks)) {
+      if (this.containsInvoke(this.invoke.childAsyncSerialLinks)) {
         this.$(".invoke-effects").show();
+      } else {
+        this.$(".invoke-effects").hide();
       }
     }
 

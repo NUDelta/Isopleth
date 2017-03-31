@@ -904,40 +904,42 @@ if (typeof {name} === 'undefined') {
 	}
 
     var nodeChainLastInvokeMap = {};
-    window.showLogs = false;
 
     function addLogEntry(handle, invocationId) {
-      // Throttle invokes
-      var invocation = invocationById[invocationId];
-      var nodeId = invocation.f.id;
+    	if (__tracer.throttleInvokeMillis) {
+        var invocation = invocationById[invocationId];
+        var nodeId = invocation.f.id;
 
-      var parentStr = invocation.getParents().reduce(function (str, inv) {
-        str += inv.f.id;
-        return str;
-      }, "");
+        var parentStr = invocation.getParents().reduce(function (str, inv) {
+          str += inv.f.id;
+          return str;
+        }, "");
 
-      var childStr = invocation.getChildren().reduce(function (str, inv) {
-        str += inv.f.id;
-        return str;
-      }, "");
+        var childStr = invocation.getChildren().reduce(function (str, inv) {
+          str += inv.f.id;
+          return str;
+        }, "");
 
-      var key = parentStr + nodeId + childStr;
-      var lastInvokeTime = nodeChainLastInvokeMap[key];
-      var currentTime = new Date().getTime();
+        var key = parentStr + nodeId + childStr;
+        var lastInvokeTime = nodeChainLastInvokeMap[key];
+        var currentTime = new Date().getTime();
 
-      var allowAdd = false;
-      if (lastInvokeTime) {
-        if ((currentTime - lastInvokeTime) > 500) {
+        var allowAdd = false;
+        if (lastInvokeTime) {
+          if ((currentTime - lastInvokeTime) > __tracer.throttleInvokeMillis) {
+            allowAdd = true;
+          }
+        } else {
           allowAdd = true;
         }
-      } else {
-        allowAdd = true;
-      }
 
-      if (allowAdd) {
-        nodeChainLastInvokeMap[key] = currentTime;
-        logEntries[0].entries.push(invocationId);
-      }
+        if (allowAdd) {
+          nodeChainLastInvokeMap[key] = currentTime;
+          logEntries[0].entries.push(invocationId);
+        }
+			} else {
+				logEntries[0].entries.push(invocationId);
+			}
     }
 
 
@@ -1720,6 +1722,13 @@ if (typeof {name} === 'undefined') {
 		}
 
 		return logEntries[0].entries.length;
+	};
+
+	this.throttleInvokeMillis = null;
+
+	this.setThrottleInvokeMillis = function (millis) {
+		this.throttleInvokeMillis = millis;
+		console.log("Set throttleInvokeMillis", millis);
 	};
 
 	this.logDelta = function (handle, maxResults) {

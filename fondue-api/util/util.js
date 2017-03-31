@@ -109,9 +109,11 @@ var util = {
 
     redisClient.get(digest, function (err, foundSrc) {
       if (foundSrc != null) {
-        console.log("Retrieved beautification for source.");
+        console.log("Retrieved beautification for " + path);
         return callback(foundSrc);
       } else {
+        console.log("Beautifying " + path);
+
         try {
           src = src.split("use strict").join("");
           src = UglifyJS.minify(src, {
@@ -122,7 +124,7 @@ var util = {
             output: minifyJSOutputOpts
           }).code;
 
-          if(src === ""){
+          if (src === "") {
             return callback(src);
           }
 
@@ -131,7 +133,7 @@ var util = {
               {
                 selector: '.function > block',
                 callback: function (node) {
-                  if(node.body && node.body.length > 0){
+                  if (node.body && node.body.length > 0) {
                     node.body[0].update("\"iso_" + uuid.v4() + "_iso\";\n" + node.body[0].source());
                   }
                 }

@@ -19,10 +19,13 @@ define([
       "click #markClick": "markClick",
       "click #hideRepeats": "hideRepeats",
       "click #hideLibs": "hideLibs",
+      "click #hideUnknownAspectNodes": "hideUnknownAspectNodes",
+      "click #showLibCode": "showLibCode",
+      "click #showRepeats": "showRepeats",
+      "click #showUnknown": "showUnknown",
       "click #drawHeatMap": "drawHeatMap",
       "click #downloadInvokes": "downloadInvokes",
       "click #downloadNodes": "downloadNodes",
-      "click #hideUnknownAspectNodes": "hideUnknownAspectNodes"
     },
 
     customColors: {},
@@ -56,22 +59,6 @@ define([
 
     negatedAspectFilters: [],
 
-    lastSelectedNodes: [],
-
-    lastSelectedEdge: null,
-
-    visibleInvokes: [],
-
-    maxVisibleHitCount: 0,
-
-    showLibs: true,
-
-    showUnknownAspects: true,
-
-    showSequentialRepeats: true,
-
-    hideInvokeIdMap: {},
-
     draw: function () {
       this.invokeGraph.calculate();
       this.resetGraph();
@@ -80,8 +67,6 @@ define([
     initialize: function (invokeGraph, activeNodeCollection) {
       this.invokeGraph = invokeGraph;
       this.activeNodeCollection = activeNodeCollection;
-      this.showLibs = false;
-      this.showSequentialRepeats = false;
       this.setElement($("#graphView"));  // el should be in the dom at instantiation time
 
       this.$("#invokeGraph").height(parseInt(this.$el.height()) - parseInt(this.$("#graphControl").height()));
@@ -97,18 +82,27 @@ define([
     },
 
     hideLibs: function () {
-      this.showLibs = true;
-      this.drawGraph();
+      this.showLibs = false;
     },
 
     hideRepeats: function () {
-      this.showSequentialRepeats = true;
-      this.drawGraph();
+      this.showSequentialRepeats = false;
     },
 
     hideUnknownAspectNodes: function () {
       this.showUnknownAspects = false;
-      this.drawGraph();
+    },
+
+    showLibCode: function () {
+      this.showLibs = true;
+    },
+
+    showRepeats: function () {
+      this.showSequentialRepeats = true;
+    },
+
+    showUnknown: function () {
+      this.showUnknownAspects = true;
     },
 
     drawHeatMap: function () {
@@ -121,22 +115,36 @@ define([
     },
 
     resetGraph: function () {
-      this.showLibs = true;
-      this.showSequentialRepeats = true;
-      this.showUnknownAspects = true;
+      this.lastSelectedNodes = [];
+      this.lastSelectedEdge = null;
+      this.visibleInvokes = [];
+      this.maxVisibleHitCount = 0;
+      this.hideInvokeIdMap = {};
+      this.showLibs = false;
+      this.showSequentialRepeats = false;
+      this.showUnknownAspects = false;
       this.drawGraph();
     },
 
     drawJoshAsync: function () {
-      _(this.invokeGraph.asyncSerialEdges).each(function (edge) {
-        this.cy.remove('edge[source = "' + edge.parentInvoke.invocationId + '"][target="' + edge.childInvoke.invocationId + '"]');
-        this.cy.add({
-          group: 'edges', data: {
-            source: edge.parentInvoke.invocationId,
-            target: edge.childInvoke.invocationId,
-            color: this.colors.asyncSerialEdge
-          }
-        });
+      console.log("Drawing async serial connections.");
+
+      _(this.invokeGraph.asyncSerialEdges).each(function (edge, i, arr) {
+        if (this.hideInvokeIdMap[edge.parentInvoke.invocationId] ||
+          this.hideInvokeIdMap[edge.childInvoke.invocationId]) {
+          return;
+        }
+
+        var edgeElement = this.cy.elements('edge[source = "' + edge.parentInvoke.invocationId + '"][target="' + edge.childInvoke.invocationId + '"]');
+        if (!edgeElement.length) {
+          this.cy.add({
+            group: 'edges', data: {
+              source: edge.parentInvoke.invocationId,
+              target: edge.childInvoke.invocationId,
+              color: this.colors.asyncSerialEdge
+            }
+          });
+        }
       }, this);
     },
 
@@ -343,6 +351,7 @@ define([
     },
 
     drawGraph: function () {
+      console.log("Emptying old graph.")
       this.$("#invokeGraph").empty();
 
       this.hideInvokeIdMap = {};
@@ -409,6 +418,8 @@ define([
         return displayNodes;
       }, [], this);
 
+      console.log("Filtered to node count", nodes.length, "of", this.invokeGraph.invokes.length);
+
       var edges = _(this.invokeGraph.edges).reduce(function (displayEdges, edge) {
         if (this.hideInvokeIdMap[edge.parentInvoke.invocationId] ||
           this.hideInvokeIdMap[edge.childInvoke.invocationId]) {
@@ -425,6 +436,9 @@ define([
 
         return displayEdges;
       }, [], this);
+
+      console.log("Filtered to edge count", edges.length, "of", this.invokeGraph.edges.length);
+      console.log("Drawing graph...");
 
       this.cy = cytoscape({
         container: this.$("#invokeGraph")[0],
@@ -445,20 +459,20 @@ define([
             selector: 'node',
             style: {
               'min-zoomed-font-size': 6,
-              'font-family': 'system, "helvetica neue"',
-              'font-size': 14,
-              'font-weight': 400,
+              // 'font-family': 'system, "helvetica neue"',
+              // 'font-size': 14,
+              // 'font-weight': 400,
               'shape': 'roundrectangle',
-              'overlay-color': "white",
-              'overlay-padding': 1,
+              // 'overlay-color': "white",
+              // 'overlay-padding': 1,
               'width': 'label',
               'height': 'label',
               'padding': 8,
               'content': 'data(label)',
-              'text-opacity': 1,
+              // 'text-opacity': 1,
               'text-valign': 'center',
-              'text-halign': 'center',
-              'color': "black",
+              // 'text-halign': 'center',
+              // 'color': "black",
               'background-color': 'data(color)'
             }
           },
@@ -489,7 +503,11 @@ define([
         callGraphView.handleEdgeClick(this.data("source"), this.data("target"));
       });
 
-      this.drawJoshAsync();
+      console.log("Graph initial draw done.");
+
+      // this.drawJoshAsync();
+
+      console.log("DrawGraph completed.");
     },
 
     downloadInvokes: function () {

@@ -14,8 +14,9 @@ define([], function () {
       // FondueBridge.EMIT_INTERVAL_MILLIS = 3000;
 
 
-      FondueBridge.MAX_LOG_COUNT = 1000;
+      FondueBridge.MAX_LOG_COUNT = 2000;
       FondueBridge.BUFFER_INTERVAL_MILLIS = 1000;
+
       FondueBridge.EMIT_INTERVAL_MILLIS = 2000;
       FondueBridge.EMIT_INVOKE_COUNT = 2000;
       FondueBridge.EMIT_NODE_MILLIS = 3000;
