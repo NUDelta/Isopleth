@@ -1735,10 +1735,20 @@ if (typeof {name} === 'undefined') {
 		maxResults = maxResults || 10;
 
 		var ids = logEntries[0].entries.splice(0, maxResults);
-		var results = ids.map(function (invocationId, i) {
+		var results = ids.reduce(function (arr, invocationId) {
 			var invocation = invocationById[invocationId];
-			return makeLogEntry(invocation, findParentsInQuery(invocation, _logQueries[0]));
-		});
+      var entry;
+
+      try {
+        entry = makeLogEntry(invocation, findParentsInQuery(invocation, _logQueries[0]));
+      } catch (ig) {
+      }
+
+      if(entry){
+      	arr.push(entry);
+			}
+      return arr;
+		}, []);
 
 		return results;
 	};

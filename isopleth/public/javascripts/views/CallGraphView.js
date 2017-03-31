@@ -83,26 +83,32 @@ define([
 
     hideLibs: function () {
       this.showLibs = false;
+      this.drawGraph();
     },
 
     hideRepeats: function () {
       this.showSequentialRepeats = false;
+      this.drawGraph();
     },
 
     hideUnknownAspectNodes: function () {
       this.showUnknownAspects = false;
+      this.drawGraph();
     },
 
     showLibCode: function () {
       this.showLibs = true;
+      this.drawGraph();
     },
 
     showRepeats: function () {
       this.showSequentialRepeats = true;
+      this.drawGraph();
     },
 
     showUnknown: function () {
       this.showUnknownAspects = true;
+      this.drawGraph();
     },
 
     drawHeatMap: function () {

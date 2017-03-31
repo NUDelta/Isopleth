@@ -6,6 +6,8 @@ var ROUTES = require('./routes/routes');
 
 var app = express();
 
+require('events').EventEmitter.prototype._maxListeners = 100;
+
 var redis = require('redis');
 // var redisClient = redis.createClient();
 // redisClient.on('connect', function () {

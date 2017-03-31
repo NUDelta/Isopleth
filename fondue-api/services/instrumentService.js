@@ -47,6 +47,8 @@ var blockedDomains = [
   "https://assets.tumblr.com/assets/scripts/dashboard.js",
   "https://assets.tumblr.com/client/prod/app/vendor.build.js",
   "https://assets.tumblr.com/client/prod/app/global.build.js",
+  "gd-core-bottom",
+  "gd-home",
 ];
 
 
@@ -103,7 +105,7 @@ module.exports = {
 
   instrumentHTML: function (url, basePath, callback) {
     request({
-      url: url, method: "GET", rejectUnauthorized: false, headers: {
+      url: url, method: "GET", rejectUnauthorized: false, gzip: true, headers: {
         "Cache-Control": "no-cache",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.130 Safari/537.36",

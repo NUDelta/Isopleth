@@ -1,5 +1,5 @@
 // Script executed every time the devtools are opened.
-var name = "Ibex";
+var name = "Isopleth";
 
 //chrome.devtools.panels.elements.createSidebarPane(name,
 //  function (sidebar) {

@@ -76,6 +76,7 @@ define([], function () {
           if (this.interval) {
             window.clearInterval(this.interval);
             window.clearInterval(this.interval2);
+            window.clearInterval(this.interval3);
           }
 
           this.interval = setInterval(unravelAgent._.bind(function () {
@@ -152,9 +153,15 @@ define([], function () {
             //Get the last n javascript calls logged
             var logEntryArr = __tracer.getLogEntryArr();
             console.log("Buffer length", this.emitBuffer.length, "of", logEntryArr[0].entries.length);
-            this.emitBuffer.push.apply(this.emitBuffer, window.__tracer.logDelta(0, FondueBridge.MAX_LOG_COUNT));
+            var invokes = __tracer.logDelta(0, FondueBridge.MAX_LOG_COUNT);
+            unravelAgent._(invokes).each(function(invoke){
+              this.emitBuffer.push(invoke);
+            }, this);
           } catch (err) {
-            console.warn("Err on buffering invocations:", err);
+            debugger;
+            if(~err.toString().indexOf("SecurityError")){
+              console.warn("Ignoring invocation logDelta err.");
+            }
           }
         },
 

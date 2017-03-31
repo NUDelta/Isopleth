@@ -17,7 +17,8 @@ define([
 
     events: {
       "click #reload": "reloadInjecting",
-      "click #throttleInvokes": "throttleInvokes"
+      "click #throttleInvokes": "throttleInvokes",
+      "click #removeThrottle": "removeThrottle"
     },
 
     initialize: function () {
@@ -188,6 +189,12 @@ define([
     throttleInvokes: function () {
       UnravelAgent.runInPage(function () {
         __tracer.setThrottleInvokeMillis(500);
+      }, null);
+    },
+
+    removeThrottle: function () {
+      UnravelAgent.runInPage(function () {
+        __tracer.setThrottleInvokeMillis(null);
       }, null);
     },
 
