@@ -6,7 +6,6 @@ define([], function () {
         this.getNodes = unravelAgent._.bind(this.getNodes, this);
         this.resetTracer = unravelAgent._.bind(this.resetTracer, this);
         this.startTrackInterval = unravelAgent._.bind(this.startTrackInterval, this);
-        this.getNewNodes = unravelAgent._.bind(this.getNewNodes, this);
         this.totalInvocations = 0;
       };
 
@@ -15,23 +14,35 @@ define([], function () {
       // FondueBridge.EMIT_INTERVAL_MILLIS = 3000;
 
 
-      FondueBridge.MAX_LOG_COUNT = 999999;
-      FondueBridge.MAX_STACK_DEPTH = 999999;
+      FondueBridge.MAX_LOG_COUNT = 1000;
+      FondueBridge.BUFFER_INTERVAL_MILLIS = 1000;
       FondueBridge.EMIT_INTERVAL_MILLIS = 2000;
+      FondueBridge.EMIT_INVOKE_COUNT = 2000;
+      FondueBridge.EMIT_NODE_MILLIS = 3000;
 
       FondueBridge.prototype = {
         constructor: FondueBridge,
 
-        getNodes: function () {
+        emitBuffer: [],
+
+        nodeById: {},
+
+        getTracerNodeList: function(){
           return __tracer.getNodeList();
         },
 
-        getNewNodes: function () {
-          // if (!this.nodesHandle) {
-          //   this.nodesHandle = window.__tracer.trackNodes();
-          // }
+        getNodes: function () {
+          var nodeList = __tracer.getNodeList();
+          var newNodes = [];
 
-          return window.__tracer.newNodes(window.__tracer.trackNodes());
+          unravelAgent._(nodeList).map(function (node) {
+            if (!this.nodeById[node.id]) {
+              this.nodeById[node.id] = node;
+              newNodes.push(node);
+            }
+          }, this);
+
+          return newNodes;
         },
 
         startTracking: function () {
@@ -40,34 +51,43 @@ define([], function () {
         },
 
         resetTracer: function () {
-          window.__tracer.resetTrace();
-          this.logHandle = window.__tracer.trackLogs({ids: this.ids});
+          // window.__tracer.resetTrace();
+          // this.logHandles.push(window.__tracer.trackLogs({ids: this.ids}));
         },
 
         updateTrackedNodes: function () {
-          this.ids = unravelAgent._(__tracer.getNodeMap()).keys();
-          this.logHandle = window.__tracer.trackLogs({ids: this.ids});
+          // this.ids = unravelAgent._(__tracer.getNodeMap()).keys();
+          // this.logHandles.push(window.__tracer.trackLogs({ids: this.ids}));
         },
 
         startTrackInterval: function () {
-          this.updateTrackedNodes();
-          if (!this.ids || this.ids.length < 1) {
-            console.log("fondueInjector: startTrackInterval: no nodes yet.");
-            setTimeout(unravelAgent._.bind(function () {
-              this.startTrackInterval();
-            }, this), FondueBridge.EMIT_INTERVAL_MILLIS);
-            return;
-          }
+          // this.updateTrackedNodes();
+          // if (!this.ids || this.ids.length < 1) {
+          //   console.log("fondueInjector: startTrackInterval: no nodes yet.");
+          //   setTimeout(unravelAgent._.bind(function () {
+          //     this.startTrackInterval();
+          // }, this), FondueBridge.EMIT_INTERVAL_MILLIS);
+          // return;
+          // }
 
           console.log("fondueInjector: startTrackInterval: Got nodes... emitting");
-          this.logHandle = window.__tracer.trackLogs({ids: this.ids});
+          // this.logHandle = window.__tracer.trackLogs({ids: this.ids});
           if (this.interval) {
             window.clearInterval(this.interval);
+            window.clearInterval(this.interval2);
           }
 
           this.interval = setInterval(unravelAgent._.bind(function () {
+            this.transferInvokesToEmitBuffer();
+          }, this), FondueBridge.BUFFER_INTERVAL_MILLIS);
+
+          this.interval2 = setInterval(unravelAgent._.bind(function () {
             this.emitNodeActivity();
           }, this), FondueBridge.EMIT_INTERVAL_MILLIS);
+
+          this.interval3 = setInterval(unravelAgent._.bind(function () {
+            this.emitNodeList();
+          }, this), FondueBridge.EMIT_NODE_MILLIS);
         },
 
         emitNodeList: function () {
@@ -126,67 +146,28 @@ define([], function () {
           });
         },
 
-        emitNodeActivity: function () {
+        transferInvokesToEmitBuffer: function () {
           try {
             //Get the last n javascript calls logged
-            var arrInvocations = window.__tracer.logDelta(this.logHandle, FondueBridge.MAX_LOG_COUNT);
-            if (arrInvocations.length < 1) {
-              console.log("emitNodeActivity:no invocations")
-              return;
-            }
-            console.log("emitNodeActivity:", arrInvocations.length, "invocations");
-
-            // var nodeMap = __tracer.getNodeMap();
-            //For each one, get its callStack, up to 10 deep
-            // unravelAgent._(arrInvocations).each(function (invocation) {
-            //   var node = nodeMap[invocation.nodeId];
-            //   if (!node.startLine) {
-            //     node.startLine = node.start.line;
-            //     node.startColumn = node.start.column;
-            //     node.endLine = node.end.line;
-            //     node.endColumn = node.end.column;
-            //   }
-            //
-            //   invocation.node = node;
-            //   if (node.domQuery || this.isDomQueryNode(node)) {
-            //
-            //     invocation.callStack = unravelAgent._(__tracer.backtrace({
-            //       invocationId: invocation.invocationId,
-            //       range: [0, FondueBridge.MAX_STACK_DEPTH]
-            //     })).reverse();
-            //
-            //     //Remove the last item on the stack, === the invocation
-            //     if (invocation.callStack.length > 0) {
-            //       invocation.callStack.pop();
-            //     }
-            //   } else {
-            //     invocation.callStack = [];
-            //   }
-            // }, this);
-
-            // if (arrInvocations.length < FondueBridge.MAX_LOG_COUNT) {
-            // if (unravelAgent.scriptLoadComplete) {
-            //   __tracer.softReset(this.logHandle);
-            // }
-            // }
-
-            // var logLength = __tracer.getLogLength(this.logHandle);
-            // if (logLength > 10000) {
-            //   console.log("Remaining Log Length is too large:", logLength, "... clearing.");
-            //   this.updateTrackedNodes();
-            //   __tracer.softReset(this.logHandle);
-            // }
-
-            window.dispatchEvent(new CustomEvent("fondueDTO", {
-                detail: {
-                  eventStr: "fondueDTO:arrInvocations",
-                  obj: {invocations: arrInvocations}
-                }
-              })
-            );
+            var logEntryArr = __tracer.getLogEntryArr();
+            console.log("Buffer length", this.emitBuffer.length, "of", logEntryArr[0].entries.length);
+            this.emitBuffer.push.apply(this.emitBuffer, window.__tracer.logDelta(0, FondueBridge.MAX_LOG_COUNT));
           } catch (err) {
-            console.warn("Err on dispatching invocations:", err);
+            console.warn("Err on buffering invocations:", err);
           }
+        },
+
+        emitNodeActivity: function () {
+          var invocations = this.emitBuffer.splice(0, FondueBridge.EMIT_INVOKE_COUNT);
+          console.log("emitNodeActivity:", invocations.length, "invocations");
+
+          window.dispatchEvent(new CustomEvent("fondueDTO", {
+              detail: {
+                eventStr: "fondueDTO:arrInvocations",
+                obj: {invocations: invocations}
+              }
+            })
+          );
         }
       };
 

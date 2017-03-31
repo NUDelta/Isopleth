@@ -13,8 +13,8 @@ var blockedDomains = [
   "connect.facebook.net",
   "google-analytics.com",
   "beacon.krxd.net",
-  "trackingTags_v1.1",
-  "html5shiv",
+  // "trackingTags_v1.1",
+  // "html5shiv",
   "advertisement",
   "swfobject",
   // "ac-globalnav.built",
@@ -36,18 +36,17 @@ var blockedDomains = [
   "rapidworker-1.2.js",
   "rapid-3.36.1.js",
   "plugins.js?v=0.1",
-  "modernizr.custom",
+  // "modernizr.custom",
   "cedexis",
   "gstatic",
   "strings/en_US.js",
-  "https://assets.tumblr.com/client/prod/app/header.build.js",
+  // "https://assets.tumblr.com/client/prod/app/header.build.js",
   "https://assets.tumblr.com/assets/scripts/vendor/yahoo/rapid/rapid-3.42.1.js",
   "https://assets.tumblr.com/assets/scripts/tumblr/utils/popover.js",
   "https://assets.tumblr.com/assets/scripts/registration/registration.js",
   "https://assets.tumblr.com/assets/scripts/dashboard.js",
   "https://assets.tumblr.com/client/prod/app/vendor.build.js",
   "https://assets.tumblr.com/client/prod/app/global.build.js",
-
 ];
 
 
@@ -124,9 +123,9 @@ module.exports = {
       _(domItems).each(function (domItem) {
         var $domItem = $(domItem);
 
-        if ($domItem.is("iframe")) {
-          $domItem.remove();
-        }
+        // if ($domItem.is("iframe")) {
+        //   $domItem.remove();
+        // }
         if ($domItem.is("script")) {
           $domItem.removeAttr("nonce");
 
