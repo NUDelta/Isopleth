@@ -12,6 +12,7 @@ var blockedDomains = [
   "scorecardresearch.com",
   "connect.facebook.net",
   "google-analytics.com",
+  "analytics",
   "beacon.krxd.net",
   // "trackingTags_v1.1",
   // "html5shiv",

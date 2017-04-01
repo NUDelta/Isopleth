@@ -2,7 +2,7 @@ define([
   "backbone",
   "underscore",
   "../util/util",
-  "text!../util/samples/500px/invokeSample.txt",
+  "text!../util/samples/bbc/invokeSample.txt",
 ], function (Backbone, _, util, invokeSample) {
   return Backbone.View.extend({
     rawInvokes: [],

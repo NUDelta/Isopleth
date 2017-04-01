@@ -1724,7 +1724,8 @@ if (typeof {name} === 'undefined') {
 		return logEntries[0].entries.length;
 	};
 
-	this.throttleInvokeMillis = null;
+	this.throttleInvokeMillis = 500;
+	console.log("Tracer throttleInvokeMillis set at", this.throttleInvokeMillis);
 
 	this.setThrottleInvokeMillis = function (millis) {
 		this.throttleInvokeMillis = millis;
