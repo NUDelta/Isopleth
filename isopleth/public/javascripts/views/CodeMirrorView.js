@@ -8,7 +8,13 @@ define([
 
     className: "codeMirrorView",
 
-    events: {},
+    events: {
+      "keyup":"keyup"
+    },
+
+    keyup:function(){
+      this.trigger("keyup", this.getCode());
+    },
 
     initialize: function (code, maxHeight, writable) {
       code = code || "";
@@ -21,7 +27,7 @@ define([
 
       this.codeMirror = CodeMirror.fromTextArea(this.$("textarea")[0], {
         parserfile: [],
-        readOnly: !writable,
+        readOnly: false,
         dragDrop: false,
         mode: "javascript",
         lineWrapping: true,
@@ -34,7 +40,6 @@ define([
         scrollbarStyle: "null",
         matchBrackets: true
       });
-
 
       this.setCode(code);
     },

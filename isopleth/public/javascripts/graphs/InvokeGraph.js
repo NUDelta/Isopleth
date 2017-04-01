@@ -2,7 +2,7 @@ define([
   "backbone",
   "underscore",
   "../util/util",
-  "text!../util/samples/xkcd/invokeSample.txt",
+  "text!../util/samples/500px/invokeSample.txt",
 ], function (Backbone, _, util, invokeSample) {
   return Backbone.View.extend({
     rawInvokes: [],
@@ -591,8 +591,8 @@ define([
     },
 
     getInvokeLabel: function (invoke) {
-      if (invoke.customLabel) {
-        return invoke.customLabel;
+      if (invoke.node.customLabel) {
+        return invoke.node.customLabel;
       }
 
       var aspects = invoke.aspectMap ? _(invoke.aspectMap).keys().join(", ") : "";
