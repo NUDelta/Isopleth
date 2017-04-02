@@ -3,7 +3,7 @@ html
     .restart-mode(style="display:none;")
       .row(style='padding-top:.6em; padding-bottom:1em;')
         .col-xs-12
-          span The Ibex system needs inspection access to this window.
+          span Isopleth needs inspection access to this window.
           button#reload.btn.btn-default.btn-xs(type='button', aria-label='Left Align', style="margin-left:1em;")
             i
             | #{' '}Reload with Ibex
@@ -12,3 +12,9 @@ html
         .col-xs-12
           p
           | Broadcasting...
+          br
+          br
+          button#throttleInvokes.btn.btn-default.btn-xs Throttle Invokes
+          br
+          br
+          button#removeThrottle.btn.btn-default.btn-xs Remove Throttle

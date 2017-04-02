@@ -33,8 +33,9 @@ define([
       jQueryCall: false
     },
 
-    initialize: function (invokeGraph) {
+    initialize: function (invokeGraph, callGraphView) {
       this.invokeGraph = invokeGraph;
+      this.callGraphView = callGraphView;
       this.setElement($("#deckView"));
 
       this.showCard = _.bind(this.showCard, this);
@@ -98,7 +99,7 @@ define([
     },
 
     addCard:function(invokeId){
-      var cardView = new CardView(invokeId, this.invokeGraph);
+      var cardView = new CardView(invokeId, this.invokeGraph, this.callGraphView);
         this.$("#deck").append(cardView.el);
     },
 

@@ -84,7 +84,7 @@ if (typeof {name} === 'undefined') {
 	var uncaughtExceptionsByNodeId = {}; // nodeId -> array of { exception: ..., invocationId: ... }
 	var nodeHitCounts = {}; // { query-handle: { nodeId: hit-count } }
 	var exceptionCounts = {}; // { query-handle: { nodeId: exception-count } }
-	var logEntries = {}; // { query-handle: [invocation id] }
+	var logEntries = {0:{entries:[]}}; // { query-handle: [invocation id] }
 	var anonFuncParentInvocation, lastException, lastExceptionThrownFromInvocation; // yucky globals track state between trace* calls
 	var nextInvocationId = 0;
 	var _hitQueries = [];
@@ -475,16 +475,28 @@ if (typeof {name} === 'undefined') {
 		objects of any other type, ignoring the overhead of array/object storage.
 		**/
 
-		var pathToSelector = function(node){
-		  if(!node || !node.outerHTML){
-		    return null;
+    var nativeToString = function (o) {
+      return Object.prototype.toString.call(o);
+    };
+
+    var nativeToLowerCase = function (str) {
+      return String.prototype.toLowerCase.call(str);
+    };
+
+    var nativeIndexOf = function (str, test) {
+      return String.prototype.indexOf.call(str, test)
+    };
+
+    var pathToSelector = function (node) {
+      if (!node || !node.outerHTML) {
+        return null;
       }
 
       var path;
       while (node.parentElement) {
         var name = node.localName;
         if (!name) break;
-        name = name.toLowerCase();
+        name = nativeToLowerCase(name);
         var parent = node.parentElement;
 
         var domSiblings = [];
@@ -493,15 +505,15 @@ if (typeof {name} === 'undefined') {
           for (var i = 0; i < parent.children.length; i++) {
             var sibling = parent.children[i];
             if (sibling.localName && sibling.localName.toLowerCase) {
-              if (sibling.localName.toLowerCase() === name) {
+              if (nativeToLowerCase(sibling.localName) === name) {
                 domSiblings.push(sibling);
               }
             }
           }
-				}
+        }
 
         if (domSiblings.length > 1) {
-          name += ':eq(' + domSiblings.indexOf(node) + ')';
+          name += ':eq(' + nativeIndexOf(domSiblings, node) + ')';
         }
         path = name + (path ? '>' + path : '');
         node = parent;
@@ -511,12 +523,12 @@ if (typeof {name} === 'undefined') {
     };
 
     var elToObj = function (el) {
-      if(!el || !el.toString){
+      if (!el || !el.toString) {
         return {};
       } else {
-        var elType = el.toString();
+        var elType = nativeToString(el);
 
-        if (!(elType.indexOf("HTML") > -1) || !(elType.indexOf("Element") > -1)) {
+        if (!(nativeIndexOf(elType, "HTML") > -1) || !(nativeIndexOf(elType, "Element") > -1)) {
           return {};
         }
       }
@@ -529,7 +541,7 @@ if (typeof {name} === 'undefined') {
 
       // Dom element
       var attrs = {
-        elementType: el.toString(),
+        elementType: nativeToString(el),
         domPath: domPath
       };
 
@@ -545,22 +557,23 @@ if (typeof {name} === 'undefined') {
 
     var objStr = null;
     if (object && object.toString) {
-    	var s = object.toString();
-      if(s && s.toLowerCase){
-      	objStr = s.toLowerCase();
-			}
-		}
+      var s = nativeToString(object);
+      if (s && s.toLowerCase) {
+        objStr = nativeToLowerCase(s);
+      }
+    }
 
     if (objStr) {
-      if (objStr.indexOf("event]") > -1) {
-      	var path;
-      	try{
-      		path = pathToSelector(object.path && object.path.length ? object.path[0] : null);
-				}catch(ig){}
+      if (nativeIndexOf(objStr, "event]") > -1) {
+        var path;
+        try {
+          path = pathToSelector(object.path && object.path.length ? object.path[0] : null);
+        } catch (ig) {
+        }
 
         try {
           object = {
-					  // Properties of Abstract Event Class
+            // Properties of Abstract Event Class
             bubbles: object.bubbles,
             cancelBubble: object.cancelBubble,
             cancelable: object.cancelable,
@@ -580,7 +593,7 @@ if (typeof {name} === 'undefined') {
             isTrusted: object.isTrusted,
 
             // Properties of MouseEvent Class
-            eventName: object.toString ? object.toString() : null,
+            eventName: object.toString ? nativeToString(object) : null,
             altKey: object.altKey,
             button: object.button,
             buttons: object.buttons,
@@ -603,19 +616,19 @@ if (typeof {name} === 'undefined') {
             screenX: object.screenX,
             screenY: object.screenY,
             shiftKey: object.shiftKey,
-            sourceCapabilities: object.sourceCapabilities ? object.sourceCapabilities.toString() : null,
+            sourceCapabilities: object.sourceCapabilities ? nativeToString(object.sourceCapabilities) : null,
             toElement: elToObj(object.toElement),
-            view: object.view ? object.view.toString() : null,
+            view: object.view ? nativeToString(object.view) : null,
             which: object.which,
             x: object.x,
             y: object.y,
 
             // Properties of KeyboardEvent Class
             code: object.code,
-            key:object.key,
+            key: object.key,
             isComposing: object.isComposing,
-            location:object.location,
-            repeat:object.repeat,
+            location: object.location,
+            repeat: object.repeat,
           };
 
           for (var k in object) {
@@ -628,9 +641,9 @@ if (typeof {name} === 'undefined') {
         } catch (ig) {
 
         }
-      } else if (objStr.indexOf(" xmlhttprequest]") > -1 || objStr.indexOf(" progressevent]") > -1) {
-        if (objStr.indexOf(" progressevent]") > -1 && object.currentTarget &&
-          object.currentTarget.toString().toLowerCase().indexOf(" xmlhttprequest]") > -1) {
+      } else if (nativeIndexOf(objStr, " xmlhttprequest]") > -1 || nativeIndexOf(objStr, " progressevent]") > -1) {
+        if (nativeIndexOf(objStr, " progressevent]") > -1 && object.currentTarget &&
+          nativeIndexOf(nativeToLowerCase(nativeToString(object.currentTarget)), " xmlhttprequest]") > -1) {
           // sometimes request comes nested inside a progress event
           object = object.currentTarget;
         }
@@ -655,13 +668,13 @@ if (typeof {name} === 'undefined') {
         };
 
         for (var k in object) {
-          if (object.hasOwnProperty(k)) {
-            if(object[k] === undefined){
-            	delete object[k];
-						}
+          if (Object.prototype.hasOwnProperty.call(object, k)) {
+            if (object[k] === undefined) {
+              delete object[k];
+            }
           }
         }
-      } else if(objStr.indexOf("html") > -1 && objStr.indexOf("element") > -1){
+      } else if (nativeIndexOf(objStr, "html") > -1 && nativeIndexOf(objStr, "element") > -1) {
         object = elToObj(object);
       }
     }
@@ -788,10 +801,10 @@ if (typeof {name} === 'undefined') {
 
 	function hit(invocation) {
 		var id = invocation.f.id;
-		for (var handle in nodeHitCounts) {
-			var hits = nodeHitCounts[handle];
-			hits[id] = (hits[id] || 0) + 1;
-		}
+		// for (var handle in nodeHitCounts) {
+		// 	var hits = nodeHitCounts[handle];
+		// 	hits[id] = (hits[id] || 0) + 1;
+		// }
 
 		// if this is console.log, we'll want the call site in a moment
 		var callSite;
@@ -799,21 +812,16 @@ if (typeof {name} === 'undefined') {
 			callSite = invocation.getParents().filter(function (inv) { return inv.type === "callsite" })[0];
 		}
 
-		// add this invocation to all the relevant log queries
-		for (var handle in _logQueries) {
-			var query = _logQueries[handle];
-			if (query.logs && invocation.f.id === "log") {
-				if (callSite) {
-					addLogEntry(handle, callSite.id);
-				} else {
-					console.log("no call site! I needed one!", invocation.getParents());
-				}
-			}
-			if (query.ids && query.ids.indexOf(id) !== -1) {
-				addLogEntry(handle, invocation.id);
-			}
-		}
-	}
+    if (invocation.f.id === "log") {
+      if (callSite) {
+        addLogEntry(0, callSite.id);
+      } else {
+        console.log("no call site! I needed one!", invocation.getParents());
+      }
+    } else {
+      addLogEntry(0, invocation.id);
+    }
+  }
 
 	function calculateHitCounts() {
 		var hits = {};
@@ -895,12 +903,44 @@ if (typeof {name} === 'undefined') {
 		return { entries: ids, seenIds: seenIds };
 	}
 
-	function addLogEntry(handle, invocationId) {
-		if (!(invocationId in logEntries[handle].seenIds)) {
-			logEntries[handle].entries.push(invocationId);
-			logEntries[handle].seenIds[invocationId] = true;
-		}
-	}
+    var nodeChainLastInvokeMap = {};
+
+    function addLogEntry(handle, invocationId) {
+    	if (__tracer.throttleInvokeMillis) {
+        var invocation = invocationById[invocationId];
+        var nodeId = invocation.f.id;
+
+        var parentStr = invocation.getParents().reduce(function (str, inv) {
+          str += inv.f.id;
+          return str;
+        }, "");
+
+        var childStr = invocation.getChildren().reduce(function (str, inv) {
+          str += inv.f.id;
+          return str;
+        }, "");
+
+        var key = parentStr + nodeId + childStr;
+        var lastInvokeTime = nodeChainLastInvokeMap[key];
+        var currentTime = new Date().getTime();
+
+        var allowAdd = false;
+        if (lastInvokeTime) {
+          if ((currentTime - lastInvokeTime) > __tracer.throttleInvokeMillis) {
+            allowAdd = true;
+          }
+        } else {
+          allowAdd = true;
+        }
+
+        if (allowAdd) {
+          nodeChainLastInvokeMap[key] = currentTime;
+          logEntries[0].entries.push(invocationId);
+        }
+			} else {
+				logEntries[0].entries.push(invocationId);
+			}
+    }
 
 
 	// instrumentation
@@ -1478,7 +1518,7 @@ if (typeof {name} === 'undefined') {
     _fileCallGraph = [];
 
     var temp = {};
-    temp[logHandle] = logEntries[logHandle];
+    temp[0] = logEntries[0];
     logEntries = temp;
 
     for(var i=0; i< logHandle; i++){
@@ -1489,8 +1529,8 @@ if (typeof {name} === 'undefined') {
   };
 
 	this.getLogLength = function(logHandle){
-    if (logEntries[logHandle] && logEntries[logHandle].entries && logEntries[logHandle].entries.length) {
-      return logEntries[logHandle].entries.length;
+    if (logEntries[0] && logEntries[0].entries && logEntries[0].entries.length) {
+      return logEntries[0].entries.length;
     } else {
       return 0;
     }
@@ -1502,6 +1542,10 @@ if (typeof {name} === 'undefined') {
 
   this.getNodeList = function(){
     return nodes;
+  };
+
+  this.getLogEntryArr = function (handle) {
+    return logEntries;
   };
 
 	this.toJSON = function () {
@@ -1576,7 +1620,7 @@ if (typeof {name} === 'undefined') {
 
 	this.trackLogs = function (query) {
 		var handle = _logQueries.push(query) - 1;
-		logEntries[handle] = backlog(query);
+		logEntries[0] = {entries:[]};
 		return handle;
 	};
 
@@ -1677,21 +1721,35 @@ if (typeof {name} === 'undefined') {
 			throw new Error("unrecognized query");
 		}
 
-		return logEntries[handle].entries.length;
+		return logEntries[0].entries.length;
+	};
+
+	this.throttleInvokeMillis = 500;
+	console.log("Tracer throttleInvokeMillis set at", this.throttleInvokeMillis);
+
+	this.setThrottleInvokeMillis = function (millis) {
+		this.throttleInvokeMillis = millis;
+		console.log("Set throttleInvokeMillis", millis);
 	};
 
 	this.logDelta = function (handle, maxResults) {
-		if (!(handle in _logQueries)) {
-			throw new Error("unrecognized query");
-		}
-
 		maxResults = maxResults || 10;
 
-		var ids = logEntries[handle].entries.splice(0, maxResults);
-		var results = ids.map(function (invocationId, i) {
+		var ids = logEntries[0].entries.splice(0, maxResults);
+		var results = ids.reduce(function (arr, invocationId) {
 			var invocation = invocationById[invocationId];
-			return makeLogEntry(invocation, findParentsInQuery(invocation, _logQueries[handle]));
-		});
+      var entry;
+
+      try {
+        entry = makeLogEntry(invocation, findParentsInQuery(invocation, _logQueries[0]));
+      } catch (ig) {
+      }
+
+      if(entry){
+      	arr.push(entry);
+			}
+      return arr;
+		}, []);
 
 		return results;
 	};
@@ -1737,10 +1795,6 @@ if (typeof {name} === 'undefined') {
 	};
 
 	function findParentsInQuery(invocation, query) {
-		if (!query.ids || query.ids.length === 0) {
-			return [];
-		}
-
 		var matches = {}; // invocation id -> link
 		var seen = {}; // invocation id -> true
 		var types = ['async', 'call', 'branch-enter']; // in priority order
@@ -1760,7 +1814,7 @@ if (typeof {name} === 'undefined') {
 			seen[link.id] = true;
 
 			var targetInvocation = invocationById[link.id];
-			if (query.ids.indexOf(targetInvocation.f.id) !== -1) { // if the called function is in the query
+			// if (query.ids.indexOf(targetInvocation.f.id) !== -1) { // if the called function is in the query
 				if (link.id in matches) { // if we've already found this one
 					if (link.type === 'call' && matches[link.id].type === 'async') { // if we found an async one before but this one is synchronous
 						// overwrite the previous match
@@ -1777,9 +1831,9 @@ if (typeof {name} === 'undefined') {
 						inbetween: []
 					};
 				}
-			} else {
-				targetInvocation.getParentLinks().forEach(function (link) { search(link, promoteType(type, link.type)); });
-			}
+			// } else {
+			// 	targetInvocation.getParentLinks().forEach(function (link) { search(link, promoteType(type, link.type)); });
+			// }
 		}
 		invocation.getParentLinks().forEach(function (link) { search(link, link.type); });
 

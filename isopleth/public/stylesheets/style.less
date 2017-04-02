@@ -149,6 +149,8 @@ body {
     }
 
     .empty-javascript {
+      width: 100%;
+      float:left;
       p {
         margin-left: 1em;
       }
@@ -183,13 +185,36 @@ body {
     }
 
     .center-column {
+      .main-javascript{
+        float:left;
+        width: 99%;
+      }
+
       width: 500px;
-      h4 {
+      input {
+        background-color: #f7f9fa;
+        float: left;
+        display: block;
+        margin-top: 0;
+        box-shadow: none;
+        border: none;
+        height: 24px;
+        line-height: 24px;
+        width: 96%;
+        font-size: 16px;
+        text-decoration: none;
+        padding-left: 9px;
+        border-radius: 5px;
+
         overflow-x: hidden;
         text-overflow: ellipsis;
-        margin-top: 5px;
-        margin-bottom: 5px;
+        margin-bottom: 3px;
         margin-left: 5px;
+
+        &:focus {
+          outline: none;
+          background-color: white;
+        }
       }
     }
 

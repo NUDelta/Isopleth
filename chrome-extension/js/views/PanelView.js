@@ -16,7 +16,9 @@ define([
     template: Handlebars.compile(viewTemplate),
 
     events: {
-      "click #reload": "reloadInjecting"
+      "click #reload": "reloadInjecting",
+      "click #throttleInvokes": "throttleInvokes",
+      "click #removeThrottle": "removeThrottle"
     },
 
     initialize: function () {
@@ -63,8 +65,8 @@ define([
     resetTracerResendNodes: function () {
       console.log("JSBin requesting tracer reset and new node list.");
       UnravelAgent.runInPage(function () {
-        unravelAgent.fondueBridge.resetTracer();
-        unravelAgent.fondueBridge.emitNodeList();
+        // unravelAgent.fondueBridge.resetTracer();
+        // unravelAgent.fondueBridge.emitNodeList();
       });
     },
 
@@ -101,9 +103,9 @@ define([
         }, this);
 
         UnravelAgent.runInPage(function () {
-          unravelAgent.emitCSS();
-          unravelAgent.emitHTMLSelect();
-          unravelAgent.fondueBridge.emitNodeList();
+          // unravelAgent.emitCSS();
+          // unravelAgent.emitHTMLSelect();
+          // unravelAgent.fondueBridge.emitNodeList();
         }, transmissionDone);
       }, this);
 
@@ -148,8 +150,7 @@ define([
           var scripts = unravelAgent.$("script");
           if (hasBodyChildren && scripts && scripts[0]) {
             unravelAgent.fondueBridge.startTracking();
-            unravelAgent.fondueBridge.updateTrackedNodes();
-            return unravelAgent.fondueBridge.getNodes(); //for our script metadata
+            return unravelAgent.fondueBridge.getTracerNodeList(); //for our script metadata
           } else {
             console.log("PanelView: Waiting on scripts to finish loading...");
             return false;
@@ -183,6 +184,18 @@ define([
         datatype: "json",
         method: "post"
       }).done(jsBinCallback);
+    },
+
+    throttleInvokes: function () {
+      UnravelAgent.runInPage(function () {
+        __tracer.setThrottleInvokeMillis(500);
+      }, null);
+    },
+
+    removeThrottle: function () {
+      UnravelAgent.runInPage(function () {
+        __tracer.setThrottleInvokeMillis(null);
+      }, null);
     },
 
     getScriptMetaData: function (callback) {
@@ -240,45 +253,45 @@ define([
             return s.path === path;
           }, this);
 
-          if (!meta) {
-            return {
-              path: path,
-              builtIn: true,
-              url: null,
-              inline: null,
-              domPath: null,
-              order: null,
-              js: ""
-            };
-          } else {
-            meta.merged = true;
-          }
+          // if (!meta) {
+          //   return {
+          //     path: path,
+          //     builtIn: true,
+          //     url: null,
+          //     inline: null,
+          //     domPath: null,
+          //     order: null,
+          //     js: ""
+          //   };
+          // } else {
+          //   meta.merged = true;
+          // }
 
           return {
             path: path,
-            url: meta.url.split("#")[0], //ignore hash parts
+            url: path.split("#")[0], //ignore hash parts
             builtIn: false,
-            inline: meta.inline,
-            domPath: meta.domPath,
-            order: meta.order,
+            inline: meta ? meta.inline : null,
+            domPath: meta ? meta.domPath : null,
+            order: meta ? meta.order : null,
             js: ""
           };
         }, this).value();
 
-      _(this.metaScripts).each(function (metaS) {
-        if (!metaS.merged && metaS.url) {
-          var path = metaS.url.split("#")[0];
-          hitScripts.push({
-            path: path,
-            url: path,
-            builtIn: false,
-            inline: metaS.inline,
-            domPath: metaS.domPath,
-            order: metaS.order,
-            js: ""
-          });
-        }
-      }, this);
+      // _(this.metaScripts).each(function (metaS) {
+      //   if (!metaS.merged && metaS.url) {
+      //     var path = metaS.url.split("#")[0];
+      //     hitScripts.push({
+      //       path: path,
+      //       url: path,
+      //       builtIn: false,
+      //       inline: metaS.inline,
+      //       domPath: metaS.domPath,
+      //       order: metaS.order,
+      //       js: ""
+      //     });
+      //   }
+      // }, this);
 
       var emitToBin = _.bind(function () {
         this.ibexSocketRouter.emit("fondueDTO:scripts", {scripts: hitScripts});

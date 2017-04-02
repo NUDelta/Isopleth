@@ -16,14 +16,17 @@ define([
         "plugins",
         "moment",
         "underscore",
+        "highcharts",
+        "vendor",
         "backbone",
         "require",
         "angular",
         "react",
         "handlebars",
         "html5shiv",
-        "underscore",
         "plugins.js",
+        "js.cookie",
+        "analytic",
       ]).find(function (lib) {
         if (testStr.toLowerCase().indexOf(lib) > -1) {
           return true;

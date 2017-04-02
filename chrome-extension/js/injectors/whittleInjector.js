@@ -10,6 +10,21 @@ define([],
       };
 
       window.unravelAgent.metaScripts = function () {
+
+        /*
+        *
+        * Required built-ins look the same when compiled and lazy-loaded:
+        * "<script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="javascripts/router/HomeRouter" src="http://users.eecs.northwestern.edu/~jjh380/javascripts/router/HomeRouter.js"></script>"
+        * lazy load below
+        * "<script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="javascripts/view/AskMeView" src="./javascripts/view/AskMeView.js"></script>"
+        *
+        *
+        *
+        * */
+
+
+
+
         var metaScripts = [];
         var scripts = unravelAgent.$("script:not(#unravelUntraced)");
 
