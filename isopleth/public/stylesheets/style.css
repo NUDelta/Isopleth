@@ -22,7 +22,7 @@ textarea {
   display: flex;
 }
 #isoplethView #deckView {
-  min-height: 407px;
+  min-height: 336px;
   width: 100%;
   float: left;
   overflow-x: scroll;
@@ -93,6 +93,7 @@ textarea {
   flex-grow: 1;
 }
 #isoplethView #graphView #graphControl {
+  display: none;
   width: 100%;
   float: left;
   height: 12%;
@@ -116,11 +117,12 @@ textarea {
 }
 #isoplethView #graphView #invokeGraph {
   width: 100%;
+  height: 350px;
 }
 #isoplethView .cardView {
   display: inline-block;
-  height: 300px;
-  margin: 2em;
+  height: 263px;
+  margin: 1em;
   border-radius: 6px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }

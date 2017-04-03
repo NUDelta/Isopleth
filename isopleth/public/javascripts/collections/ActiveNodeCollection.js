@@ -4,7 +4,7 @@ define([
   "underscore",
   "../models/ActiveNodeModel",
   "../routers/JSBinSocketRouter",
-  "text!../util/samples/bbc/nodeSample.txt",
+  "text!../util/samples/nat-geo/nodeSample.txt",
   "raphael"
 ], function ($, Backbone, _, ActiveNodeModel, JSBinSocketRouter, nodeSample) {
   return Backbone.Collection.extend({

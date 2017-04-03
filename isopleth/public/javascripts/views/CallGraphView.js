@@ -75,6 +75,7 @@ define([
       this.handleNodeClick = _.bind(this.handleNodeClick, this);
       this.handleEdgeClick = _.bind(this.handleEdgeClick, this);
       this.addCustomColor = _.bind(this.addCustomColor, this);
+      window.callGraphView = this;
     },
 
     addCustomColor: function (aspect, color) {
@@ -276,6 +277,7 @@ define([
     },
 
     handleEdgeClick: function (sourceId, targetId, silent) {
+      console.log("Clicked edge", sourceId, targetId);
       this.resetLastNodes();
 
       _([sourceId, targetId]).each(function (nodeId) {
@@ -465,20 +467,20 @@ define([
             selector: 'node',
             style: {
               'min-zoomed-font-size': 6,
-              // 'font-family': 'system, "helvetica neue"',
-              // 'font-size': 14,
-              // 'font-weight': 400,
+              'font-family': 'system, "helvetica neue"',
+              'font-size': 14,
+              'font-weight': 400,
               'shape': 'roundrectangle',
               // 'overlay-color': "white",
-              // 'overlay-padding': 1,
+              'overlay-padding': 1,
               'width': 'label',
               'height': 'label',
               'padding': 8,
               'content': 'data(label)',
-              // 'text-opacity': 1,
+              'text-opacity': 1,
               'text-valign': 'center',
-              // 'text-halign': 'center',
-              // 'color': "black",
+              'text-halign': 'center',
+              'color': "black",
               'background-color': 'data(color)'
             }
           },

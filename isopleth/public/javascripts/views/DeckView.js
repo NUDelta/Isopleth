@@ -145,7 +145,7 @@ define([
       }
     },
 
-    filterAction: function (buttonSelector, filterSet, negate) {
+    filterAction: function (buttonSelector, filterSet, negate, mock) {
       var $filterMouse = this.$(buttonSelector);
 
       if (negate) {
@@ -161,6 +161,10 @@ define([
         filterStatus = true;
       } else if ($filterMouse.hasClass("negate")) {
         filterStatus = "negate";
+      }
+
+      if(mock){
+        return;
       }
 
       _(filterSet).each(function (filter) {
@@ -180,7 +184,7 @@ define([
     },
 
     filterSetup: function (e, negate) {
-      this.filterAction("#filterSetup", ["setup"], negate);
+      this.filterAction("#filterSetup", ["setup"], negate, true);
     },
 
     filterAJAX: function (e, negate) {
@@ -189,6 +193,10 @@ define([
 
     filterDom: function (e, negate) {
       this.filterAction("#filterDom", this.invokeGraph.domQueries, negate);
+    },
+
+    filterNone: function (e, negate) {
+      this.filterAction("#filterNone", [], negate, true);
     },
 
     filterAdd: function () {

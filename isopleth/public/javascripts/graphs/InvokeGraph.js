@@ -2,7 +2,7 @@ define([
   "backbone",
   "underscore",
   "../util/util",
-  "text!../util/samples/bbc/invokeSample.txt",
+  "text!../util/samples/nat-geo/invokeSample.txt",
 ], function (Backbone, _, util, invokeSample) {
   return Backbone.View.extend({
     rawInvokes: [],
@@ -447,6 +447,12 @@ define([
         return this.parseEventFromArg(arg);
       },
       function (arg) {
+        var val = this.parseEventFromArg(arg);
+        if(val === "mouseenter"){
+          return "*Hover Effect"
+        }
+      },
+      function (arg) {
         try {
           if ((arg.value.ownProperties.type.value === "load" ||
             arg.value.ownProperties.type.value === "readystatechange" ||
@@ -629,3 +635,15 @@ define([
     }
   });
 });
+
+/*
+
+callGraphView.invokeGraph.invokeIdMap["0.15026345111115025-90138"].parentAsyncSerialLinks = [callGraphView.invokeGraph.invokeIdMap["0.15026345111115025-89528"]]
+callGraphView.invokeGraph.invokeIdMap["0.15026345111115025-89528"].childAsyncSerialLinks = [callGraphView.invokeGraph.invokeIdMap["0.15026345111115025-90138"]]
+callGraphView.invokeGraph.asyncSerialEdges.push({
+              parentInvoke: callGraphView.invokeGraph.invokeIdMap["0.15026345111115025-89528"],
+              childInvoke: callGraphView.invokeGraph.invokeIdMap["0.15026345111115025-90138"]
+            })
+callGraphView.drawJoshAsync()
+
+ */
