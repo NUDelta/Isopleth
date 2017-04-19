@@ -2,7 +2,7 @@ define([
   "backbone",
   "underscore",
   "../util/util",
-  "text!../util/samples/bbc/invokeSample.txt",
+  "text!../util/samples/ibex/invokeSample.txt",
 ], function (Backbone, _, util, invokeSample) {
   return Backbone.View.extend({
     rawInvokes: [],
@@ -433,6 +433,7 @@ define([
     ],
 
     ajaxEvents: [
+      "ajaxStart",
       "ajaxRequest",
       "ajaxResponse"
     ],

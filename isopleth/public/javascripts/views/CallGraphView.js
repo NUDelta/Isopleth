@@ -37,6 +37,7 @@ define([
       nativeRootInvoke: "#48ff60",
       asyncEdge: "#fd9620",
       asyncSerialEdge: "#bc95ff",
+      ajaxStart: "#fff",
       ajaxRequest: "#fff",
       ajaxResponse: "#dd7382",
       domQuery: "#bc95ff",
