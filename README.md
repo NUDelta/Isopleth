@@ -4,15 +4,17 @@ A platform for following interesting paths through JavaScript.
 
 #To install:
     
-    # install nvm (https://github.com/creationix/nvm)
+Install nvm and node (https://github.com/creationix/nvm)
     
     nvm install v0.10.32
     nvm alias default v0.10.32
     
-    # install homebrew for mac
-    # if on windows, install redis via googling
+Install redis (via homebrew, or if on windows google it)
+    
     brew install redis
        
+Install npm dependencies for all the sub-projects
+    
     cd isopleth/fondue-api
     rm -rf node_modules
     npm install
@@ -29,15 +31,19 @@ A platform for following interesting paths through JavaScript.
     rm -rf node_modules
     npm install
     
-    #Update your chrome flags to allow localhost to spoof https certs
-    chrome://flags > Allow invalid certificates for resources loaded from localhost
-
-#To run:
+Setup Chrome
+    
     - Open google chrome
+    - Update your chrome flags to allow localhost to spoof https certs:
+        chrome://flags > Allow invalid certificates for resources loaded from localhost
+
     - chrome://extensions
     - check "Developer Mode"
     - Load upnacked extension...
     - Navigate to isopleth/chrome-extension
+    - Ok
+
+#To run:
     
     cd isopleth/fondue-api/redis
     ./redisStart.sh  #start redis
@@ -50,6 +56,11 @@ A platform for following interesting paths through JavaScript.
     
     cd isopleth/tests
     node app.js
+    
+    cd isopleth/isopleth
+    node app.js
+    
+    # All four must be up and running for the test app to work.
     
 #To run a test app:
 
