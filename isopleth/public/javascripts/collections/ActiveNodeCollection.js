@@ -28,12 +28,12 @@ define([
 
     initialize: function () {
       this.jsBinSocketRouter = JSBinSocketRouter.getInstance();
-      this.jsBinSocketRouter.onSocketData("fondueDTO:nodeBacktrace", function (obj) {
-        var model = this.get(obj.id);
-        if (model) {
-          model.set("callStack", obj.callStack);
-        }
-      }, this);
+      // this.jsBinSocketRouter.onSocketData("fondueDTO:nodeBacktrace", function (obj) {
+      //   var model = this.get(obj.id);
+      //   if (model) {
+      //     model.set("callStack", obj.callStack);
+      //   }
+      // }, this);
 
       this.empty = _.bind(this.empty, this);
 

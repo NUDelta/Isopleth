@@ -15,17 +15,17 @@ define([
         this.binId = new Date().getTime();
       }
 
-      this.socket = io.connect('https://localhost:3003');
-      this.socket.on('connect', function () {
-        console.log("Socket connection established.");
-      });
-      this.socket.on("user:id", _.bind(function (obj) {
-        this.userId = obj.id;
-        this.emit("jsbin:listen", {
-          userId: this.userId,
-          binId: this.binId
-        });
-      }, this));
+      // this.socket = io.connect('https://localhost:3003');
+      // this.socket.on('connect', function () {
+      //   console.log("Socket connection established.");
+      // });
+      // this.socket.on("user:id", _.bind(function (obj) {
+      //   this.userId = obj.id;
+      //   this.emit("jsbin:listen", {
+      //     userId: this.userId,
+      //     binId: this.binId
+      //   });
+      // }, this));
     },
 
     emit: function (eventStr, obj) {
