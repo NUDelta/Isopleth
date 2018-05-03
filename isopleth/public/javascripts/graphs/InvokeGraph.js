@@ -2,7 +2,6 @@ define([
   "backbone",
   "underscore",
   "../util/util",
-  "text!../util/samples/ibex/invokeSample.txt",
 ], function (Backbone, _, util, invokeSample) {
   return Backbone.View.extend({
     rawInvokes: [],
@@ -19,9 +18,10 @@ define([
       }, this);
 
       var instanceId = window.location.pathname.split("/")[1];
-      if (!instanceId || instanceId.length < 1) {
-        this.addInvokes(JSON.parse(invokeSample));
-      }
+      var invokeGraph = this;
+      require(["text!/javascripts/util/samples/" + instanceId + "/invokeSample.txt"], function (invokeSample) {
+        invokeGraph.addInvokes(JSON.parse(invokeSample));
+      });
     },
 
     toJSON: function () {

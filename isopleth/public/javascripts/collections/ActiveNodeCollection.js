@@ -4,9 +4,8 @@ define([
   "underscore",
   "../models/ActiveNodeModel",
   "../routers/JSBinSocketRouter",
-  "text!../util/samples/ibex/nodeSample.txt",
   "raphael"
-], function ($, Backbone, _, ActiveNodeModel, JSBinSocketRouter, nodeSample) {
+], function ($, Backbone, _, ActiveNodeModel, JSBinSocketRouter) {
   return Backbone.Collection.extend({
     model: ActiveNodeModel,
 
@@ -38,9 +37,10 @@ define([
       this.empty = _.bind(this.empty, this);
 
       var instanceId = window.location.pathname.split("/")[1];
-      if (!instanceId || instanceId.length < 1) {
-        this.mergeNodes(JSON.parse(nodeSample));
-      }
+      var activeNodeCollection = this;
+      require(["text!/javascripts/util/samples/" + instanceId + "/nodeSample.txt"], function (nodeSample) {
+        activeNodeCollection.mergeNodes(JSON.parse(nodeSample));
+      });
     },
 
     getEarliestTimeStamp: function () {
@@ -100,7 +100,7 @@ define([
         if (!activeNodeModel) {
           node.name = node.name ? node.name + "" : "";
           activeNodeModel = new ActiveNodeModel(node);
-          if(serial){
+          if (serial) {
             this.serialToNode[serial] = activeNodeModel;
           }
           this.add(activeNodeModel);
