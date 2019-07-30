@@ -18,10 +18,9 @@ define([
       }, this);
 
       var instanceId = window.location.pathname.split("/")[1];
-      var invokeGraph = this;
-      require(["text!/javascripts/util/samples/" + instanceId + "/invokeSample.txt"], function (invokeSample) {
-        invokeGraph.addInvokes(JSON.parse(invokeSample));
-      });
+      if (!instanceId || instanceId.length < 1) {
+        this.addInvokes(JSON.parse(invokeSample));
+      }
     },
 
     toJSON: function () {

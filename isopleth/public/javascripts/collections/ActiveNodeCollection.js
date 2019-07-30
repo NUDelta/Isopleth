@@ -27,20 +27,19 @@ define([
 
     initialize: function () {
       this.jsBinSocketRouter = JSBinSocketRouter.getInstance();
-      // this.jsBinSocketRouter.onSocketData("fondueDTO:nodeBacktrace", function (obj) {
-      //   var model = this.get(obj.id);
-      //   if (model) {
-      //     model.set("callStack", obj.callStack);
-      //   }
-      // }, this);
+      this.jsBinSocketRouter.onSocketData("fondueDTO:nodeBacktrace", function (obj) {
+        var model = this.get(obj.id);
+        if (model) {
+          model.set("callStack", obj.callStack);
+        }
+      }, this);
 
       this.empty = _.bind(this.empty, this);
 
       var instanceId = window.location.pathname.split("/")[1];
-      var activeNodeCollection = this;
-      require(["text!/javascripts/util/samples/" + instanceId + "/nodeSample.txt"], function (nodeSample) {
-        activeNodeCollection.mergeNodes(JSON.parse(nodeSample));
-      });
+      if (!instanceId || instanceId.length < 1) {
+        this.mergeNodes(JSON.parse(nodeSample));
+      }
     },
 
     getEarliestTimeStamp: function () {

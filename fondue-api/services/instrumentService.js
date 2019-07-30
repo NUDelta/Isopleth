@@ -7,7 +7,14 @@ var routes = require("../routes/routes");
 var fondueService = require("./fondueService");
 
 var blockedDomains = [
-  "static.dynamicyield.com",
+  "https://www.zillow.com/-script-",
+  "https://s.zillowstatic.com/homepage/_next/static/runtime/webpack-37c7117ec1e5094e1e66.js",
+  "https://s.zillowstatic.com/homepage/_next/static/gqGL9hLZq4aKEK1b1kRRL/pages/buy.js",
+  "https://s.zillowstatic.com/homepage/_next/static/runtime/main-1d0215c1a32fc3bfc2d7.js",
+  "https://s.zillowstatic.com/homepage/_next/static/chunks/styles.dd3d8ccc3e131127ed83.js",
+  // "https://s.zillowstatic.com/homepage/_next/static/gqGL9hLZq4aKEK1b1kRRL/pages/_app.js",
+  "https://s.zillowstatic.com/homepage/_next/static/chunks/commons.c228028fd9b6a8638a2f.js",
+  "https://s.zillowstatic.com/pfs/core-dd77a03e72d9f22e2b33.js",
   "static.chartbeat.com",
   "scorecardresearch.com",
   "connect.facebook.net",
@@ -88,7 +95,7 @@ module.exports = {
         };
 
         var $scriptEl = $(scriptNode);
-        if (!$scriptEl.attr("src")) {
+        if (url !== 'https://www.zillow.com/' && !$scriptEl.attr("src")) {
           var src = $scriptEl.html();
           util.beautifyJS(src, url, function (src) {
             arrJS.push({
@@ -99,6 +106,7 @@ module.exports = {
             next();
           });
         } else {
+          console.log("Skipping blocked inline script: ", url);
           next();
         }
       };
@@ -119,6 +127,17 @@ module.exports = {
       if (err) {
         console.log("Error on fetching HTML. Returning \"\" for:", url);
         callback("");
+        return;
+      }
+
+      if (_(blockedDomains).find(function (domain) {
+        if (url.indexOf(domain) > -1) {
+          return true;
+        }
+      })) {
+        console.log("Blocking ad source request and returning original for:", url);
+
+        callback(body);
         return;
       }
 
